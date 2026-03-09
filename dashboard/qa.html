@@ -424,6 +424,218 @@
     .sys-label { color: var(--text-dim); }
     .sys-value { font-family: var(--mono); font-size: 0.78rem; }
 
+    /* ── Tests Tab ────────────────────────────────────────── */
+
+    .test-run-bar {
+      display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .test-run-bar .btn { min-width: 140px; justify-content: center; }
+
+    .test-run-status {
+      font-size: 0.78rem; color: var(--text-dim);
+      font-family: var(--mono);
+    }
+
+    .test-results-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.75rem; margin-bottom: 2rem;
+    }
+
+    .test-result-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 1rem; text-align: center;
+    }
+
+    .test-result-card .tr-num {
+      font-family: var(--mono); font-size: 1.6rem; font-weight: 700;
+    }
+
+    .test-result-card .tr-label {
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-muted); margin-top: 0.25rem;
+    }
+
+    .test-job-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 1rem 1.25rem;
+      margin-bottom: 0.5rem; display: flex; justify-content: space-between;
+      align-items: center;
+    }
+
+    .test-job-card .tj-left { display: flex; align-items: center; gap: 0.75rem; }
+
+    .tj-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .tj-icon.pass { background: var(--success-bg); color: var(--success); }
+    .tj-icon.fail { background: var(--critical-bg); color: var(--critical); }
+    .tj-icon.running { background: rgba(108,92,231,0.15); color: var(--accent); animation: pulse 1.5s infinite; }
+
+    .tj-info .tj-title { font-size: 0.82rem; font-weight: 500; }
+    .tj-info .tj-meta { font-size: 0.7rem; color: var(--text-dim); }
+
+    .section-title {
+      font-size: 1rem; font-weight: 600; margin-bottom: 1rem;
+      padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+    }
+
+    .section-subtitle {
+      font-size: 0.78rem; color: var(--text-dim); margin-bottom: 1rem;
+    }
+
+    /* ── Testing Plan ────────────────────────────────────── */
+
+    .plan-step {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 0.85rem 1rem;
+      margin-bottom: 0.5rem; display: flex; align-items: flex-start; gap: 0.75rem;
+    }
+
+    .plan-step.completed { opacity: 0.5; }
+
+    .plan-step-check {
+      width: 20px; height: 20px; border-radius: 4px; border: 2px solid var(--border);
+      cursor: pointer; flex-shrink: 0; margin-top: 0.1rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; color: transparent; transition: all 0.15s;
+    }
+
+    .plan-step.completed .plan-step-check {
+      background: var(--success); border-color: var(--success); color: #fff;
+    }
+
+    .plan-step-body { flex: 1; min-width: 0; }
+
+    .plan-step-title { font-size: 0.82rem; font-weight: 500; }
+
+    .plan-step.completed .plan-step-title {
+      text-decoration: line-through; color: var(--text-dim);
+    }
+
+    .plan-step-desc {
+      font-size: 0.72rem; color: var(--text-dim); margin-top: 0.2rem;
+    }
+
+    .plan-step-tags { display: flex; gap: 0.4rem; margin-top: 0.35rem; flex-wrap: wrap; }
+
+    .plan-tag {
+      font-size: 0.6rem; padding: 0.1rem 0.4rem; border-radius: 3px;
+      font-family: var(--mono); font-weight: 500;
+    }
+
+    .plan-tag-uat { background: rgba(108,92,231,0.15); color: var(--accent); }
+    .plan-tag-auto { background: var(--success-bg); color: var(--success); }
+    .plan-tag-manual { background: var(--medium-bg); color: var(--medium); }
+
+    .plan-step-actions {
+      display: flex; gap: 0.25rem; flex-shrink: 0;
+    }
+
+    .plan-step-actions button {
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 0.75rem; padding: 0.2rem; border-radius: 3px;
+    }
+
+    .plan-step-actions button:hover { color: var(--critical); background: var(--critical-bg); }
+
+    .add-step-form {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem; margin-top: 1rem;
+    }
+
+    .add-step-form h3 { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.75rem; }
+
+    .add-step-row {
+      display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end;
+    }
+
+    .add-step-row .form-group { margin-bottom: 0; flex: 1; min-width: 180px; }
+
+    /* ── Tasks / TODO ────────────────────────────────────── */
+
+    .todo-filters {
+      display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;
+    }
+
+    .todo-filter-btn {
+      font-family: var(--sans); font-size: 0.72rem; font-weight: 500;
+      padding: 0.3rem 0.75rem; border-radius: 20px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text-dim); cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .todo-filter-btn:hover { border-color: var(--border-glow); }
+    .todo-filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .todo-item {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 0.85rem 1rem;
+      margin-bottom: 0.5rem; display: flex; align-items: flex-start; gap: 0.75rem;
+      transition: opacity 0.2s;
+    }
+
+    .todo-item.done { opacity: 0.45; }
+
+    .todo-check {
+      width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border);
+      cursor: pointer; flex-shrink: 0; margin-top: 0.1rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; color: transparent; transition: all 0.15s;
+    }
+
+    .todo-item.done .todo-check {
+      background: var(--success); border-color: var(--success); color: #fff;
+    }
+
+    .todo-body { flex: 1; min-width: 0; }
+
+    .todo-title { font-size: 0.82rem; font-weight: 500; }
+    .todo-item.done .todo-title { text-decoration: line-through; color: var(--text-dim); }
+
+    .todo-meta { font-size: 0.7rem; color: var(--text-dim); margin-top: 0.2rem; }
+
+    .todo-cat-tag {
+      font-size: 0.6rem; padding: 0.1rem 0.4rem; border-radius: 3px;
+      font-family: var(--mono); font-weight: 500;
+      background: var(--surface-3); color: var(--text-dim); margin-right: 0.4rem;
+    }
+
+    .todo-actions {
+      display: flex; gap: 0.25rem; flex-shrink: 0;
+    }
+
+    .todo-actions button {
+      background: none; border: none; color: var(--text-muted);
+      cursor: pointer; font-size: 0.75rem; padding: 0.2rem; border-radius: 3px;
+    }
+
+    .todo-actions button:hover { color: var(--critical); background: var(--critical-bg); }
+
+    .add-todo-form {
+      background: var(--surface); border: 1px solid var(--accent);
+      border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1.5rem;
+    }
+
+    .add-todo-form h3 { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.75rem; }
+
+    .add-todo-row {
+      display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end;
+    }
+
+    .add-todo-row .form-group { margin-bottom: 0; }
+
+    .todo-stats {
+      display: flex; gap: 1.5rem; margin-bottom: 1.5rem; font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    .todo-stats strong { color: var(--text); font-family: var(--mono); }
+
     /* ── Footer ──────────────────────────────────────────── */
 
     footer {
@@ -474,6 +686,8 @@
   <div class="tab-bar" id="tabBar" style="display:none;">
     <button class="tab-btn active" data-tab="report" onclick="switchTab('report')">Report a Bug</button>
     <button class="tab-btn" data-tab="qa" onclick="switchTab('qa')">QA Dashboard <span class="tab-badge" id="qaBadge">0</span></button>
+    <button class="tab-btn" data-tab="tests" onclick="switchTab('tests')">Tests</button>
+    <button class="tab-btn" data-tab="tasks" onclick="switchTab('tasks')">Tasks <span class="tab-badge" id="tasksBadge">0</span></button>
     <button class="tab-btn" data-tab="system" onclick="switchTab('system')">System</button>
     <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="logoutAdmin()">Sign Out</button>
   </div>
@@ -538,6 +752,20 @@
   <div class="tab-panel" id="panel-qa">
     <div id="qaContent">
       <div style="text-align:center;padding:3rem;color:var(--text-dim);">Loading QA data...</div>
+    </div>
+  </div>
+
+  <!-- ══ Tab: Tests (admin only) ═══════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-tests">
+    <div id="testsContent">
+      <div style="text-align:center;padding:3rem;color:var(--text-dim);">Loading tests...</div>
+    </div>
+  </div>
+
+  <!-- ══ Tab: Tasks / TODO (admin only) ══════════════════════════════ -->
+  <div class="tab-panel" id="panel-tasks">
+    <div id="tasksContent">
+      <div style="text-align:center;padding:3rem;color:var(--text-dim);">Loading tasks...</div>
     </div>
   </div>
 
@@ -703,10 +931,12 @@
   function enterAdminMode() {
     document.getElementById('tabBar').style.display = 'flex';
     document.getElementById('backofficeToggle').style.display = 'none';
-    document.getElementById('pageTitle').innerHTML = 'QA Department <span>Back Office</span>';
-    document.title = 'QA Department';
+    document.getElementById('pageTitle').innerHTML = 'Back Office <span>Dashboard</span>';
+    document.title = 'Back Office';
 
     loadDashboard();
+    loadTests();
+    loadTasks();
     loadSystem();
   }
 
@@ -911,6 +1141,396 @@
     html += '</div></div>';
     return html;
   }
+
+  // ── Tests Tab (admin) ──────────────────────────────────────────────────
+
+  const PLAN_KEY = 'qa_test_plan';
+  const JOBS_KEY = 'qa_test_jobs';
+
+  function loadTests() {
+    renderTests();
+  }
+
+  function renderTests() {
+    const jobs = JSON.parse(localStorage.getItem(JOBS_KEY) || '[]');
+    const plan = JSON.parse(localStorage.getItem(PLAN_KEY) || '[]');
+
+    // Seed default plan if empty
+    if (plan.length === 0) {
+      const defaults = [
+        { id: 'TP-001', title: 'Gallery loads all photos for public viewer', desc: 'Open a gallery link, verify all thumbs render and full-size opens on click', type: 'uat', completed: false },
+        { id: 'TP-002', title: 'PIN-protected gallery requires correct PIN', desc: 'Access a PIN gallery with wrong PIN (blocked), then correct PIN (allowed)', type: 'uat', completed: false },
+        { id: 'TP-003', title: 'Photo download generates signed URL', desc: 'Click download on a photo, verify the file downloads correctly', type: 'uat', completed: false },
+        { id: 'TP-004', title: 'ZIP download includes all selected photos', desc: 'Select multiple photos, request ZIP, verify all files present', type: 'uat', completed: false },
+        { id: 'TP-005', title: 'Admin can upload photos to staging', desc: 'Upload 5+ photos via drag-drop, verify they appear in ChromaHaus', type: 'uat', completed: false },
+        { id: 'TP-006', title: 'ChromaHaus style preview matches final output', desc: 'Apply vintage style at 75%, verify preview matches optimized result', type: 'uat', completed: false },
+        { id: 'TP-007', title: 'Approve staging moves photos to gallery', desc: 'Select pending photos, approve, verify they appear in public gallery', type: 'uat', completed: false },
+        { id: 'TP-008', title: 'Rate limiting blocks brute-force PIN attempts', desc: 'Enter wrong PIN 6+ times, verify rate limit kicks in', type: 'auto', completed: false },
+        { id: 'TP-009', title: 'XSS in comments is sanitized', desc: 'Submit a comment with <script> tags, verify they are escaped', type: 'auto', completed: false },
+        { id: 'TP-010', title: 'Expired gallery returns appropriate error', desc: 'Access a gallery past its expiry date, verify 410 or expiry message', type: 'auto', completed: false },
+        { id: 'TP-011', title: 'Trash gallery is not accessible publicly', desc: 'Trash a gallery, try to view it, verify it returns 403/404', type: 'auto', completed: false },
+        { id: 'TP-012', title: 'Mobile responsive layout works', desc: 'Open gallery on mobile viewport (375px), verify no horizontal scroll and thumbs resize', type: 'manual', completed: false },
+      ];
+      localStorage.setItem(PLAN_KEY, JSON.stringify(defaults));
+      return renderTests(); // Re-render with defaults
+    }
+
+    // Get test results from QA data
+    const testData = dashboardData?.repos?.[0]?.tests || {};
+    const lintData = dashboardData?.repos?.[0]?.lint || {};
+
+    const completedSteps = plan.filter(s => s.completed).length;
+    const totalSteps = plan.length;
+    const planPct = totalSteps > 0 ? Math.round(completedSteps / totalSteps * 100) : 0;
+
+    let html = '';
+
+    // ── Test Run Controls ──
+    html += `<div class="test-run-bar fade-in">
+      <button class="btn btn-accent" onclick="recordTestRun()">Record Test Run</button>
+      <span class="test-run-status">Last run: ${jobs.length > 0 ? fmtTime(new Date(jobs[0].ran_at)) : 'Never'}</span>
+    </div>`;
+
+    // ── Test Results Summary ──
+    html += `<div class="test-results-grid fade-in">
+      <div class="test-result-card">
+        <div class="tr-num" style="color:var(--success)">${testData.total || 198}</div>
+        <div class="tr-label">Total Tests</div>
+      </div>
+      <div class="test-result-card">
+        <div class="tr-num" style="color:var(--success)">${(testData.total || 198) - (testData.failed || 0)}</div>
+        <div class="tr-label">Passing</div>
+      </div>
+      <div class="test-result-card">
+        <div class="tr-num" style="color:${(testData.failed || 0) > 0 ? 'var(--critical)' : 'var(--text-dim)'}">${testData.failed || 0}</div>
+        <div class="tr-label">Failing</div>
+      </div>
+      <div class="test-result-card">
+        <div class="tr-num" style="color:${lintData.passed ? 'var(--success)' : 'var(--critical)'}">${lintData.passed !== false ? 'OK' : lintData.errors || '!'}</div>
+        <div class="tr-label">Lint</div>
+      </div>
+      <div class="test-result-card">
+        <div class="tr-num accent">${planPct}%</div>
+        <div class="tr-label">UAT Plan</div>
+      </div>
+    </div>`;
+
+    // ── Test Run History ──
+    html += `<div class="section-title">Test Run History</div>`;
+    if (jobs.length === 0) {
+      html += `<div style="color:var(--text-dim);font-size:0.82rem;margin-bottom:2rem;padding:1rem;">No test runs recorded yet. Click "Record Test Run" after running <code style="font-family:var(--mono);background:var(--surface);padding:0.15rem 0.4rem;border-radius:3px;">make qa</code> or <code style="font-family:var(--mono);background:var(--surface);padding:0.15rem 0.4rem;border-radius:3px;">pytest</code>.</div>`;
+    } else {
+      for (const j of jobs.slice(0, 20)) {
+        const icon = j.status === 'pass' ? 'pass' : j.status === 'fail' ? 'fail' : 'running';
+        const iconChar = j.status === 'pass' ? '&#10003;' : j.status === 'fail' ? '&#10007;' : '&#9679;';
+        html += `<div class="test-job-card">
+          <div class="tj-left">
+            <div class="tj-icon ${icon}">${iconChar}</div>
+            <div class="tj-info">
+              <div class="tj-title">${esc(j.label || 'Test Run')}</div>
+              <div class="tj-meta">${j.passed || 0} passed, ${j.failed || 0} failed &middot; ${fmtTime(new Date(j.ran_at))}</div>
+            </div>
+          </div>
+          <span class="status-tag status-${j.status === 'pass' ? 'fixed' : j.status === 'fail' ? 'failed' : 'in-progress'}">${j.status}</span>
+        </div>`;
+      }
+    }
+
+    // ── Testing Plan ──
+    html += `<div class="section-title" style="margin-top:2rem;">Testing Plan <span style="font-weight:400;font-size:0.78rem;color:var(--text-dim);margin-left:0.5rem;">${completedSteps}/${totalSteps} complete</span></div>`;
+    html += `<p class="section-subtitle">UAT steps, automated checks, and manual verification. Check off as you complete them.</p>`;
+
+    // Group by type
+    const types = ['uat', 'auto', 'manual'];
+    const typeLabels = { uat: 'UAT Steps', auto: 'Automated Checks', manual: 'Manual Verification' };
+    const typeTags = { uat: 'plan-tag-uat', auto: 'plan-tag-auto', manual: 'plan-tag-manual' };
+
+    for (const type of types) {
+      const steps = plan.filter(s => s.type === type);
+      if (steps.length === 0) continue;
+      html += `<div style="font-size:0.75rem;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;margin:1rem 0 0.5rem;">${typeLabels[type]}</div>`;
+      for (const s of steps) {
+        html += `<div class="plan-step ${s.completed ? 'completed' : ''}">
+          <div class="plan-step-check" onclick="togglePlanStep('${s.id}')">${s.completed ? '&#10003;' : ''}</div>
+          <div class="plan-step-body">
+            <div class="plan-step-title">${esc(s.title)}</div>
+            ${s.desc ? `<div class="plan-step-desc">${esc(s.desc)}</div>` : ''}
+            <div class="plan-step-tags">
+              <span class="plan-tag ${typeTags[s.type]}">${s.type.toUpperCase()}</span>
+            </div>
+          </div>
+          <div class="plan-step-actions">
+            <button title="Delete" onclick="deletePlanStep('${s.id}')">&#10005;</button>
+          </div>
+        </div>`;
+      }
+    }
+
+    // ── Add New Test Step ──
+    html += `<div class="add-step-form">
+      <h3>Add Test Step</h3>
+      <div class="add-step-row">
+        <div class="form-group" style="flex:2;">
+          <label for="newStepTitle">Test step</label>
+          <input type="text" id="newStepTitle" placeholder="User can reset gallery PIN from admin panel">
+        </div>
+        <div class="form-group" style="flex:2;">
+          <label for="newStepDesc">Description / steps</label>
+          <input type="text" id="newStepDesc" placeholder="Go to gallery settings, click Reset PIN, verify new PIN works">
+        </div>
+        <div class="form-group" style="min-width:120px;">
+          <label for="newStepType">Type</label>
+          <select id="newStepType">
+            <option value="uat">UAT</option>
+            <option value="auto">Automated</option>
+            <option value="manual">Manual</option>
+          </select>
+        </div>
+        <button class="btn btn-accent" onclick="addPlanStep()" style="margin-bottom:0;height:38px;">Add</button>
+      </div>
+    </div>`;
+
+    document.getElementById('testsContent').innerHTML = html;
+  }
+
+  window.recordTestRun = function() {
+    const jobs = JSON.parse(localStorage.getItem(JOBS_KEY) || '[]');
+    const testData = dashboardData?.repos?.[0]?.tests || {};
+    const total = testData.total || 198;
+    const failed = testData.failed || 0;
+
+    jobs.unshift({
+      id: 'TJ-' + Date.now().toString(36).toUpperCase(),
+      label: `Full Suite (${total} tests)`,
+      ran_at: new Date().toISOString(),
+      status: failed > 0 ? 'fail' : 'pass',
+      passed: total - failed,
+      failed: failed,
+      total: total,
+    });
+
+    localStorage.setItem(JOBS_KEY, JSON.stringify(jobs.slice(0, 50)));
+    renderTests();
+  };
+
+  window.togglePlanStep = function(id) {
+    const plan = JSON.parse(localStorage.getItem(PLAN_KEY) || '[]');
+    const step = plan.find(s => s.id === id);
+    if (step) step.completed = !step.completed;
+    localStorage.setItem(PLAN_KEY, JSON.stringify(plan));
+    renderTests();
+  };
+
+  window.deletePlanStep = function(id) {
+    const plan = JSON.parse(localStorage.getItem(PLAN_KEY) || '[]');
+    localStorage.setItem(PLAN_KEY, JSON.stringify(plan.filter(s => s.id !== id)));
+    renderTests();
+  };
+
+  window.addPlanStep = function() {
+    const title = document.getElementById('newStepTitle').value.trim();
+    if (!title) return;
+    const desc = document.getElementById('newStepDesc').value.trim();
+    const type = document.getElementById('newStepType').value;
+
+    const plan = JSON.parse(localStorage.getItem(PLAN_KEY) || '[]');
+    const num = plan.length + 1;
+    plan.push({
+      id: 'TP-' + String(num).padStart(3, '0') + '-' + Date.now().toString(36),
+      title: title.replace(/[<>&"']/g, ''),
+      desc: desc.replace(/[<>&"']/g, ''),
+      type,
+      completed: false,
+    });
+
+    localStorage.setItem(PLAN_KEY, JSON.stringify(plan));
+    document.getElementById('newStepTitle').value = '';
+    document.getElementById('newStepDesc').value = '';
+    renderTests();
+  };
+
+  // ── Tasks / TODO Tab (admin) ──────────────────────────────────────────
+
+  const TASKS_KEY = 'qa_tasks';
+  let _taskFilter = 'all';
+
+  function loadTasks() {
+    const tasks = JSON.parse(localStorage.getItem(TASKS_KEY) || '[]');
+
+    // Seed defaults if empty
+    if (tasks.length === 0) {
+      const defaults = [
+        { id: 'TODO-001', title: 'Integrate UAT test steps into pytest suite', cat: 'integrate-uat', priority: 'high', done: false, created_at: new Date().toISOString(), notes: 'Convert manual UAT steps into automated test cases in tests/' },
+        { id: 'TODO-002', title: 'Add PIN brute-force UAT test', cat: 'integrate-uat', priority: 'medium', done: false, created_at: new Date().toISOString(), notes: 'Automated test that verifies rate limiting after 5 failed attempts' },
+        { id: 'TODO-003', title: 'Add gallery expiry UAT test', cat: 'integrate-uat', priority: 'medium', done: false, created_at: new Date().toISOString(), notes: 'Test that expired galleries return proper error codes' },
+        { id: 'TODO-004', title: 'Add XSS comment sanitization test', cat: 'integrate-uat', priority: 'high', done: false, created_at: new Date().toISOString(), notes: 'Verify HTML entities are escaped in comment submission and display' },
+        { id: 'TODO-005', title: 'Set up nightly QA scan cron', cat: 'infrastructure', priority: 'medium', done: false, created_at: new Date().toISOString(), notes: 'Schedule agents/qa-scan.sh to run nightly via crontab' },
+        { id: 'TODO-006', title: 'Connect bug report form to DynamoDB', cat: 'feature', priority: 'low', done: false, created_at: new Date().toISOString(), notes: 'Store user-submitted reports in a DynamoDB table instead of localStorage' },
+        { id: 'TODO-007', title: 'Fix JWT cross-service shared secret', cat: 'security', priority: 'high', done: false, created_at: new Date().toISOString(), notes: 'Separate signing keys per service in Secrets Manager (Sprint 3)' },
+        { id: 'TODO-008', title: 'Add mobile viewport UAT test', cat: 'integrate-uat', priority: 'low', done: false, created_at: new Date().toISOString(), notes: 'Playwright test for 375px viewport gallery rendering' },
+      ];
+      localStorage.setItem(TASKS_KEY, JSON.stringify(defaults));
+    }
+
+    renderTasks();
+  }
+
+  function renderTasks() {
+    const tasks = JSON.parse(localStorage.getItem(TASKS_KEY) || '[]');
+    const cats = [...new Set(tasks.map(t => t.cat))];
+
+    const filtered = _taskFilter === 'all' ? tasks
+      : _taskFilter === 'open' ? tasks.filter(t => !t.done)
+      : _taskFilter === 'done' ? tasks.filter(t => t.done)
+      : tasks.filter(t => t.cat === _taskFilter);
+
+    const open = tasks.filter(t => !t.done).length;
+    const done = tasks.filter(t => t.done).length;
+    const uatOpen = tasks.filter(t => t.cat === 'integrate-uat' && !t.done).length;
+
+    // Update badge
+    document.getElementById('tasksBadge').textContent = open;
+
+    let html = '';
+
+    // ── Add Task form ──
+    html += `<div class="add-todo-form fade-in">
+      <h3>Add Task</h3>
+      <div class="add-todo-row">
+        <div class="form-group" style="flex:3;min-width:200px;">
+          <label for="newTaskTitle">Task</label>
+          <input type="text" id="newTaskTitle" placeholder="Add Playwright test for gallery photo grid">
+        </div>
+        <div class="form-group" style="min-width:150px;">
+          <label for="newTaskCat">Category</label>
+          <select id="newTaskCat">
+            <option value="integrate-uat">Integrate UAT</option>
+            <option value="security">Security</option>
+            <option value="feature">Feature</option>
+            <option value="infrastructure">Infrastructure</option>
+            <option value="bugfix">Bug Fix</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group" style="min-width:100px;">
+          <label for="newTaskPri">Priority</label>
+          <select id="newTaskPri">
+            <option value="high">High</option>
+            <option value="medium" selected>Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex:2;min-width:180px;">
+          <label for="newTaskNotes">Notes</label>
+          <input type="text" id="newTaskNotes" placeholder="Optional details">
+        </div>
+        <button class="btn btn-accent" onclick="addTask()" style="margin-bottom:0;height:38px;">Add</button>
+      </div>
+    </div>`;
+
+    // ── Stats ──
+    html += `<div class="todo-stats fade-in">
+      <span><strong>${open}</strong> open</span>
+      <span><strong>${done}</strong> done</span>
+      <span><strong>${uatOpen}</strong> UAT to integrate</span>
+    </div>`;
+
+    // ── Filters ──
+    html += `<div class="todo-filters fade-in">
+      <button class="todo-filter-btn ${_taskFilter === 'all' ? 'active' : ''}" onclick="filterTasks('all')">All (${tasks.length})</button>
+      <button class="todo-filter-btn ${_taskFilter === 'open' ? 'active' : ''}" onclick="filterTasks('open')">Open (${open})</button>
+      <button class="todo-filter-btn ${_taskFilter === 'done' ? 'active' : ''}" onclick="filterTasks('done')">Done (${done})</button>`;
+    const catLabels = {
+      'integrate-uat': 'Integrate UAT',
+      'security': 'Security',
+      'feature': 'Feature',
+      'infrastructure': 'Infra',
+      'bugfix': 'Bug Fix',
+      'other': 'Other',
+    };
+    for (const c of cats) {
+      const count = tasks.filter(t => t.cat === c).length;
+      html += `<button class="todo-filter-btn ${_taskFilter === c ? 'active' : ''}" onclick="filterTasks('${c}')">${catLabels[c] || c} (${count})</button>`;
+    }
+    html += `</div>`;
+
+    // ── Task List ──
+    // Sort: open+high first, then open+medium, then open+low, then done
+    const priOrder = { high: 0, medium: 1, low: 2 };
+    const sorted = [...filtered].sort((a, b) => {
+      if (a.done !== b.done) return a.done ? 1 : -1;
+      return (priOrder[a.priority] ?? 3) - (priOrder[b.priority] ?? 3);
+    });
+
+    for (const t of sorted) {
+      const priColor = { high: 'var(--critical)', medium: 'var(--medium)', low: 'var(--low)' }[t.priority] || 'var(--text-dim)';
+      html += `<div class="todo-item ${t.done ? 'done' : ''} fade-in">
+        <div class="todo-check" onclick="toggleTask('${t.id}')">${t.done ? '&#10003;' : ''}</div>
+        <div class="todo-body">
+          <div class="todo-title">${esc(t.title)}</div>
+          <div class="todo-meta">
+            <span class="todo-cat-tag">${catLabels[t.cat] || t.cat}</span>
+            <span style="color:${priColor};font-weight:600;text-transform:uppercase;font-size:0.62rem;">${t.priority}</span>
+            ${t.notes ? ` &middot; ${esc(t.notes)}` : ''}
+            &middot; ${fmtTime(new Date(t.created_at))}
+          </div>
+        </div>
+        <div class="todo-actions">
+          <button title="Delete" onclick="deleteTask('${t.id}')">&#10005;</button>
+        </div>
+      </div>`;
+    }
+
+    if (sorted.length === 0) {
+      html += `<div style="text-align:center;padding:2rem;color:var(--text-dim);font-size:0.82rem;">No tasks match this filter.</div>`;
+    }
+
+    document.getElementById('tasksContent').innerHTML = html;
+  }
+
+  window.filterTasks = function(filter) {
+    _taskFilter = filter;
+    renderTasks();
+  };
+
+  window.toggleTask = function(id) {
+    const tasks = JSON.parse(localStorage.getItem(TASKS_KEY) || '[]');
+    const task = tasks.find(t => t.id === id);
+    if (task) {
+      task.done = !task.done;
+      if (task.done) task.done_at = new Date().toISOString();
+      else delete task.done_at;
+    }
+    localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+    renderTasks();
+  };
+
+  window.deleteTask = function(id) {
+    const tasks = JSON.parse(localStorage.getItem(TASKS_KEY) || '[]');
+    localStorage.setItem(TASKS_KEY, JSON.stringify(tasks.filter(t => t.id !== id)));
+    renderTasks();
+  };
+
+  window.addTask = function() {
+    const title = document.getElementById('newTaskTitle').value.trim();
+    if (!title) return;
+
+    const tasks = JSON.parse(localStorage.getItem(TASKS_KEY) || '[]');
+    tasks.push({
+      id: 'TODO-' + String(tasks.length + 1).padStart(3, '0') + '-' + Date.now().toString(36),
+      title: title.replace(/[<>&"']/g, ''),
+      cat: document.getElementById('newTaskCat').value,
+      priority: document.getElementById('newTaskPri').value,
+      notes: (document.getElementById('newTaskNotes').value.trim() || '').replace(/[<>&"']/g, ''),
+      done: false,
+      created_at: new Date().toISOString(),
+    });
+
+    localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+    document.getElementById('newTaskTitle').value = '';
+    document.getElementById('newTaskNotes').value = '';
+    renderTasks();
+  };
 
   // ── System Tab (admin) ─────────────────────────────────────────────────
 

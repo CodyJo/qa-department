@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# QA Department — Initial Setup
+# Back Office — Initial Setup
 # Usage: ./scripts/setup.sh
 
 set -euo pipefail
@@ -8,7 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 QA_ROOT="$(dirname "$SCRIPT_DIR")"
 
 echo "╔══════════════════════════════════════════════════════════╗"
-echo "║  QA Department — Setup                                  ║"
+echo "║  Back Office — Setup                                  ║"
 echo "╚══════════════════════════════════════════════════════════╝"
 echo ""
 

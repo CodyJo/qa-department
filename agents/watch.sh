@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# QA Department — Watch Mode
+# Back Office — Watch Mode
 # Usage: ./agents/watch.sh /path/to/target-repo [--interval 15] [--auto-fix]
 #
 # Monitors a results directory for new findings and triggers the fix agent.
@@ -35,7 +35,7 @@ RESULTS_DIR="$QA_ROOT/results/$REPO_NAME"
 LAST_HASH=""
 
 echo "╔══════════════════════════════════════════════════════════╗"
-echo "║  QA Department — Watch Mode"
+echo "║  Back Office — Watch Mode"
 echo "╚══════════════════════════════════════════════════════════╝"
 echo ""
 echo "  Target:   $REPO_NAME"

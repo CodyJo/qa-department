@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# QA Department — Scan Agent
+# Back Office — Scan Agent
 # Usage: ./agents/qa-scan.sh /path/to/target-repo [--sync]
 #
 # Launches a Claude Code session that scans the target repository
@@ -37,7 +37,7 @@ RESULTS_DIR="$QA_ROOT/results/$REPO_NAME"
 mkdir -p "$RESULTS_DIR"
 
 echo "╔══════════════════════════════════════════════════════════╗"
-echo "║  QA Department — Scanning: $REPO_NAME"
+echo "║  Back Office — Scanning: $REPO_NAME"
 echo "╚══════════════════════════════════════════════════════════╝"
 echo ""
 echo "  Target:  $TARGET_REPO"

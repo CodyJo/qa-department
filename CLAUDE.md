@@ -1,6 +1,6 @@
-# QA Department — Claude Code Instructions
+# Back Office — Claude Code Instructions
 
-This is an automated QA pipeline built for Claude Code. It uses two agent loops:
+This is a portable back office dashboard with automated QA pipeline, built for Claude Code. It uses two agent loops:
 
 1. **QA Agent** — Scans a target repository for bugs, security issues, and performance problems
 2. **Fix Agent** — Picks up findings, fixes them in isolated git worktrees, tests, and commits

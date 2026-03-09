@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# QA Department — Fix Agent
+# Back Office — Fix Agent
 # Usage: ./agents/fix-bugs.sh /path/to/target-repo [--sync] [--deploy]
 #
 # Launches a Claude Code session that reads findings and fixes them
@@ -48,7 +48,7 @@ CRITICAL=$(python3 -c "import json; d=json.load(open('$FINDINGS_FILE')); print(d
 HIGH=$(python3 -c "import json; d=json.load(open('$FINDINGS_FILE')); print(d['summary']['high'])" 2>/dev/null || echo "?")
 
 echo "╔══════════════════════════════════════════════════════════╗"
-echo "║  QA Department — Fixing: $REPO_NAME"
+echo "║  Back Office — Fixing: $REPO_NAME"
 echo "╚══════════════════════════════════════════════════════════╝"
 echo ""
 echo "  Target:   $TARGET_REPO"

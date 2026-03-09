@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "project_name" {
   description = "Project name for resource naming"
   type        = string
-  default     = "qa-department"
+  default     = "back-office"
 }
 
 variable "dashboard_domains" {
