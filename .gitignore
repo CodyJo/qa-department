@@ -1,0 +1,35 @@
+# Results data (generated locally, synced to S3)
+results/*.json
+results/*/
+
+# Terraform
+terraform/.terraform/
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/terraform.tfvars
+terraform/tfplan
+
+# Config (may contain secrets)
+config/targets.yaml
+config/qa-config.yaml
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Claude
+.claude/
+
+# Logs
+*.log
