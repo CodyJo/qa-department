@@ -1950,6 +1950,8 @@
       adminKey = savedKey;
       isAdmin = true;
       enterAdminMode();
+    } else if (new URLSearchParams(window.location.search).has('admin')) {
+      showAdminGate();
     }
   }
 
