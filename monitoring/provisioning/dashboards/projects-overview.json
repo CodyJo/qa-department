@@ -1,0 +1,667 @@
+{
+  "uid": "breakpoint-projects",
+  "title": "BreakPoint Labs — Projects Overview",
+  "tags": ["breakpoint", "aws", "projects"],
+  "timezone": "browser",
+  "refresh": "1m",
+  "time": { "from": "now-6h", "to": "now" },
+  "fiscalYearStartMonth": 0,
+  "liveNow": false,
+  "templating": {
+    "list": [
+      {
+        "name": "region",
+        "type": "custom",
+        "current": { "text": "us-west-2", "value": "us-west-2" },
+        "options": [
+          { "text": "us-west-2", "value": "us-west-2", "selected": true },
+          { "text": "us-east-1", "value": "us-east-1", "selected": false }
+        ],
+        "query": "us-west-2,us-east-1"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "row",
+      "title": "The New Beautiful Me",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "collapsed": false
+    },
+    {
+      "type": "timeseries",
+      "title": "Lambda Invocations & Errors",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 1 },
+      "datasource": { "uid": "cloudwatch" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "pointSize": 5, "spanNulls": true },
+          "color": { "mode": "palette-classic" },
+          "unit": "short"
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Errors" }, "properties": [{ "id": "color", "value": { "fixedColor": "#e74c3c", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "namespace": "AWS/Lambda",
+          "metricName": "Invocations",
+          "statistics": ["Sum"],
+          "dimensions": { "FunctionName": ["thenewbeautifulme-interpret"] },
+          "period": "300",
+          "region": "$region",
+          "label": "Invocations"
+        },
+        {
+          "refId": "B",
+          "namespace": "AWS/Lambda",
+          "metricName": "Errors",
+          "statistics": ["Sum"],
+          "dimensions": { "FunctionName": ["thenewbeautifulme-interpret"] },
+          "period": "300",
+          "region": "$region",
+          "label": "Errors"
+        },
+        {
+          "refId": "C",
+          "namespace": "AWS/Lambda",
+          "metricName": "Throttles",
+          "statistics": ["Sum"],
+          "dimensions": { "FunctionName": ["thenewbeautifulme-interpret"] },
+          "period": "300",
+          "region": "$region",
+          "label": "Throttles"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Lambda Duration (ms)",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 1 },
+      "datasource": { "uid": "cloudwatch" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "spanNulls": true },
+          "color": { "mode": "palette-classic" },
+          "unit": "ms"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "namespace": "AWS/Lambda",
+          "metricName": "Duration",
+          "statistics": ["Average"],
+          "dimensions": { "FunctionName": ["thenewbeautifulme-interpret"] },
+          "period": "300",
+          "region": "$region",
+          "label": "Avg Duration"
+        },
+        {
+          "refId": "B",
+          "namespace": "AWS/Lambda",
+          "metricName": "Duration",
+          "statistics": ["p99"],
+          "dimensions": { "FunctionName": ["thenewbeautifulme-interpret"] },
+          "period": "300",
+          "region": "$region",
+          "label": "p99 Duration"
+        },
+        {
+          "refId": "C",
+          "namespace": "AWS/Lambda",
+          "metricName": "Duration",
+          "statistics": ["Maximum"],
+          "dimensions": { "FunctionName": ["thenewbeautifulme-interpret"] },
+          "period": "300",
+          "region": "$region",
+          "label": "Max Duration"
+        }
+      ]
+    },
+    {
+      "type": "gauge",
+      "title": "Lambda Concurrent Executions",
+      "gridPos": { "h": 8, "w": 4, "x": 16, "y": 1 },
+      "datasource": { "uid": "cloudwatch" },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 50 },
+              { "color": "red", "value": 100 }
+            ]
+          },
+          "min": 0, "max": 150,
+          "unit": "short"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "namespace": "AWS/Lambda",
+          "metricName": "ConcurrentExecutions",
+          "statistics": ["Maximum"],
+          "dimensions": { "FunctionName": ["thenewbeautifulme-interpret"] },
+          "period": "60",
+          "region": "$region"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Lambda Error Rate",
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
+      "datasource": { "uid": "cloudwatch" },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 1 },
+              { "color": "red", "value": 5 }
+            ]
+          },
+          "unit": "percent",
+          "noValue": "0%"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "namespace": "AWS/Lambda",
+          "metricName": "Errors",
+          "statistics": ["Sum"],
+          "dimensions": { "FunctionName": ["thenewbeautifulme-interpret"] },
+          "period": "3600",
+          "region": "$region",
+          "id": "errors"
+        },
+        {
+          "refId": "B",
+          "namespace": "AWS/Lambda",
+          "metricName": "Invocations",
+          "statistics": ["Sum"],
+          "dimensions": { "FunctionName": ["thenewbeautifulme-interpret"] },
+          "period": "3600",
+          "region": "$region",
+          "id": "invocations",
+          "hide": true
+        }
+      ],
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "binary": { "left": "errors", "operator": "/", "right": "invocations" },
+            "reduce": { "reducer": "lastNotNull" }
+          }
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Lambda Memory Used",
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 5 },
+      "datasource": { "uid": "cloudwatch" },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 180 },
+              { "color": "red", "value": 230 }
+            ]
+          },
+          "unit": "decmbytes",
+          "max": 256
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "namespace": "AWS/Lambda",
+          "metricName": "MaxMemoryUsed",
+          "statistics": ["Maximum"],
+          "dimensions": { "FunctionName": ["thenewbeautifulme-interpret"] },
+          "period": "300",
+          "region": "$region"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "API Gateway — Requests & Latency",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 9 },
+      "datasource": { "uid": "cloudwatch" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "spanNulls": true },
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Latency (ms)" }, "properties": [{ "id": "custom.axisPlacement", "value": "right" }, { "id": "unit", "value": "ms" }] },
+          { "matcher": { "id": "byName", "options": "4xx" }, "properties": [{ "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }] },
+          { "matcher": { "id": "byName", "options": "5xx" }, "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "namespace": "AWS/ApiGateway",
+          "metricName": "Count",
+          "statistics": ["Sum"],
+          "dimensions": { "ApiId": ["thenewbeautifulme-api"] },
+          "period": "300",
+          "region": "$region",
+          "label": "Requests"
+        },
+        {
+          "refId": "B",
+          "namespace": "AWS/ApiGateway",
+          "metricName": "Latency",
+          "statistics": ["Average"],
+          "dimensions": { "ApiId": ["thenewbeautifulme-api"] },
+          "period": "300",
+          "region": "$region",
+          "label": "Latency (ms)"
+        },
+        {
+          "refId": "C",
+          "namespace": "AWS/ApiGateway",
+          "metricName": "4xx",
+          "statistics": ["Sum"],
+          "dimensions": { "ApiId": ["thenewbeautifulme-api"] },
+          "period": "300",
+          "region": "$region",
+          "label": "4xx"
+        },
+        {
+          "refId": "D",
+          "namespace": "AWS/ApiGateway",
+          "metricName": "5xx",
+          "statistics": ["Sum"],
+          "dimensions": { "ApiId": ["thenewbeautifulme-api"] },
+          "period": "300",
+          "region": "$region",
+          "label": "5xx"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "DynamoDB — Read/Write Capacity",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 9 },
+      "datasource": { "uid": "cloudwatch" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "bars", "fillOpacity": 40, "lineWidth": 1, "stacking": { "mode": "none" } },
+          "color": { "mode": "palette-classic" },
+          "unit": "short"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "namespace": "AWS/DynamoDB",
+          "metricName": "ConsumedReadCapacityUnits",
+          "statistics": ["Sum"],
+          "dimensions": { "TableName": ["thenewbeautifulme-data"] },
+          "period": "300",
+          "region": "$region",
+          "label": "Read Units"
+        },
+        {
+          "refId": "B",
+          "namespace": "AWS/DynamoDB",
+          "metricName": "ConsumedWriteCapacityUnits",
+          "statistics": ["Sum"],
+          "dimensions": { "TableName": ["thenewbeautifulme-data"] },
+          "period": "300",
+          "region": "$region",
+          "label": "Write Units"
+        },
+        {
+          "refId": "C",
+          "namespace": "AWS/DynamoDB",
+          "metricName": "ThrottledRequests",
+          "statistics": ["Sum"],
+          "dimensions": { "TableName": ["thenewbeautifulme-data"] },
+          "period": "300",
+          "region": "$region",
+          "label": "Throttled"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "CloudFront — Requests & Cache",
+      "description": "Distribution E1I21C6DXV70HC",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 17 },
+      "datasource": { "uid": "cloudwatch" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "spanNulls": true },
+          "color": { "mode": "palette-classic" },
+          "unit": "short"
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Error Rate %" }, "properties": [{ "id": "custom.axisPlacement", "value": "right" }, { "id": "unit", "value": "percent" }, { "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "namespace": "AWS/CloudFront",
+          "metricName": "Requests",
+          "statistics": ["Sum"],
+          "dimensions": { "DistributionId": ["E1I21C6DXV70HC"], "Region": ["Global"] },
+          "period": "300",
+          "region": "us-east-1",
+          "label": "Requests"
+        },
+        {
+          "refId": "B",
+          "namespace": "AWS/CloudFront",
+          "metricName": "BytesDownloaded",
+          "statistics": ["Sum"],
+          "dimensions": { "DistributionId": ["E1I21C6DXV70HC"], "Region": ["Global"] },
+          "period": "300",
+          "region": "us-east-1",
+          "label": "Bytes Downloaded"
+        },
+        {
+          "refId": "C",
+          "namespace": "AWS/CloudFront",
+          "metricName": "TotalErrorRate",
+          "statistics": ["Average"],
+          "dimensions": { "DistributionId": ["E1I21C6DXV70HC"], "Region": ["Global"] },
+          "period": "300",
+          "region": "us-east-1",
+          "label": "Error Rate %"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "S3 — Bucket Metrics",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 17 },
+      "datasource": { "uid": "cloudwatch" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "spanNulls": true },
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Bucket Size" }, "properties": [{ "id": "unit", "value": "decbytes" }] },
+          { "matcher": { "id": "byName", "options": "Object Count" }, "properties": [{ "id": "custom.axisPlacement", "value": "right" }, { "id": "unit", "value": "short" }] }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "namespace": "AWS/S3",
+          "metricName": "BucketSizeBytes",
+          "statistics": ["Average"],
+          "dimensions": { "BucketName": ["thenewbeautifulme-site"], "StorageType": ["StandardStorage"] },
+          "period": "86400",
+          "region": "$region",
+          "label": "Bucket Size"
+        },
+        {
+          "refId": "B",
+          "namespace": "AWS/S3",
+          "metricName": "NumberOfObjects",
+          "statistics": ["Average"],
+          "dimensions": { "BucketName": ["thenewbeautifulme-site"], "StorageType": ["AllStorageTypes"] },
+          "period": "86400",
+          "region": "$region",
+          "label": "Object Count"
+        }
+      ]
+    },
+
+    {
+      "type": "row",
+      "title": "codyjo.com",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 25 },
+      "collapsed": false
+    },
+    {
+      "type": "timeseries",
+      "title": "CloudFront — Requests & Errors",
+      "description": "Distribution EF4U8A7W3OH5K",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 26 },
+      "datasource": { "uid": "cloudwatch" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "spanNulls": true },
+          "color": { "mode": "palette-classic" },
+          "unit": "short"
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Error Rate %" }, "properties": [{ "id": "custom.axisPlacement", "value": "right" }, { "id": "unit", "value": "percent" }, { "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }] }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "namespace": "AWS/CloudFront",
+          "metricName": "Requests",
+          "statistics": ["Sum"],
+          "dimensions": { "DistributionId": ["EF4U8A7W3OH5K"], "Region": ["Global"] },
+          "period": "300",
+          "region": "us-east-1",
+          "label": "Requests"
+        },
+        {
+          "refId": "B",
+          "namespace": "AWS/CloudFront",
+          "metricName": "4xxErrorRate",
+          "statistics": ["Average"],
+          "dimensions": { "DistributionId": ["EF4U8A7W3OH5K"], "Region": ["Global"] },
+          "period": "300",
+          "region": "us-east-1",
+          "label": "4xx Rate %"
+        },
+        {
+          "refId": "C",
+          "namespace": "AWS/CloudFront",
+          "metricName": "5xxErrorRate",
+          "statistics": ["Average"],
+          "dimensions": { "DistributionId": ["EF4U8A7W3OH5K"], "Region": ["Global"] },
+          "period": "300",
+          "region": "us-east-1",
+          "label": "5xx Rate %"
+        },
+        {
+          "refId": "D",
+          "namespace": "AWS/CloudFront",
+          "metricName": "TotalErrorRate",
+          "statistics": ["Average"],
+          "dimensions": { "DistributionId": ["EF4U8A7W3OH5K"], "Region": ["Global"] },
+          "period": "300",
+          "region": "us-east-1",
+          "label": "Error Rate %"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "CloudFront — Bandwidth",
+      "description": "Distribution EF4U8A7W3OH5K",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 26 },
+      "datasource": { "uid": "cloudwatch" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 20, "lineWidth": 2, "spanNulls": true },
+          "color": { "mode": "palette-classic" },
+          "unit": "decbytes"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "namespace": "AWS/CloudFront",
+          "metricName": "BytesDownloaded",
+          "statistics": ["Sum"],
+          "dimensions": { "DistributionId": ["EF4U8A7W3OH5K"], "Region": ["Global"] },
+          "period": "300",
+          "region": "us-east-1",
+          "label": "Downloaded"
+        },
+        {
+          "refId": "B",
+          "namespace": "AWS/CloudFront",
+          "metricName": "BytesUploaded",
+          "statistics": ["Sum"],
+          "dimensions": { "DistributionId": ["EF4U8A7W3OH5K"], "Region": ["Global"] },
+          "period": "300",
+          "region": "us-east-1",
+          "label": "Uploaded"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "S3 — Bucket Size",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 34 },
+      "datasource": { "uid": "cloudwatch" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "spanNulls": true },
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Bucket Size" }, "properties": [{ "id": "unit", "value": "decbytes" }] },
+          { "matcher": { "id": "byName", "options": "Object Count" }, "properties": [{ "id": "custom.axisPlacement", "value": "right" }, { "id": "unit", "value": "short" }] }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "namespace": "AWS/S3",
+          "metricName": "BucketSizeBytes",
+          "statistics": ["Average"],
+          "dimensions": { "BucketName": ["www.codyjo.com"], "StorageType": ["StandardStorage"] },
+          "period": "86400",
+          "region": "$region",
+          "label": "Bucket Size"
+        },
+        {
+          "refId": "B",
+          "namespace": "AWS/S3",
+          "metricName": "NumberOfObjects",
+          "statistics": ["Average"],
+          "dimensions": { "BucketName": ["www.codyjo.com"], "StorageType": ["AllStorageTypes"] },
+          "period": "86400",
+          "region": "$region",
+          "label": "Object Count"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "S3 — Photos Bucket Size",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 34 },
+      "datasource": { "uid": "cloudwatch" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "spanNulls": true },
+          "color": { "mode": "palette-classic" }
+        },
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "Bucket Size" }, "properties": [{ "id": "unit", "value": "decbytes" }] },
+          { "matcher": { "id": "byName", "options": "Object Count" }, "properties": [{ "id": "custom.axisPlacement", "value": "right" }, { "id": "unit", "value": "short" }] }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "namespace": "AWS/S3",
+          "metricName": "BucketSizeBytes",
+          "statistics": ["Average"],
+          "dimensions": { "BucketName": ["codyjo-com-photos-7fa5a7d0"], "StorageType": ["StandardStorage"] },
+          "period": "86400",
+          "region": "$region",
+          "label": "Bucket Size"
+        },
+        {
+          "refId": "B",
+          "namespace": "AWS/S3",
+          "metricName": "NumberOfObjects",
+          "statistics": ["Average"],
+          "dimensions": { "BucketName": ["codyjo-com-photos-7fa5a7d0"], "StorageType": ["AllStorageTypes"] },
+          "period": "86400",
+          "region": "$region",
+          "label": "Object Count"
+        }
+      ]
+    },
+
+    {
+      "type": "row",
+      "title": "Back Office",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 42 },
+      "collapsed": false
+    },
+    {
+      "type": "timeseries",
+      "title": "CloudFront — Dashboard CDN (TNBM)",
+      "description": "Distribution E1I21C6DXV70HC — backoffice paths",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 43 },
+      "datasource": { "uid": "cloudwatch" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "spanNulls": true },
+          "color": { "mode": "palette-classic" },
+          "unit": "short"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "namespace": "AWS/CloudFront",
+          "metricName": "Requests",
+          "statistics": ["Sum"],
+          "dimensions": { "DistributionId": ["E1I21C6DXV70HC"], "Region": ["Global"] },
+          "period": "3600",
+          "region": "us-east-1",
+          "label": "TNBM CDN Requests"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "CloudFront — Dashboard CDN (codyjo)",
+      "description": "Distribution EW2SF2IXBOKE5",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 43 },
+      "datasource": { "uid": "cloudwatch" },
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2, "spanNulls": true },
+          "color": { "mode": "palette-classic" },
+          "unit": "short"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "namespace": "AWS/CloudFront",
+          "metricName": "Requests",
+          "statistics": ["Sum"],
+          "dimensions": { "DistributionId": ["EW2SF2IXBOKE5"], "Region": ["Global"] },
+          "period": "3600",
+          "region": "us-east-1",
+          "label": "CodyJo CDN Requests"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 39,
+  "version": 1
+}

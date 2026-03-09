@@ -1,5 +1,6 @@
 .PHONY: setup qa fix watch dashboard clean help
 .PHONY: seo ada compliance audit-all full-scan
+.PHONY: grafana grafana-stop grafana-logs
 
 TARGET ?=
 
@@ -72,6 +73,16 @@ full-scan: ## Run all audits + auto-fix (make full-scan TARGET=/path/to/repo)
 
 dashboard: ## Deploy all dashboards to S3
 	bash scripts/sync-dashboard.sh
+
+grafana: ## Start Grafana monitoring dashboard
+	cd monitoring && docker compose up -d
+	@echo "Grafana running at http://localhost:3333 (admin / breakpoint)"
+
+grafana-stop: ## Stop Grafana
+	cd monitoring && docker compose down
+
+grafana-logs: ## Tail Grafana logs
+	cd monitoring && docker compose logs -f grafana
 
 clean: ## Remove all results
 	rm -rf results/*/
