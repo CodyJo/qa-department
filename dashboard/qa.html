@@ -688,6 +688,10 @@
     <button class="tab-btn" data-tab="qa" onclick="switchTab('qa')">QA Dashboard <span class="tab-badge" id="qaBadge">0</span></button>
     <button class="tab-btn" data-tab="tests" onclick="switchTab('tests')">Tests</button>
     <button class="tab-btn" data-tab="tasks" onclick="switchTab('tasks')">Tasks <span class="tab-badge" id="tasksBadge">0</span></button>
+    <button class="tab-btn" data-tab="costs" onclick="switchTab('costs')">Costs</button>
+    <button class="tab-btn" data-tab="team" onclick="switchTab('team')">Team</button>
+    <button class="tab-btn" data-tab="trials" onclick="switchTab('trials')">Trials</button>
+    <button class="tab-btn" data-tab="trash" onclick="switchTab('trash')">Trash</button>
     <button class="tab-btn" data-tab="system" onclick="switchTab('system')">System</button>
     <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="logoutAdmin()">Sign Out</button>
   </div>
@@ -766,6 +770,34 @@
   <div class="tab-panel" id="panel-tasks">
     <div id="tasksContent">
       <div style="text-align:center;padding:3rem;color:var(--text-dim);">Loading tasks...</div>
+    </div>
+  </div>
+
+  <!-- ══ Tab: Costs (admin only) ═══════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-costs">
+    <div id="costsContent">
+      <div style="text-align:center;padding:3rem;color:var(--text-dim);">Loading costs...</div>
+    </div>
+  </div>
+
+  <!-- ══ Tab: Team (admin only) ══════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-team">
+    <div id="teamContent">
+      <div style="text-align:center;padding:3rem;color:var(--text-dim);">Loading team...</div>
+    </div>
+  </div>
+
+  <!-- ══ Tab: Trials (admin only) ════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-trials">
+    <div id="trialsContent">
+      <div style="text-align:center;padding:3rem;color:var(--text-dim);">Loading trials...</div>
+    </div>
+  </div>
+
+  <!-- ══ Tab: Trash (admin only) ═════════════════════════════════════ -->
+  <div class="tab-panel" id="panel-trash">
+    <div id="trashContent">
+      <div style="text-align:center;padding:3rem;color:var(--text-dim);">Loading trash...</div>
     </div>
   </div>
 
@@ -937,6 +969,10 @@
     loadDashboard();
     loadTests();
     loadTasks();
+    loadCosts();
+    loadTeam();
+    loadTrials();
+    loadTrash();
     loadSystem();
   }
 
@@ -1530,6 +1566,289 @@
     document.getElementById('newTaskTitle').value = '';
     document.getElementById('newTaskNotes').value = '';
     renderTasks();
+  };
+
+  // ── Costs Tab (admin) ──────────────────────────────────────────────────
+
+  async function loadCosts() {
+    try {
+      const res = await fetch(API + '/admin/costs', { headers: { 'x-admin-key': adminKey } });
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+      renderCosts(data);
+    } catch (e) {
+      document.getElementById('costsContent').innerHTML =
+        '<div style="text-align:center;padding:3rem;color:var(--text-dim);">Could not load cost data. Make sure Cost Explorer is enabled.</div>';
+    }
+  }
+
+  function renderCosts(data) {
+    const total = data.total_cost || '0.00';
+    const period = data.period || 'This Month';
+    const services = data.by_service || [];
+    const galleries = data.by_gallery || [];
+
+    let html = `<div class="stats-grid fade-in">
+      <div class="stat-card">
+        <div class="stat-label">Monthly Cost</div>
+        <div class="stat-value accent">$${esc(total)}</div>
+        <div class="stat-sub">${esc(period)}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Services</div>
+        <div class="stat-value" style="color:var(--text)">${services.length}</div>
+        <div class="stat-sub">AWS services in use</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Galleries</div>
+        <div class="stat-value" style="color:var(--text)">${galleries.length}</div>
+        <div class="stat-sub">With storage costs</div>
+      </div>
+    </div>`;
+
+    // Service breakdown
+    if (services.length > 0) {
+      html += `<div class="sys-card fade-in"><h3>Cost by Service</h3>`;
+      const maxCost = Math.max(...services.map(s => parseFloat(s.cost || 0)), 0.01);
+      for (const s of services) {
+        const cost = parseFloat(s.cost || 0);
+        const pct = (cost / maxCost * 100).toFixed(0);
+        html += `<div class="sys-row">
+          <span class="sys-label">${esc(s.service || s.name || 'Unknown')}</span>
+          <span style="display:flex;align-items:center;gap:0.75rem;">
+            <span style="width:90px;height:6px;background:var(--border);border-radius:3px;overflow:hidden;">
+              <span style="display:block;height:100%;width:${pct}%;background:var(--accent);border-radius:3px;"></span>
+            </span>
+            <span class="sys-value">$${cost.toFixed(2)}</span>
+          </span>
+        </div>`;
+      }
+      html += `</div>`;
+    }
+
+    // Gallery storage breakdown
+    if (galleries.length > 0) {
+      html += `<div class="sys-card fade-in"><h3>Storage by Gallery</h3>`;
+      for (const g of galleries) {
+        const bytes = g.total_bytes || g.size_bytes || 0;
+        const gb = (bytes / (1024*1024*1024)).toFixed(3);
+        const cost = (parseFloat(gb) * 0.023).toFixed(4);
+        html += `<div class="sys-row">
+          <span class="sys-label" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(g.gallery_name || g.name || g.gallery_id)}</span>
+          <span class="sys-value">${fmtBytes(bytes)} &middot; ~$${cost}/mo</span>
+        </div>`;
+      }
+      html += `</div>`;
+    }
+
+    html += `<div style="margin-top:1rem;font-size:0.72rem;color:var(--text-muted);">
+      <a href="https://us-west-2.console.aws.amazon.com/cost-management/home" target="_blank" style="color:var(--accent);text-decoration:none;">AWS Cost Explorer</a> &middot;
+      <a href="https://us-west-2.console.aws.amazon.com/billing/home" target="_blank" style="color:var(--accent);text-decoration:none;">Billing</a>
+      <button class="btn btn-ghost btn-sm" style="margin-left:1rem;" onclick="loadCosts()">Refresh</button>
+    </div>`;
+
+    document.getElementById('costsContent').innerHTML = html;
+  }
+
+  function fmtBytes(b) {
+    if (b < 1024) return b + ' B';
+    if (b < 1048576) return (b / 1024).toFixed(1) + ' KB';
+    if (b < 1073741824) return (b / 1048576).toFixed(1) + ' MB';
+    return (b / 1073741824).toFixed(2) + ' GB';
+  }
+
+  // ── Team Tab (admin) ──────────────────────────────────────────────────
+
+  async function loadTeam() {
+    try {
+      const res = await fetch(API + '/admin/sub-admins', { headers: { 'x-admin-key': adminKey } });
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+      renderTeam(data.admins || data || []);
+    } catch (e) {
+      document.getElementById('teamContent').innerHTML =
+        '<div style="text-align:center;padding:3rem;color:var(--text-dim);">Could not load team data.</div>';
+    }
+  }
+
+  function renderTeam(members) {
+    let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;" class="fade-in">
+      <div>
+        <div class="section-title" style="margin-bottom:0;border:none;padding:0;">Team Members</div>
+        <div class="section-subtitle">${members.length} gallery admin${members.length !== 1 ? 's' : ''}</div>
+      </div>
+      <button class="btn btn-accent btn-sm" onclick="loadTeam()">Refresh</button>
+    </div>`;
+
+    if (members.length === 0) {
+      html += '<div style="text-align:center;padding:2rem;color:var(--text-dim);">No team members yet. Add them from the admin panel.</div>';
+    } else {
+      html += `<div style="overflow-x:auto;"><table class="findings-table">
+        <thead><tr><th>Name</th><th>Email</th><th>Galleries</th><th>Status</th></tr></thead><tbody>`;
+      for (const m of members) {
+        const gals = m.gallery_ids || [];
+        const galleryBadges = gals.slice(0, 3).map(g =>
+          `<span style="font-size:0.6rem;padding:0.1rem 0.4rem;border-radius:3px;background:var(--surface-3);color:var(--text-dim);margin-right:0.25rem;font-family:var(--mono);">${esc(g).substring(0,8)}</span>`
+        ).join('') + (gals.length > 3 ? `<span style="font-size:0.6rem;color:var(--text-muted);">+${gals.length - 3}</span>` : '');
+
+        html += `<tr>
+          <td style="font-weight:500;">${esc(m.name)}</td>
+          <td><span class="finding-file">${esc(m.email)}</span></td>
+          <td>${galleryBadges || '<span style="color:var(--text-muted);font-size:0.72rem;">None</span>'}</td>
+          <td><span class="status-tag status-fixed">${m.active !== false ? 'active' : 'inactive'}</span></td>
+        </tr>`;
+      }
+      html += '</tbody></table></div>';
+    }
+
+    document.getElementById('teamContent').innerHTML = html;
+  }
+
+  // ── Trials Tab (admin) ────────────────────────────────────────────────
+
+  async function loadTrials() {
+    try {
+      const res = await fetch(API + '/admin/trials', { headers: { 'x-admin-key': adminKey } });
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+      renderTrials(data.trials || data || []);
+    } catch (e) {
+      document.getElementById('trialsContent').innerHTML =
+        '<div style="text-align:center;padding:3rem;color:var(--text-dim);">Could not load trials. The demo system may not be configured.</div>';
+    }
+  }
+
+  function renderTrials(trials) {
+    const active = trials.filter(t => t.status === 'active' || !t.status);
+    const expired = trials.filter(t => t.status === 'expired');
+
+    let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;" class="fade-in">
+      <div>
+        <div class="section-title" style="margin-bottom:0;border:none;padding:0;">Demo Trials</div>
+        <div class="section-subtitle">${active.length} active, ${expired.length} expired</div>
+      </div>
+      <button class="btn btn-accent btn-sm" onclick="loadTrials()">Refresh</button>
+    </div>`;
+
+    if (trials.length === 0) {
+      html += '<div style="text-align:center;padding:2rem;color:var(--text-dim);">No trials yet.</div>';
+    } else {
+      html += `<div style="overflow-x:auto;"><table class="findings-table">
+        <thead><tr><th>Status</th><th>Name</th><th>Email</th><th>Company</th><th class="hide-mobile">Role</th><th class="hide-mobile">Demo Key</th><th class="hide-mobile">Created</th></tr></thead><tbody>`;
+      for (const t of trials) {
+        const isActive = t.status === 'active' || !t.status;
+        html += `<tr>
+          <td><span class="status-tag ${isActive ? 'status-fixed' : 'status-skipped'}">${isActive ? 'active' : 'expired'}</span></td>
+          <td style="font-weight:500;">${esc(t.first_name || '')} ${esc(t.last_name || '')}</td>
+          <td><span class="finding-file">${esc(t.email || '')}</span></td>
+          <td>${esc(t.company || '-')}</td>
+          <td class="hide-mobile">${esc(t.role || '-')}</td>
+          <td class="hide-mobile"><span class="finding-file" style="cursor:pointer;" title="Click to copy" onclick="navigator.clipboard.writeText('${esc(t.demo_key || '')}')">${esc((t.demo_key || '').substring(0, 12))}...</span></td>
+          <td class="hide-mobile" style="font-size:0.72rem;color:var(--text-dim);">${t.created_at ? fmtTime(new Date(t.created_at)) : '-'}</td>
+        </tr>`;
+      }
+      html += '</tbody></table></div>';
+    }
+
+    document.getElementById('trialsContent').innerHTML = html;
+  }
+
+  // ── Trash Tab (admin) ─────────────────────────────────────────────────
+
+  async function loadTrash() {
+    try {
+      const res = await fetch(API + '/admin/s3/trash', { headers: { 'x-admin-key': adminKey } });
+      if (!res.ok) throw new Error(res.status);
+      const data = await res.json();
+      renderTrash(data);
+    } catch (e) {
+      document.getElementById('trashContent').innerHTML =
+        '<div style="text-align:center;padding:3rem;color:var(--text-dim);">Could not load trash data.</div>';
+    }
+  }
+
+  function renderTrash(data) {
+    const galleries = data.galleries || [];
+    const totalCount = data.count || galleries.reduce((s, g) => s + (g.photo_count || 0), 0);
+    const totalBytes = data.total_bytes || 0;
+
+    let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;" class="fade-in">
+      <div>
+        <div class="section-title" style="margin-bottom:0;border:none;padding:0;">
+          Trash <span style="font-weight:400;font-size:0.78rem;color:var(--text-dim);margin-left:0.5rem;">${totalCount} photos &middot; ${fmtBytes(totalBytes)}</span>
+        </div>
+        <div class="section-subtitle">Photos pending permanent deletion</div>
+      </div>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn btn-sm" onclick="loadTrash()">Refresh</button>
+        ${totalCount > 0 ? '<button class="btn btn-sm" style="color:var(--critical);border-color:var(--critical);" onclick="emptyAllTrash()">Empty All Trash</button>' : ''}
+      </div>
+    </div>`;
+
+    if (galleries.length === 0) {
+      html += '<div style="text-align:center;padding:2rem;color:var(--text-dim);">Trash is empty.</div>';
+    } else {
+      for (const g of galleries) {
+        html += `<div class="repo-section fade-in">
+          <div class="repo-header" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.toggle-arrow').textContent=this.nextElementSibling.classList.contains('open')?'\\u25BE':'\\u25B8'">
+            <div>
+              <span class="toggle-arrow" style="color:var(--text-muted);margin-right:0.5rem;">&#x25B8;</span>
+              <span class="repo-name">${esc(g.gallery_name || g.gallery_id)}</span>
+              <span style="color:var(--text-muted);font-size:0.75rem;margin-left:0.75rem;">${g.photo_count || 0} photos</span>
+            </div>
+            <div class="repo-badges">
+              <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();restoreGalleryTrash('${esc(g.gallery_id)}')">Restore All</button>
+              <button class="btn btn-sm btn-ghost" style="color:var(--critical);" onclick="event.stopPropagation();deleteGalleryTrash('${esc(g.gallery_id)}')">Delete All</button>
+            </div>
+          </div>
+          <div class="repo-body">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:0.5rem;padding:1rem;">`;
+
+        const photos = g.photos || [];
+        for (const p of photos.slice(0, 50)) {
+          html += `<div style="position:relative;border-radius:4px;overflow:hidden;background:var(--surface-3);aspect-ratio:1;">
+            ${p.thumb_url ? `<img src="${esc(p.thumb_url)}" style="width:100%;height:100%;object-fit:cover;" loading="lazy">` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:0.6rem;color:var(--text-muted);">No thumb</div>'}
+            <div style="position:absolute;bottom:0;left:0;right:0;padding:0.15rem 0.3rem;background:rgba(0,0,0,0.6);color:white;font-size:0.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(p.filename)}</div>
+          </div>`;
+        }
+        if (photos.length > 50) {
+          html += `<div style="display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:0.72rem;">+${photos.length - 50} more</div>`;
+        }
+
+        html += `</div></div></div>`;
+      }
+    }
+
+    document.getElementById('trashContent').innerHTML = html;
+  }
+
+  window.emptyAllTrash = async function() {
+    if (!confirm('Permanently delete ALL trash across all galleries? This cannot be undone.')) return;
+    try {
+      await fetch(API + '/admin/s3/trash', { method: 'DELETE', headers: { 'x-admin-key': adminKey } });
+      loadTrash();
+    } catch (e) { alert('Failed to empty trash'); }
+  };
+
+  window.restoreGalleryTrash = async function(galleryId) {
+    try {
+      await fetch(API + '/admin/s3/trash/restore', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
+        body: JSON.stringify({ gallery_id: galleryId, filenames: ['*'] })
+      });
+      loadTrash();
+    } catch (e) { alert('Failed to restore'); }
+  };
+
+  window.deleteGalleryTrash = async function(galleryId) {
+    if (!confirm('Permanently delete all trash photos in this gallery?')) return;
+    try {
+      await fetch(API + '/admin/s3/trash/delete', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
+        body: JSON.stringify({ gallery_id: galleryId, filenames: ['*'] })
+      });
+      loadTrash();
+    } catch (e) { alert('Failed to delete'); }
   };
 
   // ── System Tab (admin) ─────────────────────────────────────────────────
