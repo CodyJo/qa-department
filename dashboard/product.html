@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SEO & AI Optimization — BreakPoint Labs</title>
+  <title>Product Roadmap — BreakPoint Labs</title>
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self';">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -21,9 +21,9 @@
       --text-muted: #5a5a70;
       --accent: #6c5ce7;
       --accent-glow: #7c6cf7;
-      --seo: #00b894;
-      --seo-glow: #00d9a7;
-      --seo-bg: rgba(0,184,148,0.1);
+      --product: #00cec9;
+      --product-glow: #00e5df;
+      --product-bg: rgba(0,206,201,0.1);
       --critical: #ff4757;
       --critical-bg: rgba(255,71,87,0.1);
       --high: #ff8c42;
@@ -99,11 +99,34 @@
     }
 
     .btn:hover { border-color: var(--border-glow); background: var(--surface-3); }
-    .btn-seo { background: var(--seo); border-color: var(--seo); color: #fff; }
-    .btn-seo:hover { background: var(--seo-glow); border-color: var(--seo-glow); }
+    .btn-product { background: var(--product); border-color: var(--product); color: #fff; }
+    .btn-product:hover { background: var(--product-glow); border-color: var(--product-glow); }
     .btn-sm { font-size: 0.72rem; padding: 0.35rem 0.75rem; }
     .btn-ghost { background: transparent; border-color: transparent; color: var(--text-dim); }
     .btn-ghost:hover { color: var(--text); background: var(--surface-2); }
+
+    /* -- Run Scan Button -- */
+    .run-scan-btn {
+      font-family: var(--sans); font-size: 0.78rem; font-weight: 500;
+      padding: 0.45rem 1rem; border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+      color: white; border: none; cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      display: inline-flex; align-items: center; gap: 0.4rem;
+    }
+    .run-scan-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .run-scan-btn:active { transform: translateY(0); }
+    .run-scan-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .run-scan-spinner {
+      display: inline-block; width: 12px; height: 12px;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
     /* -- Score Arc -- */
     .score-hero {
@@ -180,11 +203,11 @@
 
     .tab-btn:hover { color: var(--text); }
 
-    .tab-btn.active { color: var(--seo); }
+    .tab-btn.active { color: var(--product); }
 
     .tab-btn.active::after {
       content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
-      height: 2px; background: var(--seo); border-radius: 1px 1px 0 0;
+      height: 2px; background: var(--product); border-radius: 1px 1px 0 0;
     }
 
     .tab-btn .tab-badge {
@@ -193,7 +216,7 @@
       background: var(--surface-3); color: var(--text-muted); vertical-align: middle;
     }
 
-    .tab-btn.active .tab-badge { background: var(--seo-bg); color: var(--seo); }
+    .tab-btn.active .tab-badge { background: var(--product-bg); color: var(--product); }
 
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
@@ -211,7 +234,7 @@
       transition: border-color 0.15s;
     }
 
-    .search-box:focus { outline: none; border-color: var(--seo); }
+    .search-box:focus { outline: none; border-color: var(--product); }
     .search-box::placeholder { color: var(--text-muted); }
 
     .filter-btn {
@@ -222,7 +245,7 @@
     }
 
     .filter-btn:hover { border-color: var(--border-glow); }
-    .filter-btn.active { background: var(--seo); border-color: var(--seo); color: #fff; }
+    .filter-btn.active { background: var(--product); border-color: var(--product); color: #fff; }
 
     .toolbar-spacer { flex: 1; }
 
@@ -231,7 +254,7 @@
       font-size: 0.72rem; color: var(--text-dim); cursor: pointer;
     }
 
-    .auto-refresh-toggle input { accent-color: var(--seo); }
+    .auto-refresh-toggle input { accent-color: var(--product); }
 
     /* -- Findings Table -- */
     .findings-wrap {
@@ -319,11 +342,11 @@
     }
 
     .detail-fix {
-      background: var(--seo-bg); border: 1px solid rgba(0,184,148,0.2);
+      background: var(--product-bg); border: 1px solid rgba(0,206,201,0.2);
       border-radius: var(--radius-sm); padding: 0.75rem 1rem; margin-top: 0.75rem;
     }
 
-    .detail-fix h4 { color: var(--seo); }
+    .detail-fix h4 { color: var(--product); }
 
     .no-results {
       text-align: center; padding: 3rem 1rem; color: var(--text-muted);
@@ -415,25 +438,36 @@
       font-weight: 600;
     }
 
-    /* -- Run Scan Button -- */
-    .run-scan-btn {
-      font-family: var(--sans); font-size: 0.78rem; font-weight: 500;
-      padding: 0.45rem 1rem; border-radius: var(--radius-sm);
-      background: linear-gradient(135deg, var(--accent), var(--accent-glow, #7c6cf7));
-      color: white; border: none; cursor: pointer;
-      transition: opacity 0.15s, transform 0.1s;
-      display: inline-flex; align-items: center; gap: 0.4rem;
+    /* -- Toast Notifications -- */
+    .toast-container {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
+      display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-end;
     }
-    .run-scan-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-    .run-scan-btn:active { transform: translateY(0); }
-    .run-scan-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    .toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; }
-    .toast { padding: 0.75rem 1.25rem; border-radius: var(--radius-sm); font-size: 0.8rem; font-family: var(--sans);
-      color: var(--text); background: var(--surface-2); border: 1px solid var(--border); box-shadow: 0 4px 24px rgba(0,0,0,0.3);
-      animation: fadeIn 0.3s ease; max-width: 400px; }
-    .toast.success { border-color: rgba(46,213,115,0.3); }
-    .toast.error { border-color: rgba(255,71,87,0.3); }
+    .toast {
+      font-family: var(--sans); font-size: 0.8rem; padding: 0.75rem 1.25rem;
+      border-radius: var(--radius-sm); color: var(--text);
+      background: var(--surface-2); border: 1px solid var(--border);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      animation: toastIn 0.3s ease;
+      max-width: 400px; word-break: break-word;
+    }
+
+    .toast-success { border-color: var(--success); background: var(--success-bg); color: var(--success); }
+    .toast-error { border-color: var(--critical); background: var(--critical-bg); color: var(--critical); }
+    .toast-info { border-color: var(--product); background: var(--product-bg); color: var(--product); }
+
+    .toast-exit { animation: toastOut 0.3s ease forwards; }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(12px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateY(0) scale(1); }
+      to { opacity: 0; transform: translateY(12px) scale(0.95); }
+    }
 
     /* -- Footer -- */
     footer {
@@ -441,7 +475,7 @@
       color: var(--text-muted); border-top: 1px solid var(--border); margin-top: 2rem;
     }
 
-    footer a { color: var(--seo); text-decoration: none; }
+    footer a { color: var(--product); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
     /* -- Responsive -- */
@@ -453,7 +487,7 @@
     @media (max-width: 768px) {
       .container { padding: 1rem; }
       header { flex-direction: column; gap: 1rem; text-align: center; }
-      .header-right { justify-content: center; }
+      .header-right { justify-content: center; flex-wrap: wrap; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
       .score-hero { flex-direction: column; text-align: center; gap: 1.5rem; padding: 1.5rem; }
       .detail-grid { grid-template-columns: 1fr; }
@@ -482,16 +516,16 @@
     <div class="logo">
       <div class="logo-icon" id="logo-icon">BP</div>
       <div class="logo-text">
-        <h1><span id="logo-title">BreakPoint Labs</span> <span>/ SEO & AI Optimization</span></h1>
-        <div class="logo-sub">Automated Site Health Analysis</div>
+        <h1><span id="logo-title">BreakPoint Labs</span> <span>/ Product Roadmap</span></h1>
+        <div class="logo-sub">Roadmap &amp; Backlog Management</div>
       </div>
     </div>
     <div class="header-right">
-      <button class="run-scan-btn" id="runScanBtn" onclick="runScan()">&#9654; Run Scan</button>
       <div class="header-meta">
         <span class="live-dot"></span> System Active<br>
         <span id="lastScan">Last scan: loading...</span>
       </div>
+      <button class="run-scan-btn" id="runScanBtn" onclick="runScan()">&#9654; Run Scan</button>
       <a href="index.html" class="btn btn-ghost btn-sm">&larr; Back to HQ</a>
     </div>
   </header>
@@ -506,11 +540,11 @@
       </svg>
       <div class="score-arc-label">
         <div class="score-arc-num" id="scoreNum">--</div>
-        <div class="score-arc-text">SEO Score</div>
+        <div class="score-arc-text">Product Readiness</div>
       </div>
     </div>
     <div class="score-details">
-      <h2>Overall SEO Health</h2>
+      <h2>Product Readiness</h2>
       <p class="score-summary" id="scoreSummary">Loading scan results...</p>
     </div>
   </div>
@@ -520,12 +554,13 @@
 
   <!-- Tab Navigation -->
   <div class="tab-bar">
-    <button class="tab-btn active" data-tab="all" onclick="switchTab('all')">All Findings <span class="tab-badge" id="badgeAll">0</span></button>
-    <button class="tab-btn" data-tab="technical" onclick="switchTab('technical')">Technical SEO <span class="tab-badge" id="badgeTechnical">0</span></button>
-    <button class="tab-btn" data-tab="ai" onclick="switchTab('ai')">AI Optimization <span class="tab-badge" id="badgeAi">0</span></button>
-    <button class="tab-btn" data-tab="content" onclick="switchTab('content')">Content SEO <span class="tab-badge" id="badgeContent">0</span></button>
-    <button class="tab-btn" data-tab="performance" onclick="switchTab('performance')">Performance SEO <span class="tab-badge" id="badgePerformance">0</span></button>
-    <button class="tab-btn" data-tab="social" onclick="switchTab('social')">Social Meta <span class="tab-badge" id="badgeSocial">0</span></button>
+    <button class="tab-btn active" data-tab="all" onclick="switchTab('all')">All Items <span class="tab-badge" id="badgeAll">0</span></button>
+    <button class="tab-btn" data-tab="feature_gaps" onclick="switchTab('feature_gaps')">&#129513; Feature Gaps <span class="tab-badge" id="badgeFeatureGaps">0</span></button>
+    <button class="tab-btn" data-tab="ux_improvements" onclick="switchTab('ux_improvements')">&#10024; UX Improvements <span class="tab-badge" id="badgeUxImprovements">0</span></button>
+    <button class="tab-btn" data-tab="technical_debt" onclick="switchTab('technical_debt')">&#128295; Technical Debt <span class="tab-badge" id="badgeTechnicalDebt">0</span></button>
+    <button class="tab-btn" data-tab="growth_opportunities" onclick="switchTab('growth_opportunities')">&#128640; Growth Opportunities <span class="tab-badge" id="badgeGrowthOpportunities">0</span></button>
+    <button class="tab-btn" data-tab="documentation" onclick="switchTab('documentation')">&#128221; Documentation <span class="tab-badge" id="badgeDocumentation">0</span></button>
+    <button class="tab-btn" data-tab="infrastructure" onclick="switchTab('infrastructure')">&#9881; Infrastructure <span class="tab-badge" id="badgeInfrastructure">0</span></button>
   </div>
 
   <!-- Main Layout: Findings + Sidebar -->
@@ -533,12 +568,13 @@
     <div class="findings-area">
       <!-- Toolbar -->
       <div class="toolbar">
-        <input type="text" class="search-box" id="searchBox" placeholder="Search findings..." oninput="applyFilters()">
+        <input type="text" class="search-box" id="searchBox" placeholder="Search items..." oninput="applyFilters()">
         <button class="filter-btn active" data-severity="all" onclick="setSeverity('all')">All</button>
-        <button class="filter-btn" data-severity="critical" onclick="setSeverity('critical')">Critical</button>
-        <button class="filter-btn" data-severity="high" onclick="setSeverity('high')">High</button>
-        <button class="filter-btn" data-severity="medium" onclick="setSeverity('medium')">Medium</button>
-        <button class="filter-btn" data-severity="low" onclick="setSeverity('low')">Low</button>
+        <button class="filter-btn" data-severity="critical" onclick="setSeverity('critical')">Must Have</button>
+        <button class="filter-btn" data-severity="high" onclick="setSeverity('high')">Should Have</button>
+        <button class="filter-btn" data-severity="medium" onclick="setSeverity('medium')">Nice to Have</button>
+        <button class="filter-btn" data-severity="low" onclick="setSeverity('low')">Future</button>
+        <button class="filter-btn" data-severity="info" onclick="setSeverity('info')">Idea</button>
         <div class="toolbar-spacer"></div>
         <label class="auto-refresh-toggle">
           <input type="checkbox" id="autoRefreshCheck" onchange="toggleAutoRefresh()"> Auto-refresh
@@ -550,12 +586,11 @@
         <table class="findings-table" id="findingsTable">
           <thead>
             <tr>
-              <th onclick="sortFindings('severity')">Severity <span class="sort-arrow" id="sortSeverity"></span></th>
-              <th onclick="sortFindings('id')">ID <span class="sort-arrow" id="sortId"></span></th>
+              <th onclick="sortFindings('severity')">Priority <span class="sort-arrow" id="sortSeverity"></span></th>
               <th onclick="sortFindings('title')">Title <span class="sort-arrow" id="sortTitle"></span></th>
               <th onclick="sortFindings('category')">Category <span class="sort-arrow" id="sortCategory"></span></th>
+              <th class="hide-mobile" onclick="sortFindings('effort')">Effort <span class="sort-arrow" id="sortEffort"></span></th>
               <th class="hide-mobile" onclick="sortFindings('file')">File <span class="sort-arrow" id="sortFile"></span></th>
-              <th class="hide-mobile">Effort</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -567,7 +602,7 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <div class="checklist-panel" id="checklistPanel">
-        <h3>SEO Essentials</h3>
+        <h3>Product Essentials</h3>
         <div class="checklist-sub">Checklist of core requirements</div>
         <div id="checklistItems"></div>
         <div class="checklist-score">
@@ -585,14 +620,17 @@
   </div>
 </div>
 
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
 <footer>
-  <span id="footer-brand">BreakPoint Labs</span> &mdash; SEO & AI Optimization &middot;
+  <span id="footer-brand">BreakPoint Labs</span> &mdash; Product Roadmap &middot;
   <a href="qa.html">QA</a> &middot;
+  <a href="seo.html">SEO</a> &middot;
   <a href="ada.html">ADA</a> &middot;
   <a href="compliance.html">Compliance</a> &middot;
   <a href="monetization.html">Monetization</a> &middot;
-  <a href="product.html">Product</a>
-        <a href="faq.html">How Scores Work</a> &middot;
+  <a href="faq.html">How Scores Work</a> &middot;
   <a href="index.html">Back to HQ</a>
   <br>Powered by <a href="https://github.com/anthropics/claude-code" target="_blank">Claude Code</a>
 </footer>
@@ -614,54 +652,71 @@
 
   const SEVERITY_ORDER = { critical: 0, high: 1, medium: 2, low: 3, info: 4 };
 
+  const SEVERITY_LABELS = {
+    critical: 'Must Have',
+    high: 'Should Have',
+    medium: 'Nice to Have',
+    low: 'Future',
+    info: 'Idea'
+  };
+
+  const CATEGORY_ICONS = {
+    feature_gaps: '\u{1F9E9}',
+    ux_improvements: '\u2728',
+    technical_debt: '\u{1F527}',
+    growth_opportunities: '\u{1F680}',
+    documentation: '\u{1F4DD}',
+    infrastructure: '\u2699\uFE0F'
+  };
+
   // -- Demo Data --
   const DEMO_DATA = {
     scan_time: new Date().toISOString(),
-    overall_score: 72,
+    summary: { product_readiness_score: 64 },
     categories: {
-      technical:   { name: 'Technical SEO',   score: 78, issues: 6  },
-      ai:          { name: 'AI Optimization',  score: 55, issues: 8  },
-      content:     { name: 'Content SEO',      score: 82, issues: 4  },
-      performance: { name: 'Performance SEO',  score: 68, issues: 7  },
-      social:      { name: 'Social Meta',      score: 74, issues: 5  }
+      feature_gaps:          { name: 'Feature Gaps',          score: 58, issues: 7  },
+      ux_improvements:       { name: 'UX Improvements',       score: 72, issues: 5  },
+      technical_debt:        { name: 'Technical Debt',         score: 48, issues: 9  },
+      growth_opportunities:  { name: 'Growth Opportunities',   score: 65, issues: 6  },
+      documentation:         { name: 'Documentation',          score: 80, issues: 3  },
+      infrastructure:        { name: 'Infrastructure',         score: 70, issues: 4  }
     },
     checklist: [
-      { label: 'Meta title present on all pages',  status: 'pass' },
-      { label: 'Meta descriptions present',         status: 'pass' },
-      { label: 'Canonical URLs set',                status: 'fail' },
-      { label: 'robots.txt exists',                 status: 'pass' },
-      { label: 'sitemap.xml exists',                status: 'pass' },
-      { label: 'Schema.org markup',                 status: 'fail' },
-      { label: 'Open Graph tags',                   status: 'warn' },
-      { label: 'Twitter Card tags',                 status: 'fail' },
-      { label: 'H1 tags (exactly 1 per page)',      status: 'pass' },
-      { label: 'Image alt text coverage',           status: 'warn' },
-      { label: 'Mobile viewport meta',              status: 'pass' },
-      { label: 'HTTPS enforced',                    status: 'pass' },
-      { label: 'AI-friendly content structure',     status: 'fail' }
+      { label: 'Core MVP features complete',         status: 'pass' },
+      { label: 'User onboarding flow defined',       status: 'pass' },
+      { label: 'API documentation up to date',       status: 'fail' },
+      { label: 'Error handling standardized',        status: 'warn' },
+      { label: 'Performance benchmarks met',         status: 'fail' },
+      { label: 'Security audit completed',           status: 'pass' },
+      { label: 'CI/CD pipeline operational',         status: 'pass' },
+      { label: 'Monitoring and alerting setup',      status: 'warn' },
+      { label: 'User feedback loop established',     status: 'fail' },
+      { label: 'Scalability plan documented',        status: 'fail' },
+      { label: 'Accessibility standards met',        status: 'pass' },
+      { label: 'Deployment rollback strategy',       status: 'pass' }
     ],
-    trend: [62, 65, 64, 68, 70, 69, 71, 72],
+    trend: [50, 52, 55, 58, 56, 60, 62, 64],
     findings: [
-      { id: 'SEO-001', severity: 'critical', title: 'Missing canonical URLs on 12 pages', category: 'technical', file: 'src/pages/*.html', effort: 'Medium', status: 'open', description: 'Multiple pages lack canonical link elements, risking duplicate content penalties.', evidence: '<link rel="canonical"> missing from head section of 12 template files.', fix: 'Add <link rel="canonical" href="..."> to the <head> of each page template.' },
-      { id: 'SEO-002', severity: 'high', title: 'No structured data (Schema.org) found', category: 'ai', file: 'src/layouts/base.html', effort: 'High', status: 'open', description: 'The site has no JSON-LD or Microdata markup. AI crawlers and rich results depend on structured data.', evidence: 'Zero instances of application/ld+json or itemscope found in any template.', fix: 'Add JSON-LD structured data for Organization, WebSite, and per-page types (Article, Product, etc.).' },
-      { id: 'SEO-003', severity: 'high', title: 'Render-blocking CSS delays LCP by 2.3s', category: 'performance', file: 'src/assets/main.css', effort: 'Medium', status: 'open', description: 'Large synchronous CSS file blocks first paint. Lighthouse reports a 2.3s delay to Largest Contentful Paint.', evidence: 'main.css is 148KB unminified, loaded synchronously in <head>.', fix: 'Split critical CSS inline, defer non-critical styles with media="print" onload pattern.' },
-      { id: 'SEO-004', severity: 'medium', title: 'Open Graph tags incomplete on blog posts', category: 'social', file: 'src/templates/blog-post.html', effort: 'Low', status: 'open', description: 'Blog posts are missing og:image and og:description tags, reducing social sharing quality.', evidence: 'Only og:title present. og:image, og:description, og:type are absent.', fix: 'Add complete OG meta tags in the blog post template head section.' },
-      { id: 'SEO-005', severity: 'medium', title: 'Images missing alt text (23 instances)', category: 'content', file: 'src/components/*.vue', effort: 'Medium', status: 'in-progress', description: '23 images across the site lack descriptive alt attributes, hurting accessibility and image SEO.', evidence: 'grep found 23 <img> tags without alt or with alt="" in component files.', fix: 'Add descriptive alt text to each image that conveys the image content.' },
-      { id: 'SEO-006', severity: 'low', title: 'H1 tag count: 3 pages have multiple H1s', category: 'content', file: 'src/pages/about.html', effort: 'Low', status: 'open', description: 'Three pages have more than one H1 tag which can confuse crawlers about page topic hierarchy.', evidence: 'about.html (2x H1), team.html (3x H1), services.html (2x H1).', fix: 'Ensure exactly one H1 per page. Demote extras to H2 or H3.' },
-      { id: 'SEO-007', severity: 'critical', title: 'AI crawlers blocked by robots.txt', category: 'ai', file: 'public/robots.txt', effort: 'Low', status: 'open', description: 'robots.txt contains blanket disallow rules that block GPTBot, Google-Extended, and other AI crawlers.', evidence: 'User-agent: GPTBot\nDisallow: /\nUser-agent: Google-Extended\nDisallow: /', fix: 'Review robots.txt and selectively allow AI crawlers access to public content pages.' },
-      { id: 'SEO-008', severity: 'high', title: 'No llms.txt file for AI discoverability', category: 'ai', file: 'public/', effort: 'Low', status: 'open', description: 'The site lacks an llms.txt file that helps AI systems understand site structure and purpose.', evidence: '404 on /llms.txt — file does not exist.', fix: 'Create a public/llms.txt describing the site purpose, key pages, and content structure.' },
-      { id: 'SEO-009', severity: 'medium', title: 'Twitter Card meta tags missing', category: 'social', file: 'src/layouts/base.html', effort: 'Low', status: 'open', description: 'No twitter:card, twitter:title, or twitter:image meta tags found. Posts shared on X will lack rich previews.', evidence: 'Zero twitter: meta tags in any template file.', fix: 'Add twitter:card, twitter:title, twitter:description, twitter:image meta tags.' },
-      { id: 'SEO-010', severity: 'medium', title: 'Cumulative Layout Shift exceeds 0.25', category: 'performance', file: 'src/components/Hero.vue', effort: 'High', status: 'open', description: 'CLS score of 0.32 detected. Images and dynamic content cause visible layout shifts during load.', evidence: 'Lighthouse CLS: 0.32. Primary offender: Hero image without explicit dimensions.', fix: 'Set explicit width/height on images and use aspect-ratio CSS. Reserve space for dynamic content.' },
-      { id: 'SEO-011', severity: 'low', title: 'Sitemap missing lastmod dates', category: 'technical', file: 'public/sitemap.xml', effort: 'Low', status: 'fixed', description: 'sitemap.xml entries lack <lastmod> elements, so crawlers cannot prioritize recently updated content.', evidence: 'All 34 URL entries have no <lastmod> child element.', fix: 'Generate sitemap.xml with accurate lastmod dates from file modification times or CMS data.' },
-      { id: 'SEO-012', severity: 'high', title: 'No meta descriptions on 8 key pages', category: 'content', file: 'src/pages/*.html', effort: 'Medium', status: 'open', description: 'Eight high-traffic pages have no meta description, leading to auto-generated snippets in search results.', evidence: 'Homepage, pricing, 3 product pages, and 3 blog posts missing <meta name="description">.', fix: 'Write unique, compelling meta descriptions (120-160 chars) for each page.' },
-      { id: 'SEO-013', severity: 'medium', title: 'Unminified JavaScript bundles (340KB)', category: 'performance', file: 'dist/js/app.js', effort: 'Medium', status: 'open', description: 'JavaScript bundles are served unminified, increasing page weight and parse time significantly.', evidence: 'app.js: 340KB (would be ~95KB minified+gzipped).', fix: 'Enable minification in build config. Add terser plugin or configure bundler for production mode.' },
-      { id: 'SEO-014', severity: 'low', title: 'Missing hreflang for multi-language pages', category: 'technical', file: 'src/layouts/base.html', effort: 'Medium', status: 'open', description: 'The site has /en/ and /fr/ versions but no hreflang annotations, causing potential duplicate content across locales.', evidence: 'No <link rel="alternate" hreflang="..."> found in any template.', fix: 'Add hreflang link elements for each language variant in the page head.' },
-      { id: 'SEO-015', severity: 'high', title: 'No AI-parseable content summaries', category: 'ai', file: 'src/pages/*.html', effort: 'High', status: 'open', description: 'Pages lack clear introductory summaries and semantic sectioning that AI models use for content extraction.', evidence: 'No <article>, <section>, or summary/abstract patterns detected in content pages.', fix: 'Wrap main content in <article> with semantic sections. Add a visible summary paragraph at the top of each page.' },
-      { id: 'SEO-016', severity: 'medium', title: 'Missing Open Graph image dimensions', category: 'social', file: 'src/layouts/base.html', effort: 'Low', status: 'open', description: 'og:image:width and og:image:height are missing where og:image is present, causing slow social card rendering.', evidence: 'Homepage has og:image but no dimension meta tags.', fix: 'Add og:image:width and og:image:height meta tags alongside og:image.' },
-      { id: 'SEO-017', severity: 'low', title: 'Internal links use absolute URLs inconsistently', category: 'technical', file: 'src/components/Nav.vue', effort: 'Low', status: 'open', description: 'Some internal links use full absolute URLs while others use relative paths, causing minor crawl confusion.', evidence: 'Nav.vue mixes href="https://example.com/about" with href="/pricing".', fix: 'Standardize all internal links to use relative paths (e.g., /about, /pricing).' },
-      { id: 'SEO-018', severity: 'medium', title: 'No preconnect hints for third-party origins', category: 'performance', file: 'src/layouts/base.html', effort: 'Low', status: 'open', description: 'The page loads fonts and analytics from external origins without preconnect hints, adding DNS+TLS latency.', evidence: 'Google Fonts, analytics.js loaded without <link rel="preconnect">.', fix: 'Add <link rel="preconnect" href="https://fonts.googleapis.com"> and similar for other third-party origins.' },
-      { id: 'SEO-019', severity: 'critical', title: 'Noindex tag found on 3 indexable pages', category: 'technical', file: 'src/pages/pricing.html', effort: 'Low', status: 'open', description: 'Three important pages have <meta name="robots" content="noindex"> preventing them from appearing in search results.', evidence: 'pricing.html, features.html, and integrations.html all contain noindex directives.', fix: 'Remove the noindex meta tag from these public-facing pages. Use noindex only for private/utility pages.' },
-      { id: 'SEO-020', severity: 'low', title: 'Missing favicon and apple-touch-icon', category: 'social', file: 'src/layouts/base.html', effort: 'Low', status: 'open', description: 'No favicon or apple-touch-icon defined, resulting in missing icons in browser tabs and bookmarks.', evidence: 'No <link rel="icon"> or <link rel="apple-touch-icon"> in head.', fix: 'Add favicon.ico, favicon-32x32.png, and apple-touch-icon.png with corresponding link tags.' }
+      { id: 'PRD-001', severity: 'critical', title: 'No user authentication flow', category: 'feature_gaps', file: 'src/auth/', effort: 'High', status: 'open', description: 'The application lacks a complete user authentication system including login, registration, and password reset.', evidence: 'No auth module found in source tree. No JWT or session management implementation.', fix: 'Implement authentication using NextAuth.js or Auth0 with email/password and OAuth providers.' },
+      { id: 'PRD-002', severity: 'high', title: 'Database queries lack pagination', category: 'technical_debt', file: 'src/api/queries.ts', effort: 'Medium', status: 'open', description: 'All database queries return full result sets without pagination, causing performance degradation at scale.', evidence: 'SELECT * queries without LIMIT/OFFSET in 14 API endpoints.', fix: 'Add cursor-based pagination to all list endpoints. Implement standardized page size defaults.' },
+      { id: 'PRD-003', severity: 'critical', title: 'No rate limiting on API endpoints', category: 'infrastructure', file: 'src/middleware/', effort: 'Medium', status: 'open', description: 'API endpoints have no rate limiting, making the application vulnerable to abuse and DoS attacks.', evidence: 'No rate limiting middleware configured. Express/Next.js API routes are unprotected.', fix: 'Add rate limiting middleware (e.g., express-rate-limit) with sensible defaults per endpoint.' },
+      { id: 'PRD-004', severity: 'high', title: 'Missing search functionality', category: 'feature_gaps', file: 'src/components/', effort: 'High', status: 'open', description: 'Users cannot search through content. No full-text search implementation exists.', evidence: 'No search components, no search API endpoints, no indexing configuration found.', fix: 'Implement search using Algolia, Elasticsearch, or built-in database full-text search capabilities.' },
+      { id: 'PRD-005', severity: 'medium', title: 'Form validation is client-side only', category: 'ux_improvements', file: 'src/components/forms/', effort: 'Medium', status: 'open', description: 'All form validation occurs only on the client side. Server-side validation is missing, creating data integrity risks.', evidence: 'Zod/Yup schemas found in components but no server-side validation in API routes.', fix: 'Mirror client-side validation schemas on the server. Use shared validation schemas between client and API.' },
+      { id: 'PRD-006', severity: 'medium', title: 'No loading states or skeleton screens', category: 'ux_improvements', file: 'src/components/', effort: 'Low', status: 'in-progress', description: 'Data-fetching components show no loading indicators, resulting in blank screens during data loads.', evidence: 'Components render null or empty divs while awaiting data. No Suspense boundaries with fallbacks.', fix: 'Add skeleton loaders and loading spinners. Implement React Suspense with proper fallback UI.' },
+      { id: 'PRD-007', severity: 'high', title: 'API versioning not implemented', category: 'technical_debt', file: 'src/api/', effort: 'High', status: 'open', description: 'API endpoints have no versioning strategy, making backward-compatible changes difficult.', evidence: 'All routes use /api/* without version prefix. No versioning headers or URL patterns.', fix: 'Implement URL-based API versioning (e.g., /api/v1/) with a deprecation strategy.' },
+      { id: 'PRD-008', severity: 'low', title: 'Add dark/light theme toggle', category: 'ux_improvements', file: 'src/styles/', effort: 'Medium', status: 'open', description: 'Application only supports one theme. Users cannot switch between dark and light modes.', evidence: 'CSS uses hardcoded colors. No theme provider or CSS custom properties for theming.', fix: 'Implement CSS custom properties for theming. Add a ThemeProvider context with localStorage persistence.' },
+      { id: 'PRD-009', severity: 'high', title: 'No automated testing coverage', category: 'technical_debt', file: 'tests/', effort: 'High', status: 'open', description: 'The project has less than 5% test coverage. No unit, integration, or e2e tests exist for core flows.', evidence: 'Only 3 test files found, covering utility functions. No component or API tests.', fix: 'Set up Jest + Testing Library for unit/component tests. Add Playwright for e2e tests on critical flows.' },
+      { id: 'PRD-010', severity: 'medium', title: 'README lacks setup instructions', category: 'documentation', file: 'README.md', effort: 'Low', status: 'open', description: 'README file is minimal and lacks development setup instructions, environment variable documentation, and architecture overview.', evidence: 'README.md contains only project name and a one-line description.', fix: 'Document setup steps, required environment variables, project structure, and contribution guidelines.' },
+      { id: 'PRD-011', severity: 'info', title: 'Consider adding a plugin/extension system', category: 'growth_opportunities', file: 'src/core/', effort: 'High', status: 'open', description: 'A plugin system would allow third-party extensions and increase platform stickiness.', evidence: 'Current architecture is monolithic with no extension points or plugin hooks.', fix: 'Design a plugin API with lifecycle hooks, event bus, and sandboxed execution environment.' },
+      { id: 'PRD-012', severity: 'medium', title: 'No email notification system', category: 'feature_gaps', file: 'src/services/', effort: 'Medium', status: 'open', description: 'The application has no transactional email capability for user notifications, password resets, or alerts.', evidence: 'No email service configuration. No SMTP or email API integration found.', fix: 'Integrate an email service (SendGrid, AWS SES, or Resend) with templated transactional emails.' },
+      { id: 'PRD-013', severity: 'low', title: 'Add analytics and usage tracking', category: 'growth_opportunities', file: 'src/lib/', effort: 'Low', status: 'open', description: 'No analytics integration exists. User behavior, feature usage, and conversion metrics are not tracked.', evidence: 'No analytics scripts, no event tracking, no conversion tracking found in codebase.', fix: 'Integrate privacy-respecting analytics (Plausible, PostHog, or Mixpanel) with key event tracking.' },
+      { id: 'PRD-014', severity: 'high', title: 'Error boundaries missing in React tree', category: 'technical_debt', file: 'src/app/', effort: 'Low', status: 'open', description: 'No React error boundaries exist. Unhandled component errors crash the entire application.', evidence: 'No ErrorBoundary components found. No error.tsx files in app router.', fix: 'Add error boundaries at route and feature-section levels. Create error.tsx files in key route segments.' },
+      { id: 'PRD-015', severity: 'info', title: 'Explore internationalization (i18n) support', category: 'growth_opportunities', file: 'src/', effort: 'High', status: 'open', description: 'Application is English-only. Adding i18n would expand addressable market significantly.', evidence: 'All strings are hardcoded in English. No i18n library or locale files found.', fix: 'Integrate next-intl or react-i18next. Extract all user-facing strings to locale JSON files.' },
+      { id: 'PRD-016', severity: 'low', title: 'Add webhook support for integrations', category: 'growth_opportunities', file: 'src/api/', effort: 'Medium', status: 'open', description: 'No webhook system exists for notifying external services of events within the application.', evidence: 'No webhook endpoints, no event dispatch system, no webhook management UI.', fix: 'Build a webhook registration system with event types, retry logic, and delivery logs.' },
+      { id: 'PRD-017', severity: 'medium', title: 'Inline code documentation sparse', category: 'documentation', file: 'src/', effort: 'Medium', status: 'open', description: 'Most functions and modules lack JSDoc comments. Complex business logic has no explanatory comments.', evidence: 'Less than 10% of exported functions have JSDoc annotations. Zero TSDoc comments on interfaces.', fix: 'Add JSDoc/TSDoc comments to all exported functions, interfaces, and complex logic blocks.' },
+      { id: 'PRD-018', severity: 'critical', title: 'No data backup or recovery strategy', category: 'infrastructure', file: 'terraform/', effort: 'Medium', status: 'open', description: 'Database backups are not configured. No disaster recovery plan or data retention policy exists.', evidence: 'No backup cron jobs, no RDS automated backups enabled, no S3 lifecycle policies.', fix: 'Enable automated daily database backups. Configure point-in-time recovery. Document the DR plan.' },
+      { id: 'PRD-019', severity: 'info', title: 'Consider a mobile companion app', category: 'growth_opportunities', file: 'docs/', effort: 'High', status: 'open', description: 'A mobile app or PWA would improve user engagement and provide push notification capabilities.', evidence: 'No PWA manifest, no service worker, no mobile app project found.', fix: 'Start with a PWA (manifest.json + service worker) for quick wins. Evaluate React Native for a full mobile app.' },
+      { id: 'PRD-020', severity: 'high', title: 'No environment-specific configuration management', category: 'technical_debt', file: '.env.example', effort: 'Low', status: 'open', description: 'Configuration management is ad-hoc. No clear separation between dev, staging, and production configs.', evidence: 'Single .env file with mixed dev/prod values. No .env.example or config validation.', fix: 'Create .env.example with all required variables documented. Add config validation at startup with clear error messages.' }
     ]
   };
 
@@ -671,7 +726,7 @@
   }
 
   function loadData() {
-    fetch('seo-data.json')
+    fetch('product-data.json')
       .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(data => applyData(data))
       .catch(() => applyData(DEMO_DATA));
@@ -683,8 +738,12 @@
     checklist = data.checklist || [];
     trendData = data.trend || [];
 
+    const score = (data.summary && data.summary.product_readiness_score != null)
+      ? data.summary.product_readiness_score
+      : data.overall_score || 0;
+
     updateTimestamp(data.scan_time);
-    renderScoreArc(data.overall_score);
+    renderScoreArc(score);
     renderCategoryCards();
     renderTabBadges();
     renderChecklist();
@@ -708,7 +767,7 @@
     const offset = circumference - (circumference * score / 100);
 
     let color = 'var(--critical)';
-    if (score >= 80) color = 'var(--seo)';
+    if (score >= 80) color = 'var(--product)';
     else if (score >= 50) color = 'var(--medium)';
 
     arc.style.stroke = color;
@@ -721,14 +780,14 @@
 
     num.textContent = score;
 
-    const issueCount = findings.length;
-    const critical = findings.filter(f => f.severity === 'critical').length;
+    const itemCount = findings.length;
+    const mustHave = findings.filter(f => f.severity === 'critical').length;
     if (score >= 80) {
-      summary.textContent = `Good health. ${issueCount} findings detected across all categories. Site is well-optimized with minor improvements available.`;
+      summary.textContent = `Strong readiness. ${itemCount} items tracked across all categories. Product is well-positioned with minor enhancements available.`;
     } else if (score >= 50) {
-      summary.textContent = `Needs improvement. ${issueCount} findings detected, including ${critical} critical issue${critical !== 1 ? 's' : ''}. Address high-priority items to improve search visibility.`;
+      summary.textContent = `Needs improvement. ${itemCount} items tracked, including ${mustHave} must-have item${mustHave !== 1 ? 's' : ''}. Address high-priority items to improve product readiness.`;
     } else {
-      summary.textContent = `Poor health. ${issueCount} findings with ${critical} critical issue${critical !== 1 ? 's' : ''}. Immediate action required to restore search engine visibility.`;
+      summary.textContent = `Low readiness. ${itemCount} items with ${mustHave} must-have item${mustHave !== 1 ? 's' : ''}. Immediate action required on critical gaps before launch.`;
     }
   }
 
@@ -736,24 +795,25 @@
   function renderCategoryCards() {
     const container = document.getElementById('categoryCards');
     const cats = [
-      { key: 'technical',   icon: 'T' },
-      { key: 'ai',          icon: 'AI' },
-      { key: 'content',     icon: 'C' },
-      { key: 'performance', icon: 'P' },
-      { key: 'social',      icon: 'S' }
+      { key: 'feature_gaps',         icon: '\u{1F9E9}' },
+      { key: 'ux_improvements',      icon: '\u2728'     },
+      { key: 'technical_debt',       icon: '\u{1F527}'  },
+      { key: 'growth_opportunities', icon: '\u{1F680}'  },
+      { key: 'documentation',        icon: '\u{1F4DD}'  },
+      { key: 'infrastructure',       icon: '\u2699\uFE0F' }
     ];
 
     container.innerHTML = cats.map(c => {
       const cat = categories[c.key] || { name: c.key, score: 0, issues: 0 };
-      let barColor = 'var(--seo)';
+      let barColor = 'var(--product)';
       if (cat.score < 50) barColor = 'var(--critical)';
       else if (cat.score < 80) barColor = 'var(--medium)';
 
       return `<div class="stat-card">
-        <div class="stat-label">${cat.name}</div>
+        <div class="stat-label">${c.icon} ${cat.name}</div>
         <div class="stat-row">
           <span class="stat-value" style="color:${barColor}">${cat.score}</span>
-          <span class="stat-issues">${cat.issues} issue${cat.issues !== 1 ? 's' : ''}</span>
+          <span class="stat-issues">${cat.issues} item${cat.issues !== 1 ? 's' : ''}</span>
         </div>
         <div class="stat-bar"><div class="stat-bar-fill" style="width:${cat.score}%;background:${barColor}"></div></div>
       </div>`;
@@ -767,11 +827,12 @@
     findings.forEach(f => { byCat[f.category] = (byCat[f.category] || 0) + 1; });
 
     document.getElementById('badgeAll').textContent = all;
-    document.getElementById('badgeTechnical').textContent = byCat.technical || 0;
-    document.getElementById('badgeAi').textContent = byCat.ai || 0;
-    document.getElementById('badgeContent').textContent = byCat.content || 0;
-    document.getElementById('badgePerformance').textContent = byCat.performance || 0;
-    document.getElementById('badgeSocial').textContent = byCat.social || 0;
+    document.getElementById('badgeFeatureGaps').textContent = byCat.feature_gaps || 0;
+    document.getElementById('badgeUxImprovements').textContent = byCat.ux_improvements || 0;
+    document.getElementById('badgeTechnicalDebt').textContent = byCat.technical_debt || 0;
+    document.getElementById('badgeGrowthOpportunities').textContent = byCat.growth_opportunities || 0;
+    document.getElementById('badgeDocumentation').textContent = byCat.documentation || 0;
+    document.getElementById('badgeInfrastructure').textContent = byCat.infrastructure || 0;
   }
 
   // -- Tabs --
@@ -846,24 +907,25 @@
     const list = sortList(getFiltered());
 
     if (list.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" class="no-results">No findings match the current filters.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="no-results">No items match the current filters.</td></tr>';
       return;
     }
 
     tbody.innerHTML = list.map(f => {
       const sevClass = 'badge-' + f.severity;
+      const sevLabel = SEVERITY_LABELS[f.severity] || f.severity;
       const statusClass = 'status-' + (f.status || 'open').replace(' ', '-');
+      const catIcon = CATEGORY_ICONS[f.category] || '';
       return `<tr class="finding-row" onclick="toggleDetail('${f.id}')">
-        <td><span class="badge ${sevClass}">${f.severity}</span></td>
-        <td><span class="finding-id">${f.id}</span></td>
+        <td><span class="badge ${sevClass}">${sevLabel}</span></td>
         <td>${esc(f.title)}</td>
-        <td><span class="cat-tag">${esc(f.category)}</span></td>
-        <td class="hide-mobile" style="font-family:var(--mono);font-size:0.72rem;color:var(--text-dim)">${esc(f.file)}</td>
+        <td><span class="cat-tag">${catIcon} ${esc(f.category.replace(/_/g, ' '))}</span></td>
         <td class="hide-mobile"><span class="effort-tag">${esc(f.effort)}</span></td>
+        <td class="hide-mobile" style="font-family:var(--mono);font-size:0.72rem;color:var(--text-dim)">${esc(f.file)}</td>
         <td><span class="status-tag ${statusClass}">${esc(f.status)}</span></td>
       </tr>
       <tr class="finding-detail" id="detail-${f.id}">
-        <td colspan="7">
+        <td colspan="6">
           <div class="detail-grid">
             <div class="detail-block">
               <h4>Description</h4>
@@ -875,8 +937,8 @@
             </div>
           </div>
           <div class="detail-fix">
-            <h4>Suggested Fix</h4>
-            <p>${esc(f.fix || 'No fix suggestion available.')}</p>
+            <h4>Suggested Action</h4>
+            <p>${esc(f.fix || 'No action suggestion available.')}</p>
           </div>
         </td>
       </tr>`;
@@ -909,7 +971,7 @@
     const pct = Math.round((passCount / total) * 100);
     const scoreEl = document.getElementById('checklistScoreVal');
     scoreEl.textContent = passCount + '/' + total + ' (' + pct + '%)';
-    scoreEl.style.color = pct >= 80 ? 'var(--seo)' : pct >= 50 ? 'var(--medium)' : 'var(--critical)';
+    scoreEl.style.color = pct >= 80 ? 'var(--product)' : pct >= 50 ? 'var(--medium)' : 'var(--critical)';
   }
 
   // -- Trend Chart --
@@ -925,7 +987,7 @@
 
     container.innerHTML = trendData.map((val, i) => {
       const height = Math.max(4, (val / max) * 90);
-      let color = 'var(--seo)';
+      let color = 'var(--product)';
       if (val < 50) color = 'var(--critical)';
       else if (val < 80) color = 'var(--medium)';
 
@@ -948,12 +1010,21 @@
     }
   };
 
-  // -- Utility --
-  function esc(str) {
-    if (!str) return '';
-    const d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
+  // -- Toast Notifications --
+  function showToast(message, type) {
+    type = type || 'info';
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-' + type;
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    setTimeout(function() {
+      toast.classList.add('toast-exit');
+      setTimeout(function() {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 300);
+    }, 5000);
   }
 
   // -- API URL --
@@ -965,35 +1036,48 @@
   }
 
   // -- Run Scan --
-  function showToast(msg, type) {
-    const c = document.getElementById('toastContainer');
-    const t = document.createElement('div');
-    t.className = 'toast ' + (type || '');
-    t.textContent = msg;
-    c.appendChild(t);
-    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 5000);
-  }
-
   window.runScan = function() {
     // Static S3 dashboards have no API backend
     if (/^admin\./.test(window.location.hostname)) {
       var host = window.location.hostname.replace(/^admin\./, '');
-      showCommandToast('make seo TARGET=/path/to/' + host);
+      showCommandToast('make product TARGET=/path/to/' + host);
       return;
     }
     const btn = document.getElementById('runScanBtn');
     btn.disabled = true;
-    btn.innerHTML = '&#8987; Running...';
+    btn.innerHTML = '<span class="run-scan-spinner"></span> Running...';
+
     fetch(apiUrl('/api/run-scan'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ department: 'seo' })
+      body: JSON.stringify({ department: 'product' })
     })
-    .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-    .then(() => { showToast('SEO audit triggered successfully', 'success'); setTimeout(loadData, 5000); })
-    .catch(() => { showCommandToast('make seo TARGET=/path/to/repo'); })
-    .finally(() => { setTimeout(() => { btn.disabled = false; btn.innerHTML = '&#9654; Run Scan'; }, 10000); });
+    .then(function(r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    })
+    .then(function() {
+      showToast('Scan started successfully. Refreshing data in 5 seconds...', 'success');
+      setTimeout(loadData, 5000);
+    })
+    .catch(function() {
+      showCommandToast('make product TARGET=/path/to/repo');
+    })
+    .finally(function() {
+      setTimeout(function() {
+        btn.disabled = false;
+        btn.innerHTML = '&#9654; Run Scan';
+      }, 10000);
+    });
   };
+
+  // -- Utility --
+  function esc(str) {
+    if (!str) return '';
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
 
   // -- Branding --
   // Branding handled by site-branding.js
@@ -1005,8 +1089,6 @@
   document.getElementById('sortSeverity').textContent = '\u25BC';
 })();
 </script>
-
-<div class="toast-container" id="toastContainer"></div>
 
 </body>
 </html>

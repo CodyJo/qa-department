@@ -63,17 +63,31 @@ LINT_CMD=""
 TEST_CMD=""
 
 if command -v python3 &>/dev/null && [ -f "$QA_ROOT/config/targets.yaml" ]; then
-  eval "$(python3 -c "
+  mapfile -d '' -t _target_cfg < <(
+    QA_ROOT="$QA_ROOT" REPO_NAME="$REPO_NAME" TARGET_REPO="$TARGET_REPO" python3 -c '
+import os
+import sys
 import yaml
-with open('$QA_ROOT/config/targets.yaml') as f:
-    cfg = yaml.safe_load(f)
-for t in cfg.get('targets', []):
-    if t['name'] == '$REPO_NAME' or t.get('path','') == '$TARGET_REPO':
-        print(f'DEPLOY_CMD={repr(t.get(\"deploy_command\",\"\"))}')
-        print(f'LINT_CMD={repr(t.get(\"lint_command\",\"\"))}')
-        print(f'TEST_CMD={repr(t.get(\"test_command\",\"\"))}')
+
+with open(os.path.join(os.environ["QA_ROOT"], "config", "targets.yaml")) as f:
+    cfg = yaml.safe_load(f) or {}
+
+values = ["", "", ""]
+for t in cfg.get("targets", []):
+    if t["name"] == os.environ["REPO_NAME"] or t.get("path", "") == os.environ["TARGET_REPO"]:
+        values = [
+            t.get("deploy_command", ""),
+            t.get("lint_command", ""),
+            t.get("test_command", ""),
+        ]
         break
-" 2>/dev/null || true)"
+
+sys.stdout.write("\0".join(values))
+' 2>/dev/null || true
+  )
+  DEPLOY_CMD="${_target_cfg[0]:-}"
+  LINT_CMD="${_target_cfg[1]:-}"
+  TEST_CMD="${_target_cfg[2]:-}"
 fi
 
 # ── Build the prompt ─────────────────────────────────────────────────────────
@@ -127,7 +141,7 @@ echo "Fixes complete. Results in: $RESULTS_DIR/"
 
 if [ "$RUN_DEPLOY" = true ] && [ -n "$DEPLOY_CMD" ]; then
   echo "Running deploy: $DEPLOY_CMD"
-  (cd "$TARGET_REPO" && eval "$DEPLOY_CMD")
+  (cd "$TARGET_REPO" && bash -lc "$DEPLOY_CMD")
 fi
 
 # ── Sync to S3 if requested ─────────────────────────────────────────────────

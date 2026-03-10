@@ -11,6 +11,7 @@ terraform/tfplan
 
 # Config (may contain secrets)
 config/targets.yaml
+config/api-config.yaml
 config/qa-config.yaml
 
 # Python

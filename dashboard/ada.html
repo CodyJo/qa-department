@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ADA Compliance — BreakPoint Labs</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self';">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="site-branding.js"></script>
   <style>
     :root {
       --bg: #0a0a0f;
@@ -62,15 +64,16 @@
     .logo { display: flex; align-items: center; gap: 0.75rem; }
 
     .logo-icon {
-      width: 40px; height: 40px;
-      background: linear-gradient(135deg, var(--accent), #e17055);
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, #6c5ce7, #7c6cf7);
       border-radius: 10px; display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; font-weight: 700; color: #1a1a26;
-      box-shadow: 0 0 20px rgba(253,203,110,0.3);
+      font-size: 1.1rem; font-weight: 700; color: white;
+      box-shadow: 0 0 20px rgba(108,92,231,0.3);
     }
 
     .logo h1 { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.02em; }
     .logo h1 span { color: var(--text-dim); font-weight: 400; }
+    .logo-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.1rem; }
 
     .header-right { display: flex; align-items: center; gap: 1rem; }
 
@@ -456,6 +459,26 @@
     .badge-medium { background: var(--medium-bg); color: var(--medium); border: 1px solid rgba(255,209,102,0.2); }
     .badge-low { background: var(--low-bg); color: var(--low); border: 1px solid rgba(78,205,196,0.2); }
 
+    /* -- Run Scan Button -- */
+    .run-scan-btn {
+      font-family: var(--sans); font-size: 0.78rem; font-weight: 500;
+      padding: 0.45rem 1rem; border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--accent), var(--accent-glow, #7c6cf7));
+      color: white; border: none; cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      display: inline-flex; align-items: center; gap: 0.4rem;
+    }
+    .run-scan-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .run-scan-btn:active { transform: translateY(0); }
+    .run-scan-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; }
+    .toast { padding: 0.75rem 1.25rem; border-radius: var(--radius-sm); font-size: 0.8rem; font-family: var(--sans);
+      color: var(--text); background: var(--surface-2); border: 1px solid var(--border); box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+      animation: fadeIn 0.3s ease; max-width: 400px; }
+    .toast.success { border-color: rgba(46,213,115,0.3); }
+    .toast.error { border-color: rgba(255,71,87,0.3); }
+
     /* -- Footer ------------------------------------------------- */
 
     footer {
@@ -501,14 +524,18 @@
 <div class="container">
   <header>
     <div class="logo">
-      <div class="logo-icon">BP</div>
-      <h1>BreakPoint Labs <span>/ ADA Compliance</span></h1>
+      <div class="logo-icon" id="logo-icon">BP</div>
+      <div class="logo-text">
+        <h1><span id="logo-title">BreakPoint Labs</span> <span>/ ADA Compliance</span></h1>
+        <div class="logo-sub">WCAG 2.1 Accessibility Standards</div>
+      </div>
     </div>
     <div class="header-right">
       <div class="header-meta" id="headerMeta">
-        <span class="live-dot"></span> Live
+        <span class="live-dot"></span> System Active
         <br>Last scan: <span id="lastScan">--</span>
       </div>
+      <button class="run-scan-btn" id="runScanBtn" onclick="runScan()">&#9654; Run Scan</button>
       <a class="btn btn-ghost btn-sm" href="index.html">&larr; Back to HQ</a>
     </div>
   </header>
@@ -516,7 +543,7 @@
   <!-- Compliance Hero -->
   <div class="compliance-hero fade-in" id="complianceHero">
     <div class="compliance-badge-card">
-      <div class="compliance-level-label">Current Compliance Level</div>
+      <div class="compliance-level-label" data-faq="ada-level">Current Compliance Level</div>
       <div class="compliance-level-badge level-none" id="complianceBadge">--</div>
       <div class="compliance-score-ring">
         <svg viewBox="0 0 100 100">
@@ -601,7 +628,15 @@
 </div>
 
 <footer>
-  ADA Compliance Dashboard &middot; Powered by <a href="https://github.com/anthropics/claude-code" target="_blank">Claude Code</a>
+  <span id="footer-brand">BreakPoint Labs</span> &mdash; ADA Compliance &middot;
+  <a href="qa.html">QA</a> &middot;
+  <a href="seo.html">SEO</a> &middot;
+  <a href="compliance.html">Compliance</a> &middot;
+  <a href="monetization.html">Monetization</a> &middot;
+  <a href="product.html">Product</a>
+        <a href="faq.html">How Scores Work</a> &middot;
+  <a href="index.html">Back to HQ</a>
+  <br>Powered by <a href="https://github.com/anthropics/claude-code" target="_blank">Claude Code</a>
 </footer>
 
 <script>
@@ -664,12 +699,33 @@
     };
   }
 
+  // -- Normalize raw agent data to dashboard field names ---
+  function normalizeFindings(data) {
+    if (!data || !data.findings) return data;
+    data.findings = data.findings.map(f => {
+      // Handle both camelCase (wcagLevel) and snake_case (wcag_level)
+      if (!f.level) f.level = f.wcag_level || f.wcagLevel || null;
+      if (!f.principle) f.principle = f.category || null;
+      if (!f.criterion) f.criterion = f.wcag_criterion || f.wcagCriteria || null;
+      // Normalize status: treat missing as open
+      if (!f.status) f.status = 'open';
+      return f;
+    });
+    if (data.overall_score == null && data.summary && data.summary.compliance_score != null) {
+      data.overall_score = data.summary.compliance_score;
+    }
+    if (!data.scan_timestamp) {
+      data.scan_timestamp = data.scanned_at || (data.summary && data.summary.scanned_at);
+    }
+    return data;
+  }
+
   // -- Init ---
   async function init() {
     try {
       const resp = await fetch(DATA_URL);
       if (!resp.ok) throw new Error('No data file');
-      dashData = await resp.json();
+      dashData = normalizeFindings(await resp.json());
     } catch (e) {
       dashData = getDemoData();
     }
@@ -681,7 +737,7 @@
     try {
       const resp = await fetch(DATA_URL + '?t=' + Date.now());
       if (!resp.ok) return;
-      dashData = await resp.json();
+      dashData = normalizeFindings(await resp.json());
       render();
     } catch (e) { /* silent */ }
   }
@@ -745,23 +801,28 @@
     const findings = dashData.findings || [];
     if (findings.length === 0) return 100;
     const open = findings.filter(f => f.status !== 'fixed' && f.status !== 'wontfix');
-    const weights = { critical: 15, high: 8, medium: 4, low: 1 };
+    const weights = { critical: 15, high: 8, medium: 3, low: 1 };
     let penalty = 0;
-    open.forEach(f => { penalty += weights[f.severity] || 2; });
+    open.forEach(f => { penalty += weights[f.severity] || 0; });
     return Math.max(0, Math.round(100 - penalty));
   }
 
   function computeComplianceLevel() {
+    const score = computeOverallScore();
     const findings = dashData.findings || [];
     const open = findings.filter(f => f.status !== 'fixed' && f.status !== 'wontfix');
-    const hasLevelA = open.some(f => f.level === 'A');
-    const hasLevelAA = open.some(f => f.level === 'AA');
-    const hasLevelAAA = open.some(f => f.level === 'AAA');
+    const hasCritical = open.some(f => f.severity === 'critical');
+    const hasHigh = open.some(f => f.severity === 'high');
+    const hasMedium = open.some(f => f.severity === 'medium');
+    const hasCriticalA = open.some(f => f.severity === 'critical' && f.level === 'A');
 
-    if (hasLevelA) return 'Non-Compliant';
-    if (hasLevelAA) return 'A';
-    if (hasLevelAAA) return 'AA';
-    return 'AAA';
+    // Per agent prompt: AAA = score>=95 + no crit/high/med
+    if (score >= 95 && !hasCritical && !hasHigh && !hasMedium) return 'AAA';
+    // AA = score>=70 + no critical
+    if (score >= 70 && !hasCritical) return 'AA';
+    // A = score>=40 + no critical findings on Level A criteria
+    if (score >= 40 && !hasCriticalA) return 'A';
+    return 'Non-Compliant';
   }
 
   // -- POUR Cards ---
@@ -1116,10 +1177,53 @@
     return d.innerHTML;
   }
 
+  // -- API URL --
+  function apiUrl(path) {
+    const h = window.location.hostname;
+    const m = h.match(/^admin\.(.+)$/);
+    if (m) return 'https://api.' + m[1] + path;
+    return path;
+  }
+
+  // -- Run Scan --
+  function showToast(msg, type) {
+    const c = document.getElementById('toastContainer');
+    const t = document.createElement('div');
+    t.className = 'toast ' + (type || '');
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 5000);
+  }
+
+  window.runScan = function() {
+    // Static S3 dashboards have no API backend
+    if (/^admin\./.test(window.location.hostname)) {
+      var host = window.location.hostname.replace(/^admin\./, '');
+      showCommandToast('make ada TARGET=/path/to/' + host);
+      return;
+    }
+    const btn = document.getElementById('runScanBtn');
+    btn.disabled = true;
+    btn.innerHTML = '&#8987; Running...';
+    fetch(apiUrl('/api/run-scan'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ department: 'ada' })
+    })
+    .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+    .then(() => { showToast('ADA audit triggered successfully', 'success'); setTimeout(refreshData, 5000); })
+    .catch(() => { showCommandToast('make ada TARGET=/path/to/repo'); })
+    .finally(() => { setTimeout(() => { btn.disabled = false; btn.innerHTML = '&#9654; Run Scan'; }, 10000); });
+  };
+
   // -- Boot ---
+  // -- Branding --
+  // Branding handled by site-branding.js
+
   init();
 
 })();
 </script>
+<div class="toast-container" id="toastContainer"></div>
 </body>
 </html>
