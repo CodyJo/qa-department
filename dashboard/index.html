@@ -6,6 +6,7 @@
   <title>BreakPoint Labs — Back Office</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="site-branding.js"></script>
   <style>
     :root {
       --bg: #0a0a0f;
@@ -61,10 +62,10 @@
 
     .logo-icon {
       width: 44px; height: 44px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-glow));
-      border-radius: 11px; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #6c5ce7, #7c6cf7);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
       font-size: 1.1rem; font-weight: 700; color: white;
-      box-shadow: 0 0 24px rgba(108,92,231,0.35);
+      box-shadow: 0 0 20px rgba(108,92,231,0.3);
       letter-spacing: -0.03em;
       font-family: var(--mono);
     }
@@ -183,6 +184,7 @@
     .dept-card:nth-child(2) { animation-delay: 0.15s; }
     .dept-card:nth-child(3) { animation-delay: 0.2s; }
     .dept-card:nth-child(4) { animation-delay: 0.25s; }
+    .dept-card:nth-child(5) { animation-delay: 0.3s; }
 
     .dept-card:hover {
       border-color: var(--accent);
@@ -219,6 +221,8 @@
     .dept-icon.seo { background: rgba(116,185,255,0.15); }
     .dept-icon.ada { background: rgba(46,213,115,0.15); }
     .dept-icon.compliance { background: rgba(255,140,66,0.15); }
+    .dept-icon.monetization { background: rgba(240,180,41,0.15); }
+    .dept-icon.product { background: rgba(0,206,201,0.15); }
 
     .dept-name { font-size: 1rem; font-weight: 600; line-height: 1.2; }
 
@@ -325,6 +329,8 @@
     .activity-badge.seo { background: rgba(116,185,255,0.15); color: var(--info); }
     .activity-badge.ada { background: rgba(46,213,115,0.15); color: var(--success); }
     .activity-badge.compliance { background: rgba(255,140,66,0.15); color: var(--high); }
+    .activity-badge.monetization { background: rgba(240,180,41,0.15); color: #f0b429; }
+    .activity-badge.product { background: rgba(0,206,201,0.15); color: #00cec9; }
 
     .activity-content { flex: 1; min-width: 0; }
 
@@ -391,13 +397,14 @@
     <!-- ── Header ─────────────────────────────────────── -->
     <header>
       <div class="logo">
-        <div class="logo-icon">BP</div>
+        <div class="logo-icon" id="logo-icon">BP</div>
         <div class="logo-text">
-          <h1>BreakPoint Labs</h1>
+          <h1 id="logo-title">BreakPoint Labs</h1>
           <div class="subtitle">Back Office</div>
         </div>
       </div>
       <div class="header-right">
+        <a href="jobs.html" style="font-size:0.78rem;font-weight:500;color:var(--accent);text-decoration:none;padding:0.35rem 0.85rem;border-radius:var(--radius-sm);border:1px solid rgba(108,92,231,0.2);background:rgba(108,92,231,0.1);display:inline-flex;align-items:center;gap:0.4rem;transition:all 0.15s;">&#9654; Jobs</a>
         <div class="live-indicator">
           <span class="live-dot"></span>
           Live
@@ -418,7 +425,7 @@
     <div class="stats-grid" id="stats-grid">
       <div class="stat-card">
         <div class="stat-label">Departments</div>
-        <div class="stat-value accent" id="stat-depts">4</div>
+        <div class="stat-value accent" id="stat-depts">6</div>
         <div class="stat-sub">Active monitoring</div>
       </div>
       <div class="stat-card">
@@ -441,7 +448,7 @@
     <!-- ── Department Cards ───────────────────────────── -->
     <div class="section-header">
       <div class="section-title">Departments</div>
-      <div class="section-badge" id="dept-count-badge">4 departments</div>
+      <div class="section-badge" id="dept-count-badge">6 departments</div>
     </div>
     <div class="dept-grid" id="dept-grid"></div>
 
@@ -455,7 +462,7 @@
     </div>
 
     <div class="dashboard-footer">
-      BreakPoint Labs Back Office &middot; Auto-refreshes every 60s
+      <span id="footer-brand">BreakPoint Labs</span> Back Office &middot; <a href="faq.html" style="color:#8888a0;text-decoration:none;">How Scores Work</a> &middot; Auto-refreshes every 60s
     </div>
   </div>
 
@@ -467,7 +474,7 @@
         name: 'QA Department',
         desc: 'Automated bug scanning and fixing',
         icon: '\uD83D\uDD0D',
-        link: 'backoffice.html',
+        link: 'qa.html',
         dataFile: 'qa-data.json',
         legacyDataFile: 'data.json',
       },
@@ -494,6 +501,30 @@
         icon: '\uD83D\uDEE1\uFE0F',
         link: 'compliance.html',
         dataFile: 'compliance-data.json',
+      },
+      {
+        key: 'monetization',
+        name: 'Monetization Strategy',
+        desc: 'Revenue opportunities & growth',
+        icon: '\uD83D\uDCB0',
+        link: 'monetization.html',
+        dataFile: 'monetization-data.json',
+      },
+      {
+        key: 'product',
+        name: 'Product Roadmap',
+        desc: 'Backlog & feature planning',
+        icon: '\uD83D\uDDFA\uFE0F',
+        link: 'product.html',
+        dataFile: 'product-data.json',
+      },
+      {
+        key: 'self-audit',
+        name: 'Self-Audit',
+        desc: 'Physician, heal thyself',
+        icon: '\uD83D\uDD0D',
+        link: 'self-audit.html',
+        dataFile: 'self-audit-data.json',
       },
     ];
 
@@ -545,6 +576,29 @@
           ]
         }]
       },
+      monetization: {
+        generated_at: new Date().toISOString(),
+        totals: { total_findings: 24, critical: 0, high: 6, medium: 12, low: 6, total_fixed: 0 },
+        repos: [{
+          name: 'photo-gallery', scanned_at: new Date(Date.now() - 1800000).toISOString(),
+          findings: [
+            { id: 'MON-001', severity: 'high', title: 'No print fulfillment integration — missed revenue', category: 'monetization', found_at: new Date(Date.now() - 2700000).toISOString() },
+            { id: 'MON-002', severity: 'high', title: 'Paid digital downloads not offered', category: 'monetization', found_at: new Date(Date.now() - 5400000).toISOString() },
+          ]
+        }]
+      },
+      product: {
+        generated_at: new Date().toISOString(),
+        totals: { total_findings: 18, critical: 1, high: 4, medium: 8, low: 3, info: 2, total_fixed: 0 },
+        repos: [{
+          name: 'photo-gallery', scanned_at: new Date(Date.now() - 900000).toISOString(),
+          summary: { product_readiness_score: 58 },
+          findings: [
+            { id: 'PROD-001', severity: 'critical', title: 'No onboarding flow for new users', category: 'ux-improvement', found_at: new Date(Date.now() - 1800000).toISOString() },
+            { id: 'PROD-002', severity: 'high', title: 'Missing search functionality', category: 'feature-gap', found_at: new Date(Date.now() - 3600000).toISOString() },
+          ]
+        }]
+      },
     };
 
     // ── State ───────────────────────────────────────────
@@ -552,17 +606,50 @@
     let usingDemo = false;
 
     // ── Data Loading ────────────────────────────────────
+
+    // Normalize raw agent output or aggregate format into a consistent shape
+    function normalizeData(raw) {
+      if (!raw) return null;
+      // Already in aggregate format (has totals)
+      if (raw.totals) return raw;
+      // Raw agent format — convert to aggregate shape
+      const findings = raw.findings || [];
+      const summary = raw.summary || {};
+      const bySev = summary.by_severity || summary;
+      const totals = {
+        total_findings: summary.total_findings || summary.total || findings.length,
+        critical: bySev.critical || 0,
+        high: bySev.high || 0,
+        medium: bySev.medium || 0,
+        low: bySev.low || 0,
+        info: bySev.info || 0,
+        total_fixed: findings.filter(f => f.status === 'fixed').length,
+      };
+      return {
+        department: raw.department || '',
+        generated_at: raw.scanned_at || raw.timestamp || raw.generated_at || new Date().toISOString(),
+        totals,
+        summary,
+        repos: [{
+          name: raw.repo_name || raw.repo || '',
+          scanned_at: raw.scanned_at || raw.timestamp || '',
+          summary,
+          findings,
+        }],
+      };
+    }
+
     async function loadDepartmentData(dept) {
       try {
         const resp = await fetch(dept.dataFile);
-        if (resp.ok) return await resp.json();
+        if (resp.ok) return normalizeData(await resp.json());
       } catch (e) { /* ignore */ }
 
       // Try legacy data file for QA
       if (dept.legacyDataFile) {
         try {
           const resp = await fetch(dept.legacyDataFile);
-          if (resp.ok) return await resp.json();
+          if (resp.ok) return normalizeData(await resp.json());
         } catch (e) { /* ignore */ }
       }
 
@@ -623,13 +710,51 @@
     }
 
     function getDeptHealthScore(key) {
+      const data = departmentData[key];
+      if (!data) return 0;
+
+      // Use actual audit scores from the data when available
       const t = getDeptTotals(key);
+      const summary = (data.repos && data.repos[0] && data.repos[0].summary) || data.summary || t;
+
+      // SEO: seo_score
+      if (key === 'seo') {
+        const s = summary.seo_score ?? data.seo_score ?? (data.repos?.[0]?.seo_score);
+        if (s != null) return s;
+      }
+
+      // ADA: compliance_score or score
+      if (key === 'ada') {
+        const s = summary.compliance_score ?? summary.score;
+        if (s != null) return s;
+      }
+
+      // Compliance: compliance_score
+      if (key === 'compliance') {
+        const s = summary.compliance_score;
+        if (s != null) return s;
+      }
+
+      // Monetization: monetization_readiness_score
+      if (key === 'monetization') {
+        const s = summary.monetization_readiness_score;
+        if (s != null) return s;
+      }
+
+      // Product: product_readiness_score
+      if (key === 'product') {
+        const s = summary.product_readiness_score;
+        if (s != null) return s;
+      }
+
+      // QA or fallback: calculate from severity distribution
       if (t.total_findings === 0) return 100;
-      const fixRate = t.total_fixed / t.total_findings;
-      const critPenalty = (t.critical || 0) * 8;
-      const highPenalty = (t.high || 0) * 3;
-      const score = Math.round(Math.max(0, Math.min(100, fixRate * 100 - critPenalty - highPenalty + 20)));
-      return score;
+      const score = Math.max(0, 100
+        - (t.critical || 0) * 15
+        - (t.high || 0) * 8
+        - (t.medium || 0) * 3
+        - (t.low || 0) * 1);
+      return Math.round(score);
     }
 
     function getHealthStatus(score) {
@@ -799,6 +924,8 @@
     function capitalize(str) {
       return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
     }
+
+    // Branding handled by site-branding.js
 
     // ── Init & Auto-Refresh ─────────────────────────────
     loadAllData();
