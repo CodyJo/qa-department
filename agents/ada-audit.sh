@@ -12,6 +12,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 QA_ROOT="$(dirname "$SCRIPT_DIR")"
+source "$QA_ROOT/scripts/job-status.sh"
 PROMPT_FILE="$SCRIPT_DIR/prompts/ada-audit.md"
 CONFIG_FILE="$QA_ROOT/config/qa-config.yaml"
 
@@ -97,10 +98,13 @@ Start the audit now."
 echo "Launching Claude Code ADA compliance audit agent..."
 echo ""
 
+job_start "ada"
 unset CLAUDECODE 2>/dev/null || true
 claude --print "$SCAN_PROMPT" \
   --allowedTools "Read,Glob,Grep,Bash,Write,Agent" \
-  --add-dir "$TARGET_REPO"
+  --add-dir "$TARGET_REPO" && _EXIT_CODE=0 || _EXIT_CODE=$?
+job_finish "ada" "$_EXIT_CODE"
+[ "$_EXIT_CODE" -ne 0 ] && exit "$_EXIT_CODE"
 
 echo ""
 echo "Audit complete. Results in: $RESULTS_DIR/"
@@ -109,7 +113,7 @@ echo "Audit complete. Results in: $RESULTS_DIR/"
 
 if [ "$SYNC_TO_S3" = true ]; then
   echo "Syncing results to S3..."
-  bash "$SCRIPT_DIR/../scripts/sync-dashboard.sh" 2>/dev/null || echo "Warning: S3 sync failed"
+  bash "$SCRIPT_DIR/../scripts/quick-sync.sh" ada "$REPO_NAME" 2>/dev/null || echo "Warning: S3 sync failed"
 fi
 
 echo ""

@@ -134,7 +134,7 @@ fi
 
 if [ "$SYNC_TO_S3" = true ]; then
   echo "Syncing results to S3..."
-  bash "$SCRIPT_DIR/../scripts/sync-dashboard.sh" 2>/dev/null || echo "Warning: S3 sync failed"
+  bash "$SCRIPT_DIR/../scripts/quick-sync.sh" qa "$REPO_NAME" 2>/dev/null || echo "Warning: S3 sync failed"
 fi
 
 echo ""

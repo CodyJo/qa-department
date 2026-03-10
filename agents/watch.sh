@@ -75,7 +75,7 @@ print(f\"{s['total']} findings: {s['critical']} critical, {s['high']} high, {s['
 
       # Sync dashboard
       if [ "$SYNC" = true ]; then
-        bash "$QA_ROOT/scripts/sync-dashboard.sh" 2>/dev/null || true
+        bash "$QA_ROOT/scripts/quick-sync.sh" all "$REPO_NAME" 2>/dev/null || true
       fi
     fi
   fi

@@ -1,24 +1,25 @@
 #!/usr/bin/env bash
-# Back Office — Scan Agent
-# Usage: ./agents/qa-scan.sh /path/to/target-repo [--sync]
+# Back Office — Monetization Strategy Agent
+# Usage: ./agents/monetization-audit.sh /path/to/target-repo [--sync]
 #
-# Launches a Claude Code session that scans the target repository
-# for bugs, security issues, and performance problems.
+# Launches a Claude Code session that audits the target repository
+# for revenue opportunities, ad placement potential, premium feature
+# upsells, and other monetization strategies.
 #
 # Options:
-#   --sync    Sync results to S3 after scan completes
+#   --sync    Sync results to S3 after audit completes
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 QA_ROOT="$(dirname "$SCRIPT_DIR")"
 source "$QA_ROOT/scripts/job-status.sh"
-PROMPT_FILE="$SCRIPT_DIR/prompts/qa-scan.md"
+PROMPT_FILE="$SCRIPT_DIR/prompts/monetization-audit.md"
 CONFIG_FILE="$QA_ROOT/config/qa-config.yaml"
 
 # ── Args ─────────────────────────────────────────────────────────────────────
 
-TARGET_REPO="${1:?Usage: qa-scan.sh /path/to/target-repo [--sync]}"
+TARGET_REPO="${1:?Usage: monetization-audit.sh /path/to/target-repo [--sync]}"
 SYNC_TO_S3=false
 
 for arg in "$@"; do
@@ -38,7 +39,7 @@ RESULTS_DIR="$QA_ROOT/results/$REPO_NAME"
 mkdir -p "$RESULTS_DIR"
 
 echo "╔══════════════════════════════════════════════════════════╗"
-echo "║  Back Office — Scanning: $REPO_NAME"
+echo "║  Back Office — Monetization Audit: $REPO_NAME"
 echo "╚══════════════════════════════════════════════════════════╝"
 echo ""
 echo "  Target:  $TARGET_REPO"
@@ -46,22 +47,17 @@ echo "  Results: $RESULTS_DIR"
 echo "  Time:    $(date -Iseconds)"
 echo ""
 
-# ── Read config for lint/test commands ────────────────────────────────────────
+# ── Read config for target-specific settings ─────────────────────────────────
 
-LINT_CMD=""
-TEST_CMD=""
 CONTEXT=""
 
 if command -v python3 &>/dev/null && [ -f "$QA_ROOT/config/targets.yaml" ]; then
-  # Extract target-specific config using python
   eval "$(python3 -c "
 import yaml, sys
 with open('$QA_ROOT/config/targets.yaml') as f:
     cfg = yaml.safe_load(f)
 for t in cfg.get('targets', []):
     if t['name'] == '$REPO_NAME' or t.get('path','') == '$TARGET_REPO':
-        print(f'LINT_CMD={repr(t.get(\"lint_command\",\"\"))}')
-        print(f'TEST_CMD={repr(t.get(\"test_command\",\"\"))}')
         print(f'CONTEXT={repr(t.get(\"context\",\"\"))}')
         break
 " 2>/dev/null || true)"
@@ -79,11 +75,6 @@ SCAN_PROMPT="$(cat "$PROMPT_FILE")
 - **Name:** $REPO_NAME
 - **Results directory:** $RESULTS_DIR
 
-## Commands
-
-- **Lint:** ${LINT_CMD:-"(auto-detect from project config)"}
-- **Test:** ${TEST_CMD:-"(auto-detect from project config)"}
-
 ## Additional Context
 
 ${CONTEXT:-"No additional context provided. Read the project's README and CLAUDE.md for context."}
@@ -91,36 +82,39 @@ ${CONTEXT:-"No additional context provided. Read the project's README and CLAUDE
 ## Instructions
 
 1. cd to $TARGET_REPO
-2. Read the project structure and understand the codebase
-3. Run linter and tests, capture output
-4. Perform security audit, input validation check, performance review, and code quality review
-5. Write all findings to: $RESULTS_DIR/findings.json
-6. Write a human-readable summary to: $RESULTS_DIR/scan-summary.md
-7. Generate dashboard data: $RESULTS_DIR/dashboard.json
+2. Read the project structure — identify the business model, target audience, tech stack, and existing revenue streams
+3. Map all public-facing pages, user flows, and content surfaces
+4. Perform the full monetization audit across all 7 categories
+5. Research competitive pricing and revenue benchmarks for the niche
+6. Consider cross-department input (QA stability, SEO alignment, ADA compliance, regulatory requirements)
+7. Calculate category scores and overall monetization readiness score
+8. Build a phased project plan with specific actionable items
+9. Write all findings to: $RESULTS_DIR/monetization-findings.json
+10. Write a human-readable strategy document to: $RESULTS_DIR/monetization-strategy.md (include executive summary, opportunity matrix, project plan with timelines, and risk assessment)
 
-Start the scan now."
+Start the monetization audit now."
 
 # ── Launch Claude Code ───────────────────────────────────────────────────────
 
-echo "Launching Claude Code scan agent..."
+echo "Launching Claude Code monetization strategy agent..."
 echo ""
 
-job_start "qa"
+job_start "monetization"
 unset CLAUDECODE 2>/dev/null || true
 claude --print "$SCAN_PROMPT" \
-  --allowedTools "Read,Glob,Grep,Bash,Write,Agent" \
+  --allowedTools "Read,Glob,Grep,Bash,Write,Agent,WebSearch,WebFetch" \
   --add-dir "$TARGET_REPO" && _EXIT_CODE=0 || _EXIT_CODE=$?
-job_finish "qa" "$_EXIT_CODE"
+job_finish "monetization" "$_EXIT_CODE"
 [ "$_EXIT_CODE" -ne 0 ] && exit "$_EXIT_CODE"
 
 echo ""
-echo "Scan complete. Results in: $RESULTS_DIR/"
+echo "Monetization audit complete. Results in: $RESULTS_DIR/"
 
 # ── Sync to S3 if requested ─────────────────────────────────────────────────
 
 if [ "$SYNC_TO_S3" = true ]; then
   echo "Syncing results to S3..."
-  bash "$SCRIPT_DIR/../scripts/quick-sync.sh" qa "$REPO_NAME" 2>/dev/null || echo "Warning: S3 sync failed"
+  bash "$SCRIPT_DIR/../scripts/quick-sync.sh" monetization "$REPO_NAME" 2>/dev/null || echo "Warning: S3 sync failed"
 fi
 
 echo ""
