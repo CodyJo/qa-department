@@ -15,6 +15,61 @@ def load_json(path):
         return None
 
 
+def count_severities(findings):
+    counts = {"critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0}
+    for finding in findings:
+        severity = finding.get("severity", "info")
+        if severity not in counts:
+            severity = "info"
+        counts[severity] += 1
+    return counts
+
+
+def normalize_precalculated_summary(data, findings, department_name):
+    raw_summary = data.get("summary")
+    summary = dict(raw_summary) if isinstance(raw_summary, dict) else {}
+    counts = count_severities(findings)
+
+    # Trust the actual findings payload over stale summary totals.
+    summary["total"] = len(findings)
+    for key, value in counts.items():
+        summary[key] = value
+
+    score_map = {
+        "seo": ("seo_score", [data.get("overall_score")]),
+        "monetization": (
+            "monetization_readiness_score",
+            [
+                data.get("overall_score"),
+                (data.get("scores") or {}).get("monetizationReadiness"),
+                (data.get("scores") or {}).get("monetization_readiness"),
+            ],
+        ),
+        "product": (
+            "product_readiness_score",
+            [
+                data.get("overall_score"),
+                (data.get("scores") or {}).get("productReadiness"),
+                (data.get("scores") or {}).get("product_readiness"),
+            ],
+        ),
+    }
+    score_key, candidates = score_map.get(department_name, (None, []))
+    if score_key:
+        if score_key in summary:
+            candidates.insert(0, summary[score_key])
+        for candidate in candidates:
+            if isinstance(candidate, (int, float)):
+                summary[score_key] = candidate
+                break
+
+    scanned_at = data.get("scanned_at") or data.get("timestamp")
+    if scanned_at and "scanned_at" not in summary:
+        summary["scanned_at"] = scanned_at
+
+    return summary
+
+
 def aggregate_qa(results_dir, dashboard_dir):
     """Aggregate QA findings into qa-data.json (original behavior)."""
     repos = []
@@ -65,11 +120,12 @@ def aggregate_qa(results_dir, dashboard_dir):
         in_progress = sum(1 for e in enriched if e["status"] == "in-progress")
 
         totals["critical"] += summary.get("critical", 0)
-        totals["high"] += summary.get("high", 0)
-        totals["medium"] += summary.get("medium", 0)
-        totals["low"] += summary.get("low", 0)
+        totals["high"] += summary.get("high", summary.get("high_value", 0))
+        totals["medium"] += summary.get("medium", summary.get("medium_value", 0))
+        totals["low"] += summary.get("low", summary.get("low_value", 0))
         totals["info"] += summary.get("info", 0)
-        totals["total_findings"] += summary.get("total", 0)
+        totals["total_findings"] += summary.get("total",
+            summary.get("total_opportunities", len(findings)))
         totals["total_fixed"] += fixed
         totals["total_failed"] += failed
         totals["total_skipped"] += skipped
@@ -112,15 +168,16 @@ def aggregate_department(results_dir, findings_filename, department_name):
         if not data:
             continue
 
-        summary = data.get("summary", {})
         findings = data.get("findings", [])
+        summary = normalize_precalculated_summary(data, findings, department_name)
 
         totals["critical"] += summary.get("critical", 0)
-        totals["high"] += summary.get("high", 0)
-        totals["medium"] += summary.get("medium", 0)
-        totals["low"] += summary.get("low", 0)
+        totals["high"] += summary.get("high", summary.get("high_value", 0))
+        totals["medium"] += summary.get("medium", summary.get("medium_value", 0))
+        totals["low"] += summary.get("low", summary.get("low_value", 0))
         totals["info"] += summary.get("info", 0)
-        totals["total_findings"] += summary.get("total", 0)
+        totals["total_findings"] += summary.get("total",
+            summary.get("total_opportunities", len(findings)))
 
         repo_entry = {
             "name": repo_name,
@@ -128,14 +185,17 @@ def aggregate_department(results_dir, findings_filename, department_name):
             "summary": summary,
             "findings": [{
                 "id": f["id"],
-                "severity": f["severity"],
+                "severity": f.get("severity", f.get("value", "medium")),
                 "category": f["category"],
                 "title": f["title"],
-                "file": f.get("file", ""),
+                "file": f.get("file") or f.get("location", ""),
                 "line": f.get("line"),
-                "effort": f.get("effort", "unknown"),
+                "effort": f.get("effort", f.get("implementation_effort", "unknown")),
                 "fixable": f.get("fixable_by_agent", False),
                 "status": "open",
+                # Monetization-specific fields (if present)
+                **({"revenue_estimate": f["revenue_estimate"], "phase": f["phase"]}
+                   if "revenue_estimate" in f else {}),
             } for f in findings],
         }
 
@@ -150,6 +210,12 @@ def aggregate_department(results_dir, findings_filename, department_name):
             repo_entry["compliance_score"] = summary["compliance_score"]
         if "wcag_level" in summary:
             repo_entry["wcag_level"] = summary["wcag_level"]
+        if isinstance(data.get("summary"), str):
+            repo_entry["summary_text"] = data["summary"]
+        if isinstance(data.get("scores"), dict):
+            repo_entry["scores"] = data["scores"]
+        if isinstance(data.get("scoring_breakdown"), dict):
+            repo_entry["scoring_breakdown"] = data["scoring_breakdown"]
 
         repos.append(repo_entry)
 
@@ -195,9 +261,22 @@ def aggregate(results_dir, output_path):
     print(f"Compliance: {comp_data['totals']['total_findings']} findings across "
           f"{len(comp_data['repos'])} repos")
 
+    # Monetization department
+    mon_data = aggregate_department(results_dir, "monetization-findings.json", "monetization")
+    write_json(mon_data, os.path.join(dashboard_dir, "monetization-data.json"))
+    print(f"Monetization: {mon_data['totals']['total_findings']} findings across "
+          f"{len(mon_data['repos'])} repos")
+
+    # Product department
+    prod_data = aggregate_department(results_dir, "product-findings.json", "product")
+    write_json(prod_data, os.path.join(dashboard_dir, "product-data.json"))
+    print(f"Product: {prod_data['totals']['total_findings']} findings across "
+          f"{len(prod_data['repos'])} repos")
+
     # Summary
     total = (qa_data["totals"]["total_findings"] + seo_data["totals"]["total_findings"] +
-             ada_data["totals"]["total_findings"] + comp_data["totals"]["total_findings"])
+             ada_data["totals"]["total_findings"] + comp_data["totals"]["total_findings"] +
+             mon_data["totals"]["total_findings"] + prod_data["totals"]["total_findings"])
     print(f"\nTotal across all departments: {total} findings")
 
 

@@ -1,0 +1,780 @@
+{
+  "department": "seo",
+  "generated_at": "2026-03-10T21:25:32.289840+00:00",
+  "totals": {
+    "critical": 3,
+    "high": 7,
+    "medium": 25,
+    "low": 15,
+    "info": 9,
+    "total_findings": 59
+  },
+  "repos": [
+    {
+      "name": "codyjo.com",
+      "scanned_at": "2026-03-10T17:56:18.873800+00:00",
+      "summary": {
+        "total": 23,
+        "critical": 0,
+        "high": 1,
+        "medium": 8,
+        "low": 9,
+        "info": 5,
+        "seo_score": 87,
+        "scanned_at": "2026-03-10T17:56:18.873800+00:00"
+      },
+      "findings": [
+        {
+          "id": "SEO-001",
+          "severity": "medium",
+          "category": "technical-seo",
+          "title": "Blog post page titles can exceed 60 characters",
+          "file": "src/pages/blog/[id].astro",
+          "line": 18,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-002",
+          "severity": "medium",
+          "category": "technical-seo",
+          "title": "Missing BreadcrumbList structured data on sub-pages",
+          "file": "src/layouts/Base.astro",
+          "line": 27,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-003",
+          "severity": "low",
+          "category": "technical-seo",
+          "title": "demo.html canonical URL mismatches og:url",
+          "file": "public/demo.html",
+          "line": 13,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-004",
+          "severity": "low",
+          "category": "technical-seo",
+          "title": "Article schema missing dateModified",
+          "file": "src/pages/blog/[id].astro",
+          "line": 21,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-005",
+          "severity": "low",
+          "category": "technical-seo",
+          "title": "Missing og:image:width and og:image:height meta tags",
+          "file": "src/layouts/Base.astro",
+          "line": 67,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-006",
+          "severity": "low",
+          "category": "technical-seo",
+          "title": "Missing Apple touch icon",
+          "file": "src/layouts/Base.astro",
+          "line": 50,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "SEO-007",
+          "severity": "low",
+          "category": "technical-seo",
+          "title": "Blog index title slightly exceeds 60 characters",
+          "file": "src/pages/blog/index.astro",
+          "line": 12,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-008",
+          "severity": "medium",
+          "category": "ai-optimization",
+          "title": "Missing FAQPage schema on features comparison content",
+          "file": "src/pages/features.astro",
+          "line": 162,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-009",
+          "severity": "medium",
+          "category": "ai-optimization",
+          "title": "No dedicated author/about page for E-E-A-T signals",
+          "file": "src/pages/index.astro",
+          "line": 82,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "SEO-010",
+          "severity": "info",
+          "category": "ai-optimization",
+          "title": "No IndexNow integration for rapid content discovery",
+          "file": "astro.config.mjs",
+          "line": 5,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "SEO-011",
+          "severity": "info",
+          "category": "ai-optimization",
+          "title": "Missing speakable schema for voice search optimization",
+          "file": "src/layouts/Base.astro",
+          "line": 78,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-012",
+          "severity": "info",
+          "category": "ai-optimization",
+          "title": "Minimal blog content limits AI entity establishment",
+          "file": "src/content/blog/hello-world.md",
+          "line": 1,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "SEO-013",
+          "severity": "info",
+          "category": "ai-optimization",
+          "title": "No about/mentions schema for entity relationships",
+          "file": "src/pages/index.astro",
+          "line": 5,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-014",
+          "severity": "medium",
+          "category": "content-seo",
+          "title": "demo.html outside Astro build pipeline uses Google Fonts CDN",
+          "file": "public/demo.html",
+          "line": 28,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-015",
+          "severity": "medium",
+          "category": "content-seo",
+          "title": "Privacy policy incorrectly lists Google Fonts as a third-party service",
+          "file": "src/pages/privacy.astro",
+          "line": 109,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-016",
+          "severity": "low",
+          "category": "content-seo",
+          "title": "Footer navigation lacks semantic <nav> element",
+          "file": "src/components/Footer.astro",
+          "line": 12,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-017",
+          "severity": "low",
+          "category": "content-seo",
+          "title": "Gallery strip has 12 duplicate image alt texts due to animation looping",
+          "file": "src/pages/index.astro",
+          "line": 280,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-018",
+          "severity": "high",
+          "category": "performance-seo",
+          "title": "All 17 font files served as TTF instead of WOFF2",
+          "file": "src/styles/fonts.css",
+          "line": 4,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-019",
+          "severity": "medium",
+          "category": "performance-seo",
+          "title": "No font preloading for critical above-the-fold fonts",
+          "file": "src/layouts/Base.astro",
+          "line": 59,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-020",
+          "severity": "medium",
+          "category": "performance-seo",
+          "title": "Images lack srcset/sizes for responsive delivery",
+          "file": "src/pages/index.astro",
+          "line": 274,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-021",
+          "severity": "low",
+          "category": "performance-seo",
+          "title": "Nav scroll listener lacks explicit passive flag",
+          "file": "src/components/Nav.astro",
+          "line": 191,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-022",
+          "severity": "info",
+          "category": "performance-seo",
+          "title": "Film grain SVG overlay applied to entire viewport may affect mobile performance",
+          "file": "src/styles/global.css",
+          "line": 70,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-023",
+          "severity": "low",
+          "category": "social-meta",
+          "title": "Missing og:image:alt meta tag",
+          "file": "src/layouts/Base.astro",
+          "line": 67,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        }
+      ],
+      "categories": {
+        "technical_seo": {
+          "score": 82,
+          "issues": 7
+        },
+        "ai_optimization": {
+          "score": 92,
+          "issues": 5
+        },
+        "content_seo": {
+          "score": 88,
+          "issues": 4
+        },
+        "performance_seo": {
+          "score": 82,
+          "issues": 5
+        },
+        "social_meta": {
+          "score": 98,
+          "issues": 1
+        }
+      },
+      "seo_score": 87
+    },
+    {
+      "name": "photo-gallery",
+      "scanned_at": "2026-03-09T17:30:00Z",
+      "summary": {
+        "total": 21,
+        "critical": 2,
+        "high": 5,
+        "medium": 11,
+        "low": 2,
+        "info": 1,
+        "seo_score": 68,
+        "scanned_at": "2026-03-09T17:30:00Z"
+      },
+      "findings": [
+        {
+          "id": "SEO-001",
+          "severity": "critical",
+          "category": "technical-seo",
+          "title": "No robots.txt file",
+          "file": "frontend/",
+          "line": null,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-002",
+          "severity": "critical",
+          "category": "technical-seo",
+          "title": "No sitemap.xml file",
+          "file": "frontend/",
+          "line": null,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-003",
+          "severity": "high",
+          "category": "technical-seo",
+          "title": "Missing canonical URL on gallery.html",
+          "file": "frontend/gallery.html",
+          "line": 1,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-004",
+          "severity": "high",
+          "category": "technical-seo",
+          "title": "SPA gallery content not crawlable",
+          "file": "frontend/gallery.html",
+          "line": 1182,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "SEO-005",
+          "severity": "high",
+          "category": "technical-seo",
+          "title": "Missing og:url meta tag on gallery.html",
+          "file": "frontend/gallery.html",
+          "line": 8,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-006",
+          "severity": "high",
+          "category": "technical-seo",
+          "title": "Multiple H1 tags in gallery.html DOM",
+          "file": "frontend/gallery.html",
+          "line": 971,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-007",
+          "severity": "medium",
+          "category": "technical-seo",
+          "title": "No structured data / Schema.org markup",
+          "file": "frontend/gallery.html",
+          "line": 1,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-008",
+          "severity": "medium",
+          "category": "ai-optimization",
+          "title": "No semantic HTML for main gallery content",
+          "file": "frontend/gallery.html",
+          "line": 967,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-009",
+          "severity": "medium",
+          "category": "ai-optimization",
+          "title": "Gallery content invisible to AI search extractors",
+          "file": "frontend/gallery.html",
+          "line": 1222,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "SEO-010",
+          "severity": "medium",
+          "category": "ai-optimization",
+          "title": "No FAQ or HowTo schema on demo.html",
+          "file": "frontend/demo.html",
+          "line": 640,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-011",
+          "severity": "info",
+          "category": "ai-optimization",
+          "title": "No IndexNow integration for rapid content indexing",
+          "file": "scripts/deploy.sh",
+          "line": null,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "SEO-012",
+          "severity": "medium",
+          "category": "content-seo",
+          "title": "Cover hero image has generic alt text",
+          "file": "frontend/gallery.html",
+          "line": 1026,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-013",
+          "severity": "medium",
+          "category": "content-seo",
+          "title": "Lightbox image has empty alt text",
+          "file": "frontend/gallery.html",
+          "line": 1100,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-014",
+          "severity": "low",
+          "category": "content-seo",
+          "title": "Gallery-of-galleries grid uses lazy-loaded images without noscript fallback",
+          "file": "frontend/gallery.html",
+          "line": 1254,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "SEO-015",
+          "severity": "medium",
+          "category": "performance-seo",
+          "title": "Cover hero image missing width and height attributes (CLS)",
+          "file": "frontend/gallery.html",
+          "line": 1026,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-016",
+          "severity": "medium",
+          "category": "performance-seo",
+          "title": "Lightbox image missing width and height attributes (CLS)",
+          "file": "frontend/gallery.html",
+          "line": 1100,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-017",
+          "severity": "medium",
+          "category": "performance-seo",
+          "title": "No fetchpriority=\"high\" on LCP hero image",
+          "file": "frontend/gallery.html",
+          "line": 1026,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-018",
+          "severity": "low",
+          "category": "performance-seo",
+          "title": "Render-blocking Google Fonts stylesheet",
+          "file": "frontend/gallery.html",
+          "line": 16,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-019",
+          "severity": "high",
+          "category": "social-meta",
+          "title": "gallery.html missing og:image in initial HTML",
+          "file": "frontend/gallery.html",
+          "line": 1770,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-020",
+          "severity": "medium",
+          "category": "social-meta",
+          "title": "gallery.html uses twitter:card 'summary' instead of 'summary_large_image'",
+          "file": "frontend/gallery.html",
+          "line": 12,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-021",
+          "severity": "medium",
+          "category": "social-meta",
+          "title": "gallery.html missing twitter:image in initial HTML",
+          "file": "frontend/gallery.html",
+          "line": 1773,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        }
+      ],
+      "categories": {
+        "technical_seo": {
+          "score": 38,
+          "issues": 7
+        },
+        "ai_optimization": {
+          "score": 76,
+          "issues": 4
+        },
+        "content_seo": {
+          "score": 82,
+          "issues": 3
+        },
+        "performance_seo": {
+          "score": 86,
+          "issues": 4
+        },
+        "social_meta": {
+          "score": 82,
+          "issues": 3
+        }
+      },
+      "seo_score": 68
+    },
+    {
+      "name": "thenewbeautifulme",
+      "scanned_at": "2026-03-10T18:00:00Z",
+      "summary": {
+        "total": 15,
+        "critical": 1,
+        "high": 1,
+        "medium": 6,
+        "low": 4,
+        "info": 3,
+        "seo_score": 89,
+        "scanned_at": "2026-03-10T18:00:00Z"
+      },
+      "findings": [
+        {
+          "id": "SEO-001",
+          "severity": "critical",
+          "category": "social-meta",
+          "title": "No OG/Twitter preview image defined on any page",
+          "file": "src/app/layout.tsx",
+          "line": 31,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "SEO-002",
+          "severity": "high",
+          "category": "social-meta",
+          "title": "og:url on all sub-pages resolves to the homepage URL",
+          "file": "src/app/layout.tsx",
+          "line": 36,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-003",
+          "severity": "medium",
+          "category": "social-meta",
+          "title": "Privacy page has no OpenGraph metadata",
+          "file": "src/app/privacy/page.tsx",
+          "line": 3,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-004",
+          "severity": "medium",
+          "category": "technical-seo",
+          "title": "Missing BreadcrumbList structured data on 5 of 10 public pages",
+          "file": "src/app/history/layout.tsx",
+          "line": 13,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-005",
+          "severity": "medium",
+          "category": "ai-optimization",
+          "title": "Insufficient semantic HTML \u2014 generic divs where article/section would be better",
+          "file": "src/app/library/page.tsx",
+          "line": 345,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-006",
+          "severity": "medium",
+          "category": "ai-optimization",
+          "title": "No E-E-A-T signals or author attribution anywhere on the site",
+          "file": "src/app/layout.tsx",
+          "line": 83,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "SEO-007",
+          "severity": "low",
+          "category": "technical-seo",
+          "title": "Static sitemap with identical lastmod dates across all URLs",
+          "file": "public/sitemap.xml",
+          "line": 3,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-008",
+          "severity": "low",
+          "category": "ai-optimization",
+          "title": "Dates displayed without semantic <time> elements",
+          "file": "src/app/history/page.tsx",
+          "line": 361,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-009",
+          "severity": "low",
+          "category": "ai-optimization",
+          "title": "Learn page content lacks datePublished/dateModified schema",
+          "file": "src/app/learn/layout.tsx",
+          "line": 5,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-010",
+          "severity": "low",
+          "category": "content-seo",
+          "title": "Homepage primary CTA not rendered in initial static HTML",
+          "file": "src/app/page.tsx",
+          "line": 47,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-011",
+          "severity": "medium",
+          "category": "content-seo",
+          "title": "Authenticated pages render empty/loading state for search engine crawlers",
+          "file": "src/components/AuthGuard.tsx",
+          "line": 1,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "SEO-012",
+          "severity": "medium",
+          "category": "performance-seo",
+          "title": "Framer Motion animation library loaded on every page adds significant JS weight",
+          "file": "src/app/learn/page.tsx",
+          "line": 4,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "SEO-013",
+          "severity": "info",
+          "category": "ai-optimization",
+          "title": "Missing about/mentions schema for topical authority with Wikidata entities",
+          "file": "src/app/layout.tsx",
+          "line": 61,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-014",
+          "severity": "info",
+          "category": "ai-optimization",
+          "title": "No Speakable schema for voice assistant optimization on learn page",
+          "file": "src/app/learn/layout.tsx",
+          "line": 14,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "SEO-015",
+          "severity": "info",
+          "category": "ai-optimization",
+          "title": "No IndexNow integration for instant search engine notification",
+          "file": "public/robots.txt",
+          "line": 1,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        }
+      ],
+      "categories": {
+        "technical_seo": {
+          "score": 96,
+          "issues": 2
+        },
+        "ai_optimization": {
+          "score": 85,
+          "issues": 6
+        },
+        "content_seo": {
+          "score": 94,
+          "issues": 2
+        },
+        "performance_seo": {
+          "score": 96,
+          "issues": 1
+        },
+        "social_meta": {
+          "score": 65,
+          "issues": 4
+        }
+      },
+      "seo_score": 89
+    }
+  ]
+}

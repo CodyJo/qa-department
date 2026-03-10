@@ -1,0 +1,762 @@
+{
+  "department": "ada",
+  "generated_at": "2026-03-10T21:25:32.290746+00:00",
+  "totals": {
+    "critical": 3,
+    "high": 10,
+    "medium": 23,
+    "low": 14,
+    "info": 10,
+    "total_findings": 60
+  },
+  "repos": [
+    {
+      "name": "codyjo.com",
+      "scanned_at": "2026-03-10T17:59:55.600747+00:00",
+      "summary": {
+        "total": 14,
+        "critical": 0,
+        "high": 1,
+        "medium": 6,
+        "low": 4,
+        "info": 3,
+        "wcag_level": "AA",
+        "compliance_score": 70,
+        "scanned_at": "2026-03-10T17:59:55.600747+00:00"
+      },
+      "findings": [
+        {
+          "id": "ADA-001",
+          "severity": "high",
+          "category": "operable",
+          "title": "demo.html mobile nav overlay missing keyboard dismissal and focus management",
+          "file": "public/demo.html",
+          "line": 676,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-002",
+          "severity": "medium",
+          "category": "operable",
+          "title": "demo.html missing skip navigation link",
+          "file": "public/demo.html",
+          "line": 626,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-003",
+          "severity": "medium",
+          "category": "perceivable",
+          "title": "Form input borders have insufficient non-text contrast",
+          "file": "src/pages/index.astro",
+          "line": 1166,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-004",
+          "severity": "medium",
+          "category": "perceivable",
+          "title": "Links in privacy page and footer distinguished only by color",
+          "file": "src/pages/privacy.astro",
+          "line": 211,
+          "effort": "tiny",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "ADA-005",
+          "severity": "medium",
+          "category": "operable",
+          "title": "demo.html mobile navigation toggle has insufficient touch target size",
+          "file": "public/demo.html",
+          "line": 664,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-006",
+          "severity": "medium",
+          "category": "understandable",
+          "title": "demo.html field validation errors not programmatically associated with inputs",
+          "file": "public/demo.html",
+          "line": 793,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-007",
+          "severity": "medium",
+          "category": "understandable",
+          "title": "demo.html email input missing required attribute for assistive technology",
+          "file": "public/demo.html",
+          "line": 793,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-008",
+          "severity": "low",
+          "category": "operable",
+          "title": "Generic 'Learn More' link text on homepage hero",
+          "file": "src/pages/index.astro",
+          "line": 71,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-009",
+          "severity": "low",
+          "category": "operable",
+          "title": "Footer and mobile nav link touch targets may be under 44x44px",
+          "file": "src/components/Footer.astro",
+          "line": 92,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-010",
+          "severity": "low",
+          "category": "robust",
+          "title": "Duplicated gallery images announced twice to screen readers",
+          "file": "src/pages/index.astro",
+          "line": 281,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-011",
+          "severity": "low",
+          "category": "perceivable",
+          "title": "Footer heading hierarchy skips levels on some pages",
+          "file": "src/components/Footer.astro",
+          "line": 14,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-012",
+          "severity": "info",
+          "category": "robust",
+          "title": "Navigation landmark could benefit from aria-label for clarity",
+          "file": "src/components/Nav.astro",
+          "line": 17,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-013",
+          "severity": "info",
+          "category": "perceivable",
+          "title": "ChromaHaus color strip swatches are empty elements without ARIA hiding",
+          "file": "src/pages/index.astro",
+          "line": 234,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-014",
+          "severity": "info",
+          "category": "perceivable",
+          "title": "Enhanced contrast (AAA) could improve readability for secondary text",
+          "file": "src/styles/global.css",
+          "line": 17,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        }
+      ],
+      "categories": {
+        "perceivable": {
+          "score": 93,
+          "issues": 4
+        },
+        "operable": {
+          "score": 84,
+          "issues": 5
+        },
+        "understandable": {
+          "score": 94,
+          "issues": 2
+        },
+        "robust": {
+          "score": 99,
+          "issues": 1
+        }
+      },
+      "compliance_score": 70,
+      "wcag_level": "AA"
+    },
+    {
+      "name": "photo-gallery",
+      "scanned_at": "2026-03-09T12:00:00Z",
+      "summary": {
+        "total": 32,
+        "critical": 3,
+        "high": 8,
+        "medium": 10,
+        "low": 6,
+        "info": 5,
+        "wcag_level": "non-compliant",
+        "compliance_score": 26,
+        "scanned_at": "2026-03-09T12:00:00Z"
+      },
+      "findings": [
+        {
+          "id": "ADA-001",
+          "severity": "critical",
+          "category": "operable",
+          "title": "No skip navigation link on any page",
+          "file": "frontend/gallery.html",
+          "line": 888,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-002",
+          "severity": "critical",
+          "category": "operable",
+          "title": "Focus outlines removed without replacement across all pages",
+          "file": "frontend/gallery.html",
+          "line": 164,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-003",
+          "severity": "critical",
+          "category": "perceivable",
+          "title": "Insufficient color contrast on muted/secondary text across all pages",
+          "file": "frontend/demo.html",
+          "line": 35,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "ADA-004",
+          "severity": "high",
+          "category": "perceivable",
+          "title": "Lightbox image has empty alt text",
+          "file": "frontend/gallery.html",
+          "line": 1100,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-005",
+          "severity": "high",
+          "category": "perceivable",
+          "title": "Editor preview images have empty alt text in admin.html",
+          "file": "frontend/admin.html",
+          "line": 2114,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-006",
+          "severity": "high",
+          "category": "operable",
+          "title": "No prefers-reduced-motion support for any animation",
+          "file": "frontend/gallery.html",
+          "line": 112,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-007",
+          "severity": "high",
+          "category": "operable",
+          "title": "Gallery photo items in gallery.html are clickable divs without keyboard support in admin overlay mode",
+          "file": "frontend/gallery.html",
+          "line": 639,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-008",
+          "severity": "high",
+          "category": "robust",
+          "title": "Download modal missing ARIA dialog attributes",
+          "file": "frontend/gallery.html",
+          "line": 1060,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-009",
+          "severity": "high",
+          "category": "robust",
+          "title": "Bug report overlay missing ARIA dialog attributes",
+          "file": "frontend/gallery.html",
+          "line": 2435,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-010",
+          "severity": "high",
+          "category": "operable",
+          "title": "No focus trap in lightbox or download modal in gallery.html",
+          "file": "frontend/gallery.html",
+          "line": 1097,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-011",
+          "severity": "high",
+          "category": "robust",
+          "title": "No aria-live regions for dynamic status messages in gallery.html",
+          "file": "frontend/gallery.html",
+          "line": 1004,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-012",
+          "severity": "medium",
+          "category": "perceivable",
+          "title": "Gallery cover image has generic alt text",
+          "file": "frontend/gallery.html",
+          "line": 1026,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-013",
+          "severity": "medium",
+          "category": "perceivable",
+          "title": "Photo alt text uses raw filenames instead of descriptive text",
+          "file": "frontend/gallery.html",
+          "line": 1844,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "ADA-014",
+          "severity": "medium",
+          "category": "operable",
+          "title": "Lightbox does not manage focus on open/close",
+          "file": "frontend/gallery.html",
+          "line": 1097,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-015",
+          "severity": "medium",
+          "category": "understandable",
+          "title": "Form inputs use only placeholder as label in gallery.html gate screens",
+          "file": "frontend/gallery.html",
+          "line": 990,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-016",
+          "severity": "medium",
+          "category": "understandable",
+          "title": "Comment form inputs in lightbox have no labels",
+          "file": "frontend/gallery.html",
+          "line": 1119,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-017",
+          "severity": "medium",
+          "category": "robust",
+          "title": "Gallery cards rendered as div with role='button' should be links",
+          "file": "frontend/gallery.html",
+          "line": 1258,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-018",
+          "severity": "medium",
+          "category": "understandable",
+          "title": "Demo form error identified only by color (red border) and small text",
+          "file": "frontend/demo.html",
+          "line": 332,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-019",
+          "severity": "medium",
+          "category": "perceivable",
+          "title": "Missing <main> landmark on gallery.html, demo.html, and next-steps.html",
+          "file": "frontend/gallery.html",
+          "line": 885,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-020",
+          "severity": "medium",
+          "category": "understandable",
+          "title": "Error messages in gallery.html not associated with inputs via aria-describedby",
+          "file": "frontend/gallery.html",
+          "line": 1015,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-021",
+          "severity": "medium",
+          "category": "perceivable",
+          "title": "Missing autocomplete attributes on personal data inputs in admin.html create gallery form",
+          "file": "frontend/admin.html",
+          "line": 1834,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-022",
+          "severity": "low",
+          "category": "perceivable",
+          "title": "Some text uses very small fixed rem sizes",
+          "file": "frontend/admin.html",
+          "line": 262,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "ADA-023",
+          "severity": "low",
+          "category": "operable",
+          "title": "Lightbox close button uses visual-only label character",
+          "file": "frontend/gallery.html",
+          "line": 1110,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-024",
+          "severity": "low",
+          "category": "understandable",
+          "title": "Gallery sort select auto-triggers page update without warning",
+          "file": "frontend/admin.html",
+          "line": 1513,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-025",
+          "severity": "low",
+          "category": "perceivable",
+          "title": "Form input borders may have insufficient contrast against background",
+          "file": "frontend/demo.html",
+          "line": 309,
+          "effort": "tiny",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "ADA-026",
+          "severity": "low",
+          "category": "understandable",
+          "title": "Required fields not indicated on demo.html form",
+          "file": "frontend/demo.html",
+          "line": 730,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-027",
+          "severity": "low",
+          "category": "perceivable",
+          "title": "No consideration for user text spacing overrides",
+          "file": "frontend/admin.html",
+          "line": 542,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "ADA-028",
+          "severity": "info",
+          "category": "perceivable",
+          "title": "Enhanced contrast (AAA) not met for primary text",
+          "file": "frontend/gallery.html",
+          "line": 23,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "ADA-029",
+          "severity": "info",
+          "category": "operable",
+          "title": "No breadcrumb navigation on gallery pages",
+          "file": "frontend/gallery.html",
+          "line": 1029,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-030",
+          "severity": "info",
+          "category": "perceivable",
+          "title": "Line lengths exceed 80 characters in some content areas",
+          "file": "frontend/next-steps.html",
+          "line": 68,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-031",
+          "severity": "info",
+          "category": "understandable",
+          "title": "Technical jargon used without definitions",
+          "file": "frontend/demo.html",
+          "line": 644,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "ADA-032",
+          "severity": "info",
+          "category": "operable",
+          "title": "Photo grid content not organized with section headings",
+          "file": "frontend/gallery.html",
+          "line": 1056,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        }
+      ],
+      "categories": {
+        "perceivable": {
+          "score": 65,
+          "issues": 8
+        },
+        "operable": {
+          "score": 45,
+          "issues": 10
+        },
+        "understandable": {
+          "score": 72,
+          "issues": 7
+        },
+        "robust": {
+          "score": 68,
+          "issues": 7
+        }
+      },
+      "compliance_score": 26,
+      "wcag_level": "non-compliant"
+    },
+    {
+      "name": "thenewbeautifulme",
+      "scanned_at": "",
+      "summary": {
+        "total": 14,
+        "critical": 0,
+        "high": 1,
+        "medium": 7,
+        "low": 4,
+        "info": 2
+      },
+      "findings": [
+        {
+          "id": "ADA-001",
+          "severity": "high",
+          "category": "perceivable",
+          "title": "Visual-only data charts lack structured text alternatives",
+          "file": "",
+          "line": null,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-002",
+          "severity": "medium",
+          "category": "robust",
+          "title": "Expand/collapse buttons missing aria-expanded attribute",
+          "file": "",
+          "line": null,
+          "effort": "low",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-003",
+          "severity": "medium",
+          "category": "perceivable",
+          "title": "Fixed pixel font sizes (9px, 10px) on supplementary labels across 16+ files",
+          "file": "",
+          "line": null,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-004",
+          "severity": "medium",
+          "category": "perceivable",
+          "title": "Light mode gold text fails contrast requirements",
+          "file": "",
+          "line": null,
+          "effort": "low",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-005",
+          "severity": "medium",
+          "category": "robust",
+          "title": "CardBack component lacks accessible name when interactive",
+          "file": "",
+          "line": null,
+          "effort": "low",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-006",
+          "severity": "medium",
+          "category": "perceivable",
+          "title": "Compare mode checkbox uses visual-only styling without ARIA semantics",
+          "file": "",
+          "line": null,
+          "effort": "low",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-007",
+          "severity": "medium",
+          "category": "operable",
+          "title": "Insights stat sections lack heading landmarks for screen reader navigation",
+          "file": "",
+          "line": null,
+          "effort": "low",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-008",
+          "severity": "low",
+          "category": "perceivable",
+          "title": "Markdown heading remapping is context-unaware",
+          "file": "",
+          "line": null,
+          "effort": "low",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-009",
+          "severity": "low",
+          "category": "operable",
+          "title": "No ARIA landmark regions within long page content areas",
+          "file": "",
+          "line": null,
+          "effort": "low",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-010",
+          "severity": "low",
+          "category": "operable",
+          "title": "Framer Motion hover/tap animations not mirrored for keyboard focus",
+          "file": "",
+          "line": null,
+          "effort": "low",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-011",
+          "severity": "low",
+          "category": "operable",
+          "title": "Tutorial step dots below minimum touch/click target size",
+          "file": "",
+          "line": null,
+          "effort": "low",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-012",
+          "severity": "medium",
+          "category": "perceivable",
+          "title": "Dark mode accent text fails contrast on surface and card backgrounds",
+          "file": "",
+          "line": null,
+          "effort": "low",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "ADA-013",
+          "severity": "info",
+          "category": "understandable",
+          "title": "Search fields use placeholder-only visible identification",
+          "file": "",
+          "line": null,
+          "effort": "unknown",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "ADA-014",
+          "severity": "info",
+          "category": "perceivable",
+          "title": "Dark theme muted text passes AA but not AAA enhanced contrast",
+          "file": "",
+          "line": null,
+          "effort": "unknown",
+          "fixable": false,
+          "status": "open"
+        }
+      ]
+    }
+  ]
+}

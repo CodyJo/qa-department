@@ -1,0 +1,732 @@
+{
+  "department": "compliance",
+  "generated_at": "2026-03-10T21:25:32.291514+00:00",
+  "totals": {
+    "critical": 2,
+    "high": 9,
+    "medium": 27,
+    "low": 12,
+    "info": 6,
+    "total_findings": 56
+  },
+  "repos": [
+    {
+      "name": "codyjo.com",
+      "scanned_at": "2026-03-10T17:55:19.733770+00:00",
+      "summary": {
+        "total": 13,
+        "critical": 0,
+        "high": 2,
+        "medium": 5,
+        "low": 4,
+        "info": 2,
+        "compliance_score": 75,
+        "scanned_at": "2026-03-10T17:55:19.733770+00:00"
+      },
+      "findings": [
+        {
+          "id": "COMP-001",
+          "severity": "medium",
+          "category": "gdpr",
+          "title": "demo.html loads Google Fonts from CDN \u2014 unauthorized data transfer without consent",
+          "file": "public/demo.html",
+          "line": 28,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-002",
+          "severity": "medium",
+          "category": "gdpr",
+          "title": "Demo form does not transmit consent metadata to backend",
+          "file": "public/demo.html",
+          "line": 884,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-003",
+          "severity": "medium",
+          "category": "gdpr",
+          "title": "Privacy policy does not enumerate all data subject rights",
+          "file": "src/pages/privacy.astro",
+          "line": 122,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-004",
+          "severity": "low",
+          "category": "gdpr",
+          "title": "Privacy policy lacks complete data controller identity information",
+          "file": "src/pages/privacy.astro",
+          "line": 23,
+          "effort": "tiny",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-005",
+          "severity": "low",
+          "category": "gdpr",
+          "title": "Privacy policy inaccurately lists Google Fonts CDN as third-party service site-wide",
+          "file": "src/pages/privacy.astro",
+          "line": 109,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-006",
+          "severity": "low",
+          "category": "gdpr",
+          "title": "Privacy policy change notification relies on 'continued use = acceptance'",
+          "file": "src/pages/privacy.astro",
+          "line": 137,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-007",
+          "severity": "high",
+          "category": "iso27001",
+          "title": "CSP frame-ancestors directive in meta tag is ignored by browsers \u2014 no clickjacking protection",
+          "file": "src/layouts/Base.astro",
+          "line": 52,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-008",
+          "severity": "high",
+          "category": "iso27001",
+          "title": "No security response headers configured at CloudFront level",
+          "file": "terraform/admin.tf",
+          "line": 128,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-009",
+          "severity": "medium",
+          "category": "iso27001",
+          "title": "demo.html has no Content-Security-Policy \u2014 weakest security posture on site",
+          "file": "public/demo.html",
+          "line": 1,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-010",
+          "severity": "medium",
+          "category": "iso27001",
+          "title": "CSP allows unsafe-inline for script-src \u2014 weakened XSS protection",
+          "file": "src/layouts/Base.astro",
+          "line": 52,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-011",
+          "severity": "low",
+          "category": "iso27001",
+          "title": "demo.html outside Astro build pipeline causes security configuration drift",
+          "file": "public/demo.html",
+          "line": 1,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-012",
+          "severity": "info",
+          "category": "iso27001",
+          "title": "CloudFront distribution ID hardcoded in CI/CD pipeline",
+          "file": ".github/workflows/cd.yml",
+          "line": 57,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-013",
+          "severity": "info",
+          "category": "age-verification",
+          "title": "Age verification not applicable \u2014 marketing site for photography professionals",
+          "file": "src/pages/privacy.astro",
+          "line": 134,
+          "effort": "tiny",
+          "fixable": false,
+          "status": "open"
+        }
+      ],
+      "frameworks": {
+        "gdpr": {
+          "score": 77,
+          "issues": 7,
+          "status": "partial"
+        },
+        "iso27001": {
+          "score": 72,
+          "issues": 6,
+          "status": "partial"
+        },
+        "age_verification": {
+          "score": 100,
+          "issues": 0,
+          "status": "not-applicable"
+        }
+      },
+      "compliance_score": 75
+    },
+    {
+      "name": "photo-gallery",
+      "scanned_at": "2026-03-09T18:00:00Z",
+      "summary": {
+        "total": 18,
+        "critical": 2,
+        "high": 5,
+        "medium": 7,
+        "low": 3,
+        "info": 1,
+        "compliance_score": 62,
+        "scanned_at": "2026-03-09T18:00:00Z"
+      },
+      "findings": [
+        {
+          "id": "COMP-001",
+          "severity": "critical",
+          "category": "gdpr",
+          "title": "No cookie consent mechanism for localStorage/sessionStorage tracking",
+          "file": "frontend/gallery.html",
+          "line": 1645,
+          "effort": "large",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-002",
+          "severity": "critical",
+          "category": "gdpr",
+          "title": "No privacy policy present on any client-facing page",
+          "file": "frontend/gallery.html",
+          "line": 1,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-003",
+          "severity": "high",
+          "category": "gdpr",
+          "title": "Access log retention set to 1 year with no documented retention policy",
+          "file": "lambda/auth_view/handler.py",
+          "line": 302,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-004",
+          "severity": "high",
+          "category": "gdpr",
+          "title": "No mechanism for clients to withdraw consent or manage data preferences",
+          "file": "lambda/auth_view/handler.py",
+          "line": 294,
+          "effort": "large",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-005",
+          "severity": "high",
+          "category": "gdpr",
+          "title": "No data export mechanism for data subjects",
+          "file": "lambda/admin/handler.py",
+          "line": 4224,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-006",
+          "severity": "medium",
+          "category": "gdpr",
+          "title": "IP addresses logged on every gallery view without documented necessity",
+          "file": "lambda/auth_view/handler.py",
+          "line": 300,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-007",
+          "severity": "medium",
+          "category": "gdpr",
+          "title": "Cross-border data transfers to US AWS regions not documented",
+          "file": "terraform/dr.tf",
+          "line": 185,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-008",
+          "severity": "medium",
+          "category": "gdpr",
+          "title": "Comment data for approved comments has no TTL or retention limit",
+          "file": "lambda/admin/handler.py",
+          "line": 3874,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-009",
+          "severity": "high",
+          "category": "iso27001",
+          "title": "No Content-Security-Policy header on any Lambda response",
+          "file": "lambda/auth_view/handler.py",
+          "line": 201,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-010",
+          "severity": "high",
+          "category": "iso27001",
+          "title": "CORS defaults to wildcard (*) when CORS_ORIGIN environment variable is unset",
+          "file": "lambda/auth_view/handler.py",
+          "line": 206,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-011",
+          "severity": "medium",
+          "category": "iso27001",
+          "title": "Security-relevant events not comprehensively logged",
+          "file": "lambda/admin/handler.py",
+          "line": 4389,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-012",
+          "severity": "medium",
+          "category": "iso27001",
+          "title": "CloudFront private key committed to repository in keys/ directory",
+          "file": "keys/cf_private_key.pem",
+          "line": 1,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-013",
+          "severity": "medium",
+          "category": "iso27001",
+          "title": "WAF Web ACL defined but not attached to any resource",
+          "file": "terraform/waf.tf",
+          "line": 125,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-014",
+          "severity": "medium",
+          "category": "iso27001",
+          "title": "Gallery view auth accepts any email \u2014 no access control enforcement",
+          "file": "lambda/auth_view/handler.py",
+          "line": 251,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-015",
+          "severity": "low",
+          "category": "iso27001",
+          "title": "JWT tokens stored in localStorage are vulnerable to XSS extraction",
+          "file": "frontend/gallery.html",
+          "line": 1645,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-016",
+          "severity": "low",
+          "category": "iso27001",
+          "title": "CD pipeline has contents:write permission and auto-deploys on push to main",
+          "file": ".github/workflows/cd.yml",
+          "line": 6,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-017",
+          "severity": "low",
+          "category": "gdpr",
+          "title": "No DPIA documentation for systematic viewer activity monitoring",
+          "file": "lambda/auth_view/handler.py",
+          "line": 294,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-018",
+          "severity": "info",
+          "category": "iso27001",
+          "title": "No incident response runbook or breach notification template",
+          "file": "terraform/monitoring.tf",
+          "line": 1,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        }
+      ],
+      "frameworks": {
+        "gdpr": {
+          "score": 58,
+          "issues": 8,
+          "status": "partial"
+        },
+        "iso27001": {
+          "score": 72,
+          "issues": 8,
+          "status": "partial"
+        },
+        "age_verification": {
+          "score": 100,
+          "issues": 0,
+          "status": "not-applicable"
+        }
+      },
+      "compliance_score": 62
+    },
+    {
+      "name": "thenewbeautifulme",
+      "scanned_at": "2026-03-10T16:00:00Z",
+      "summary": {
+        "total": 25,
+        "critical": 0,
+        "high": 2,
+        "medium": 15,
+        "low": 5,
+        "info": 3,
+        "compliance_score": 70,
+        "scanned_at": "2026-03-10T16:00:00Z"
+      },
+      "findings": [
+        {
+          "id": "COMP-001",
+          "severity": "high",
+          "category": "iso27001",
+          "title": "No rate limiting on authentication or API endpoints",
+          "file": "terraform/api_gateway.tf",
+          "line": 53,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-002",
+          "severity": "high",
+          "category": "iso27001",
+          "title": "Interpret Lambda has no authentication check",
+          "file": "lambda/interpret/index.mjs",
+          "line": 41,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-003",
+          "severity": "medium",
+          "category": "gdpr",
+          "title": "Consent withdrawal requires full account deletion",
+          "file": "src/app/privacy/page.tsx",
+          "line": 85,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-004",
+          "severity": "medium",
+          "category": "gdpr",
+          "title": "Consent is bundled rather than granular",
+          "file": "src/app/login/page.tsx",
+          "line": 122,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-005",
+          "severity": "medium",
+          "category": "gdpr",
+          "title": "No mechanism to restrict processing",
+          "file": "src/app/settings/page.tsx",
+          "line": 1,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-006",
+          "severity": "medium",
+          "category": "gdpr",
+          "title": "Email change without verification of new address",
+          "file": "lambda/api/index.mjs",
+          "line": 555,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-007",
+          "severity": "medium",
+          "category": "gdpr",
+          "title": "No reference to Data Processing Agreement with Anthropic",
+          "file": "src/app/privacy/page.tsx",
+          "line": 55,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-008",
+          "severity": "medium",
+          "category": "gdpr",
+          "title": "No mechanism for right to object",
+          "file": "src/app/privacy/page.tsx",
+          "line": 84,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-009",
+          "severity": "medium",
+          "category": "iso27001",
+          "title": "CSP allows unsafe-inline for scripts and styles",
+          "file": "terraform/cloudfront.tf",
+          "line": 185,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-010",
+          "severity": "medium",
+          "category": "iso27001",
+          "title": "JWT token stored in localStorage vulnerable to XSS",
+          "file": "src/lib/api.ts",
+          "line": 9,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-011",
+          "severity": "medium",
+          "category": "iso27001",
+          "title": "No account lockout after failed login attempts",
+          "file": "lambda/api/index.mjs",
+          "line": 206,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-012",
+          "severity": "medium",
+          "category": "iso27001",
+          "title": "No Cache-Control headers on API responses containing personal data",
+          "file": "lambda/api/index.mjs",
+          "line": 37,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-013",
+          "severity": "medium",
+          "category": "iso27001",
+          "title": "Incomplete audit logging \u2014 data operations not logged",
+          "file": "lambda/api/index.mjs",
+          "line": 290,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-014",
+          "severity": "medium",
+          "category": "gdpr",
+          "title": "No terms of service defining the contractual relationship",
+          "file": "src/app/login/page.tsx",
+          "line": 123,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-015",
+          "severity": "medium",
+          "category": "gdpr",
+          "title": "Orphaned S3 images when journals expire via DynamoDB TTL",
+          "file": "lambda/api/index.mjs",
+          "line": 431,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-016",
+          "severity": "medium",
+          "category": "age-verification",
+          "title": "Age verification relies solely on self-declaration checkbox",
+          "file": "src/app/login/page.tsx",
+          "line": 122,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-017",
+          "severity": "medium",
+          "category": "age-verification",
+          "title": "No parental consent verification mechanism",
+          "file": "src/app/privacy/page.tsx",
+          "line": 98,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-018",
+          "severity": "low",
+          "category": "gdpr",
+          "title": "Privacy policy does not identify the lead supervisory authority",
+          "file": "src/app/privacy/page.tsx",
+          "line": 87,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-019",
+          "severity": "low",
+          "category": "iso27001",
+          "title": "Interpret Lambda CORS includes localhost in production",
+          "file": "lambda/interpret/index.mjs",
+          "line": 21,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-020",
+          "severity": "low",
+          "category": "iso27001",
+          "title": "JWT secret stored in Lambda environment variable instead of Secrets Manager",
+          "file": "lambda/api/index.mjs",
+          "line": 8,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-021",
+          "severity": "low",
+          "category": "gdpr",
+          "title": "Privacy policy omits retention periods for some data categories",
+          "file": "src/app/privacy/page.tsx",
+          "line": 66,
+          "effort": "tiny",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-022",
+          "severity": "low",
+          "category": "iso27001",
+          "title": "No breached password checking",
+          "file": "lambda/api/index.mjs",
+          "line": 157,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "COMP-023",
+          "severity": "info",
+          "category": "gdpr",
+          "title": "No Data Protection Impact Assessment documented",
+          "file": "",
+          "line": null,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-024",
+          "severity": "info",
+          "category": "age-verification",
+          "title": "No age-appropriate design assessment documented",
+          "file": "",
+          "line": null,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "COMP-025",
+          "severity": "info",
+          "category": "iso27001",
+          "title": "No incident response or backup recovery documentation",
+          "file": "",
+          "line": null,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        }
+      ],
+      "frameworks": {
+        "gdpr": {
+          "score": 74,
+          "issues": 10,
+          "status": "partial"
+        },
+        "iso27001": {
+          "score": 68,
+          "issues": 10,
+          "status": "partial"
+        },
+        "age_verification": {
+          "score": 55,
+          "issues": 3,
+          "status": "partial"
+        }
+      },
+      "compliance_score": 70
+    }
+  ]
+}

@@ -1,0 +1,739 @@
+{
+  "department": "product",
+  "generated_at": "2026-03-10T21:25:32.293159+00:00",
+  "totals": {
+    "critical": 3,
+    "high": 10,
+    "medium": 26,
+    "low": 14,
+    "info": 5,
+    "total_findings": 58
+  },
+  "repos": [
+    {
+      "name": "codyjo.com",
+      "scanned_at": "2026-03-10T18:04:02.372329+00:00",
+      "summary": {
+        "total": 26,
+        "critical": 2,
+        "high": 6,
+        "medium": 8,
+        "low": 6,
+        "info": 4,
+        "product_readiness_score": 62,
+        "scanned_at": "2026-03-10T18:04:02.372329+00:00"
+      },
+      "findings": [
+        {
+          "id": "PROD-001",
+          "severity": "critical",
+          "category": "technical-debt",
+          "title": "demo.html exists outside Astro build pipeline with duplicated styles and Google Fonts CDN",
+          "file": "public/demo.html",
+          "line": 1,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "PROD-002",
+          "severity": "critical",
+          "category": "technical-debt",
+          "title": "Two different hardcoded API endpoints with no .env configuration",
+          "file": "src/pages/index.astro",
+          "line": 439,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "PROD-003",
+          "severity": "high",
+          "category": "technical-debt",
+          "title": "Canonical URL mismatch: Astro config uses non-www, deployment targets www",
+          "file": "astro.config.mjs",
+          "line": 6,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "PROD-004",
+          "severity": "high",
+          "category": "technical-debt",
+          "title": "Font files served as TTF (~3.6MB total) instead of WOFF2",
+          "file": "src/styles/fonts.css",
+          "line": 4,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "PROD-005",
+          "severity": "high",
+          "category": "feature-gap",
+          "title": "No pricing page or business model communication",
+          "file": "src/pages/features.astro",
+          "line": 244,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-006",
+          "severity": "high",
+          "category": "ux-improvement",
+          "title": "Gallery strip animation only scrolls subset of images (known bug)",
+          "file": "src/pages/index.astro",
+          "line": 1014,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "PROD-007",
+          "severity": "high",
+          "category": "feature-gap",
+          "title": "Missing standard product pages: Terms of Service, Docs, Changelog",
+          "file": "src/components/Footer.astro",
+          "line": 26,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-008",
+          "severity": "high",
+          "category": "ux-improvement",
+          "title": "No interactive before/after demo of ChromaHaus on marketing site",
+          "file": "src/pages/index.astro",
+          "line": 231,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-009",
+          "severity": "medium",
+          "category": "feature-gap",
+          "title": "Blog has only one post \u2014 Journal section feels incomplete",
+          "file": "src/content/blog/hello-world.md",
+          "line": 1,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-010",
+          "severity": "medium",
+          "category": "technical-debt",
+          "title": "Duplicated CSS across page files \u2014 shared styles not extracted",
+          "file": "src/pages/index.astro",
+          "line": 804,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "PROD-011",
+          "severity": "medium",
+          "category": "infrastructure",
+          "title": "No analytics or conversion tracking on marketing site",
+          "file": "src/layouts/Base.astro",
+          "line": 52,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "PROD-012",
+          "severity": "medium",
+          "category": "feature-gap",
+          "title": "Blog missing RSS feed, tags, and reading time",
+          "file": "src/content.config.ts",
+          "line": 4,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "PROD-013",
+          "severity": "medium",
+          "category": "ux-improvement",
+          "title": "Comparison table has poor mobile experience \u2014 requires horizontal scroll",
+          "file": "src/pages/features.astro",
+          "line": 172,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "PROD-014",
+          "severity": "medium",
+          "category": "documentation",
+          "title": "Privacy policy incorrectly references Google Fonts as third-party service",
+          "file": "src/pages/privacy.astro",
+          "line": 109,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "PROD-015",
+          "severity": "medium",
+          "category": "ux-improvement",
+          "title": "Contact form success state is too subtle \u2014 small text below button",
+          "file": "src/pages/index.astro",
+          "line": 493,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "PROD-016",
+          "severity": "medium",
+          "category": "ux-improvement",
+          "title": "No social media links or social proof anywhere on site",
+          "file": "src/components/Footer.astro",
+          "line": 22,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-017",
+          "severity": "low",
+          "category": "feature-gap",
+          "title": "No email capture or newsletter/waitlist for non-demo visitors",
+          "file": "src/pages/index.astro",
+          "line": 352,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-018",
+          "severity": "low",
+          "category": "feature-gap",
+          "title": "No Terms of Service page",
+          "file": "src/pages",
+          "line": 0,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-019",
+          "severity": "low",
+          "category": "infrastructure",
+          "title": "No test suite \u2014 CI only validates build",
+          "file": ".github/workflows/ci.yml",
+          "line": 19,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-020",
+          "severity": "low",
+          "category": "ux-improvement",
+          "title": "Blog post template missing engagement features",
+          "file": "src/pages/blog/[id].astro",
+          "line": 36,
+          "effort": "medium",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "PROD-021",
+          "severity": "low",
+          "category": "documentation",
+          "title": "PROJECT-LOG.md references 38 UAT bugs, 0 fixed \u2014 stale documentation",
+          "file": "PROJECT-LOG.md",
+          "line": 8,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-022",
+          "severity": "low",
+          "category": "feature-gap",
+          "title": "Missing structured data on secondary pages",
+          "file": "src/pages/features.astro",
+          "line": 9,
+          "effort": "small",
+          "fixable": true,
+          "status": "open"
+        },
+        {
+          "id": "PROD-023",
+          "severity": "info",
+          "category": "growth-opportunity",
+          "title": "Photography portfolio/showcase section to demonstrate ChromaHaus results",
+          "file": "src/pages/features.astro",
+          "line": 84,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-024",
+          "severity": "info",
+          "category": "growth-opportunity",
+          "title": "Embeddable gallery widget for photographer websites",
+          "file": "src/pages/features.astro",
+          "line": 57,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-025",
+          "severity": "info",
+          "category": "growth-opportunity",
+          "title": "SEO content strategy: photography workflow guides targeting high-intent keywords",
+          "file": "src/content/blog/hello-world.md",
+          "line": 1,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-026",
+          "severity": "info",
+          "category": "growth-opportunity",
+          "title": "Print fulfillment integration opportunity",
+          "file": "src/pages/features.astro",
+          "line": 244,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        }
+      ],
+      "categories": {
+        "feature_gap": {
+          "score": 62,
+          "issues": 8
+        },
+        "ux_improvement": {
+          "score": 73,
+          "issues": 5
+        },
+        "technical_debt": {
+          "score": 42,
+          "issues": 5
+        },
+        "growth_opportunity": {
+          "score": 72,
+          "issues": 4
+        },
+        "documentation": {
+          "score": 88,
+          "issues": 2
+        },
+        "infrastructure": {
+          "score": 92,
+          "issues": 2
+        }
+      }
+    },
+    {
+      "name": "thenewbeautifulme",
+      "scanned_at": "",
+      "summary": {
+        "total": 32,
+        "critical": 1,
+        "high": 4,
+        "medium": 18,
+        "low": 8,
+        "info": 1,
+        "product_readiness_score": 73,
+        "scanned_at": "2026-03-10T16:00:00Z"
+      },
+      "findings": [
+        {
+          "id": "PROD-001",
+          "severity": "critical",
+          "category": "feature-gap",
+          "title": "No password reset / forgot password flow",
+          "file": "src/app/login/page.tsx, lambda/api/index.mjs",
+          "line": null,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-002",
+          "severity": "high",
+          "category": "feature-gap",
+          "title": "No email verification on registration",
+          "file": "lambda/api/index.mjs (POST /auth/register)",
+          "line": null,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-003",
+          "severity": "high",
+          "category": "ux-improvement",
+          "title": "Navigation bar overflows on mobile with 10+ links",
+          "file": "src/components/Navigation.tsx",
+          "line": null,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-004",
+          "severity": "high",
+          "category": "technical-debt",
+          "title": "No component-level tests \u2014 only regression/integration tests",
+          "file": "src/__tests__/",
+          "line": null,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-005",
+          "severity": "high",
+          "category": "infrastructure",
+          "title": "No production monitoring or alerting",
+          "file": "terraform/, lambda/",
+          "line": null,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-006",
+          "severity": "medium",
+          "category": "ux-improvement",
+          "title": "No pagination on history and journal pages",
+          "file": "src/app/history/page.tsx, src/app/journal/page.tsx, lambda/api/index.mjs",
+          "line": null,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-007",
+          "severity": "medium",
+          "category": "ux-improvement",
+          "title": "No auto-save on journal entries",
+          "file": "src/app/journal/entry/page.tsx",
+          "line": null,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-008",
+          "severity": "medium",
+          "category": "ux-improvement",
+          "title": "No filtering or sorting on reading history page",
+          "file": "src/app/history/page.tsx",
+          "line": null,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-009",
+          "severity": "medium",
+          "category": "technical-debt",
+          "title": "Learning path progress stored only in localStorage",
+          "file": "src/app/learn/page.tsx",
+          "line": null,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-010",
+          "severity": "medium",
+          "category": "technical-debt",
+          "title": "Hardcoded domain URLs in share features",
+          "file": "src/app/reading/page.tsx",
+          "line": null,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-011",
+          "severity": "low",
+          "category": "ux-improvement",
+          "title": "Native alert() used instead of Toast system for confirmations",
+          "file": "src/app/settings/page.tsx",
+          "line": null,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-012",
+          "severity": "medium",
+          "category": "documentation",
+          "title": "No API documentation for Lambda endpoints",
+          "file": "lambda/api/index.mjs",
+          "line": null,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-013",
+          "severity": "medium",
+          "category": "infrastructure",
+          "title": "No rate limiting on AI interpretation endpoints",
+          "file": "lambda/interpret/index.mjs, terraform/api_gateway.tf",
+          "line": null,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-014",
+          "severity": "medium",
+          "category": "infrastructure",
+          "title": "JWT tokens lack refresh mechanism \u2014 30-day expiry with no renewal",
+          "file": "lambda/api/index.mjs, src/lib/auth-context.tsx",
+          "line": null,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-015",
+          "severity": "medium",
+          "category": "feature-gap",
+          "title": "Capacitor mobile config exists but native app is not built",
+          "file": "capacitor.config.ts",
+          "line": null,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-016",
+          "severity": "medium",
+          "category": "feature-gap",
+          "title": "Library page accessible without auth but note-saving fails silently",
+          "file": "src/app/library/page.tsx",
+          "line": null,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-017",
+          "severity": "medium",
+          "category": "ux-improvement",
+          "title": "No delete confirmation on custom spreads",
+          "file": "src/app/spreads/page.tsx",
+          "line": null,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-018",
+          "severity": "medium",
+          "category": "ux-improvement",
+          "title": "No delete confirmation on journal entries",
+          "file": "src/app/journal/page.tsx",
+          "line": null,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-019",
+          "severity": "medium",
+          "category": "technical-debt",
+          "title": "Monolithic Lambda handler at 1055 lines",
+          "file": "lambda/api/index.mjs",
+          "line": null,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-020",
+          "severity": "medium",
+          "category": "technical-debt",
+          "title": "No API/Lambda integration tests",
+          "file": "lambda/api/index.mjs, src/__tests__/",
+          "line": null,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-021",
+          "severity": "medium",
+          "category": "infrastructure",
+          "title": "No staging environment",
+          "file": "terraform/",
+          "line": null,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-022",
+          "severity": "low",
+          "category": "ux-improvement",
+          "title": "Inconsistent loading state patterns across pages",
+          "file": "src/app/spreads/page.tsx, src/app/journal/page.tsx, src/app/history/page.tsx, src/app/insights/page.tsx",
+          "line": null,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-023",
+          "severity": "low",
+          "category": "ux-improvement",
+          "title": "No offline status indicator for PWA",
+          "file": "src/app/layout.tsx, public/sw.js",
+          "line": null,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-024",
+          "severity": "medium",
+          "category": "feature-gap",
+          "title": "AI responses not streamed \u2014 full wait for interpretation",
+          "file": "lambda/interpret/index.mjs, src/app/reading/page.tsx, src/components/ReadingChat.tsx",
+          "line": null,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-025",
+          "severity": "medium",
+          "category": "growth-opportunity",
+          "title": "Card notes not utilized in AI interpretations",
+          "file": "src/app/library/page.tsx, lambda/interpret/index.mjs",
+          "line": null,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-026",
+          "severity": "medium",
+          "category": "growth-opportunity",
+          "title": "Calendar/timeline view for reading history",
+          "file": "src/app/history/page.tsx, src/app/recap/page.tsx",
+          "line": null,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-027",
+          "severity": "low",
+          "category": "growth-opportunity",
+          "title": "AI-powered daily affirmations based on card of the day",
+          "file": "src/app/daily/page.tsx",
+          "line": null,
+          "effort": "small",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-028",
+          "severity": "low",
+          "category": "growth-opportunity",
+          "title": "PDF/printable reading reports",
+          "file": "src/app/reading/page.tsx",
+          "line": null,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-029",
+          "severity": "low",
+          "category": "feature-gap",
+          "title": "No push notification system for streak reminders",
+          "file": "public/sw.js, src/app/page.tsx, src/components/Badges.tsx",
+          "line": null,
+          "effort": "medium",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-030",
+          "severity": "low",
+          "category": "technical-debt",
+          "title": "Unused _deletedReading state pattern in history page",
+          "file": "src/app/history/page.tsx",
+          "line": null,
+          "effort": "trivial",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-031",
+          "severity": "low",
+          "category": "documentation",
+          "title": "PROJECT-LOG.md is outdated and inaccurate",
+          "file": "PROJECT-LOG.md",
+          "line": null,
+          "effort": "trivial",
+          "fixable": false,
+          "status": "open"
+        },
+        {
+          "id": "PROD-032",
+          "severity": "info",
+          "category": "growth-opportunity",
+          "title": "Community/social features for shared tarot practice",
+          "file": "src/app/shared/page.tsx",
+          "line": null,
+          "effort": "large",
+          "fixable": false,
+          "status": "open"
+        }
+      ],
+      "scores": {
+        "featureCompleteness": 76,
+        "uxPolish": 80,
+        "technicalHealth": 62,
+        "growthPotential": 72,
+        "productReadiness": 73
+      },
+      "scoring_breakdown": {
+        "feature_completeness": {
+          "score": 76,
+          "weight": 0.3,
+          "weighted": 22.8
+        },
+        "ux_polish": {
+          "score": 80,
+          "weight": 0.25,
+          "weighted": 20.0
+        },
+        "technical_health": {
+          "score": 62,
+          "weight": 0.25,
+          "weighted": 15.5
+        },
+        "growth_potential": {
+          "score": 72,
+          "weight": 0.2,
+          "weighted": 14.4
+        }
+      }
+    }
+  ]
+}
