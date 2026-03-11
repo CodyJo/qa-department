@@ -1,4 +1,4 @@
-.PHONY: setup qa fix watch dashboard clean help jobs test scaffold-workflows
+.PHONY: setup qa fix watch dashboard clean help jobs test scaffold-workflows cli
 .PHONY: seo ada compliance monetization product audit-all audit-all-parallel audit-live full-scan quick-sync
 .PHONY: grafana grafana-stop grafana-logs
 .PHONY: local-targets local-refresh local-audit local-audit-all self-audit-local
@@ -174,6 +174,10 @@ dashboard: ## Deploy all dashboards to S3
 scaffold-workflows: ## Scaffold GitHub Actions into a configured target (make scaffold-workflows TARGET_NAME=bible-app)
 	@test -n "$(TARGET_NAME)" || (echo "Usage: make scaffold-workflows TARGET_NAME=<name>" && exit 1)
 	python3 scripts/scaffold-github-workflows.py --target "$(TARGET_NAME)"
+
+cli: ## Run the Back Office CLI (make cli CMD="list-targets")
+	@test -n "$(CMD)" || (echo "Usage: make cli CMD=\"list-targets\"" && exit 1)
+	python3 scripts/backoffice-cli.py $(CMD)
 
 jobs: ## Start dashboard server with scan API (make jobs TARGET=/path/to/repo)
 	python3 scripts/dashboard-server.py $(if $(TARGET),--target "$(TARGET)",)

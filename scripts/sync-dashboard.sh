@@ -55,7 +55,7 @@ dashboard_files = [
     'index.html', 'qa.html', 'backoffice.html',
     'seo.html', 'ada.html', 'compliance.html', 'privacy.html', 'monetization.html', 'product.html',
     'jobs.html', 'faq.html', 'self-audit.html', 'admin.html',
-    'selah.html', 'analogify.html', 'chromahaus.html', 'tnbm-tarot.html', 'back-office-hq.html',
+    'selah.html', 'analogify.html', 'chromahaus.html', 'tnbm-tarot.html', 'back-office-hq.html', 'documentation.html',
     'site-branding.js', 'department-context.js', 'favicon.svg',
 ]
 

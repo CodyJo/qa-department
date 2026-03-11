@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Back Office Documentation</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="site-branding.js"></script>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --surface-2: #1a1a26;
+      --border: #2a2a3a;
+      --text: #e4e4ef;
+      --text-dim: #8888a0;
+      --accent: #c4944a;
+      --radius: 14px;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Inter', -apple-system, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; }
+    .container { max-width: 1180px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .hero, .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+    .hero { padding: 1.5rem; margin-bottom: 1.25rem; }
+    .hero p, .card p, .card li { color: var(--text-dim); line-height: 1.7; }
+    .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.76rem; margin-bottom: 0.75rem; }
+    h1 { font-size: clamp(2rem, 4vw, 3.25rem); letter-spacing: -0.04em; margin-bottom: 0.75rem; }
+    h2 { font-size: 1.35rem; margin-bottom: 0.85rem; }
+    h3 { font-size: 1rem; margin-bottom: 0.45rem; }
+    .actions { display: flex; gap: 0.85rem; flex-wrap: wrap; margin-top: 1.4rem; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; border-radius: 999px; padding: 0.78rem 1rem; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); }
+    .btn-solid { border-color: rgba(196, 148, 74, 0.5); background: rgba(196, 148, 74, 0.12); color: var(--accent); }
+    .grid { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card { padding: 1.35rem; }
+    ul { padding-left: 1.1rem; display: grid; gap: 0.55rem; }
+    pre { margin-top: 1rem; padding: 1rem; overflow-x: auto; background: #0f0f16; border: 1px solid var(--border); border-radius: 10px; color: var(--text); }
+    .note { margin-top: 0.85rem; font-size: 0.92rem; }
+    @media (max-width: 800px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <p class="eyebrow">Back Office Documentation</p>
+      <h1>CI/CD best practices reference architecture</h1>
+      <p>Use this page as the Back Office delivery standard across the estate: every push should get validated, every release should be reviewable, and production should stay protected.</p>
+      <div class="actions">
+        <a class="btn btn-solid" href="index.html">HQ Dashboard</a>
+        <a class="btn" href="admin.html">Admin Dashboard</a>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Required workflows</h2>
+        <ul>
+          <li><strong>CI</strong>: every push and pull request, including lint, typecheck, tests, and build.</li>
+          <li><strong>Preview</strong>: PR-safe preview validation before merge.</li>
+          <li><strong>Nightly</strong>: unattended release-readiness and audit refresh jobs.</li>
+          <li><strong>CD</strong>: production deployment only from <code>main</code>, behind protected environments.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Release guardrails</h2>
+        <ul>
+          <li>Use concurrency to cancel stale CI and preview runs.</li>
+          <li>Add timeout limits to deploy and nightly jobs.</li>
+          <li>Run smoke tests after production deployment.</li>
+          <li>Prefer overnight PR creation over unattended production release.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Reference flow</h2>
+        <pre><code>Back Office audit
+  -> prioritized work
+  -> branch or PR
+  -> CI gate
+  -> preview validation
+  -> review
+  -> production deploy
+  -> smoke test
+  -> dashboard refresh</code></pre>
+        <p class="note">The operating principle is simple: automate analysis and verification aggressively, automate production promotion carefully.</p>
+      </article>
+
+      <article class="card">
+        <h2>CLI</h2>
+        <pre><code>python3 scripts/backoffice-cli.py list-targets
+python3 scripts/backoffice-cli.py audit --target bible-app --departments qa,product
+python3 scripts/backoffice-cli.py refresh
+python3 scripts/backoffice-cli.py deploy
+python3 scripts/backoffice-cli.py scaffold-workflows --target bible-app</code></pre>
+        <p class="note">This CLI is the portable entry point so any operator or coding agent can run Back Office the same way.</p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

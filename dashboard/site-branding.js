@@ -254,9 +254,62 @@
       });
     }
 
+    injectReportingContext();
+
     // Apply branding to dashboard elements
     applyDashboardBranding(parentDomain, config);
   });
+
+  function injectReportingContext() {
+    if (document.getElementById('productSelect') || document.getElementById('sharedReportingSelect')) return;
+
+    originalFetch('org-data.json')
+      .then(function (resp) { return resp.ok ? resp.json() : null; })
+      .then(function (orgData) {
+        if (!orgData || !Array.isArray(orgData.products) || !orgData.products.length) return;
+
+        var current = new URL(window.location.href);
+        var currentProduct = current.searchParams.get('product') || 'all';
+        var container = document.createElement('section');
+        container.className = 'shared-reporting-shell';
+        container.innerHTML =
+          '<div class="shared-reporting-card">' +
+            '<div class="shared-reporting-label">Reporting On</div>' +
+            '<select id="sharedReportingSelect" aria-label="Reporting on product">' +
+              orgData.products.map(function (product) {
+                var selected = product.key === currentProduct ? ' selected' : '';
+                return '<option value="' + escapeHtml(product.key) + '"' + selected + '>' + escapeHtml(product.name) + '</option>';
+              }).join('') +
+            '</select>' +
+          '</div>';
+
+        var main = document.querySelector('main');
+        if (main) {
+          main.insertBefore(container, main.firstChild);
+        } else {
+          document.body.insertBefore(container, document.body.children[1] || null);
+        }
+
+        var style = document.createElement('style');
+        style.textContent =
+          '.shared-reporting-shell{max-width:1400px;margin:0 auto;padding:1rem 1.5rem 0;}' +
+          '.shared-reporting-card{background:#12121a;border:1px solid #2a2a3a;border-radius:14px;padding:1rem;display:grid;gap:0.45rem;}' +
+          '.shared-reporting-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:#8888a0;}' +
+          '#sharedReportingSelect{width:100%;background:#1a1a26;color:#e4e4ef;border:1px solid #2a2a3a;border-radius:10px;padding:0.8rem 0.9rem;font-family:\"Inter\",-apple-system,sans-serif;font-size:0.92rem;}';
+        document.head.appendChild(style);
+
+        document.getElementById('sharedReportingSelect').addEventListener('change', function (event) {
+          var url = new URL(window.location.href);
+          if (event.target.value === 'all') {
+            url.searchParams.delete('product');
+          } else {
+            url.searchParams.set('product', event.target.value);
+          }
+          window.location.href = url.toString();
+        });
+      })
+      .catch(function () {});
+  }
 
   function applyDashboardBranding(domain, cfg) {
     // Update logo/title in the dashboard's own header

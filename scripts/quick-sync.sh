@@ -138,7 +138,7 @@ upload_html() {
   local prefix="$3"
 
   local dashboard_dir="$QA_ROOT/dashboard"
-  local html_files=(index.html qa.html seo.html ada.html compliance.html privacy.html monetization.html product.html jobs.html faq.html self-audit.html admin.html selah.html analogify.html chromahaus.html tnbm-tarot.html back-office-hq.html site-branding.js favicon.svg)
+  local html_files=(index.html qa.html seo.html ada.html compliance.html privacy.html monetization.html product.html jobs.html faq.html self-audit.html admin.html selah.html analogify.html chromahaus.html tnbm-tarot.html back-office-hq.html documentation.html site-branding.js favicon.svg)
   local invalidation_paths=()
 
   for f in "${html_files[@]}"; do
