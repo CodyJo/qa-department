@@ -138,13 +138,16 @@ back-office/
 │   ├── jobs.html
 │   ├── self-audit.html
 │   ├── backoffice.html
+│   ├── automation-data.json
 │   ├── department-context.js
 │   ├── site-branding.js
 │   └── *-data.json
 ├── results/
 ├── scripts/
 │   ├── aggregate-results.py
+│   ├── generate-delivery-data.py
 │   ├── local_audit_workflow.py
+│   ├── scaffold-github-workflows.py
 │   ├── sync-dashboard.sh
 │   ├── quick-sync.sh
 │   ├── dashboard-server.py
@@ -154,6 +157,8 @@ back-office/
 │   ├── setup.sh
 │   ├── test-scoring.py
 │   └── test-local-audit-workflow.py
+├── templates/
+│   └── github-actions/
 ├── terraform/
 ├── Makefile
 └── README.md
@@ -203,10 +208,23 @@ Each audit writes structured results into `results/<repo>/`. Common files includ
 - `monetization-data.json`
 - `product-data.json`
 - `self-audit-data.json`
+- `automation-data.json`
 
 ### 5. Publish dashboards
 
 `scripts/sync-dashboard.sh` uploads the static HTML, JS, and JSON payloads to each configured deployment target and invalidates CloudFront.
+
+### 6. Generate delivery automation metadata
+
+`scripts/generate-delivery-data.py` inspects configured target repos and writes `dashboard/automation-data.json`, which the HQ dashboard uses to report:
+
+- CI workflow coverage
+- preview/staging workflow coverage
+- production deploy workflow coverage
+- nightly automation coverage
+- delivery readiness by repo
+- safe overnight candidates
+- sprint buckets derived from current findings
 
 ## Dashboard Surfaces
 
@@ -345,9 +363,11 @@ make self-audit-local
 ```bash
 make dashboard
 make jobs
+make scaffold-workflows TARGET_NAME=bible-app
 ```
 
 `make jobs` starts the local dashboard server so you can browse `jobs.html` and trigger scans locally.
+`make scaffold-workflows` writes GitHub Actions starter workflows into a configured target repo using its lint, test, and build commands from `config/targets.yaml`.
 
 ### Validation
 
@@ -440,6 +460,7 @@ That contract currently expects the runner to:
 - `dashboard/data.json`
 - `dashboard/*-data.json`
 - `dashboard/self-audit-data.json`
+- `dashboard/automation-data.json`
 - `dashboard/.jobs.json`
 - `dashboard/.jobs-history.json`
 - `dashboard/local-audit-log.json`
@@ -471,6 +492,14 @@ node --check dashboard/department-context.js
 3. Ensure target repos are represented in `config/targets.yaml`
 4. Run `make local-refresh` or a local audit
 5. Deploy with `make dashboard` or `bash scripts/sync-dashboard.sh`
+
+### Scaffold safe GitHub Actions into a product repo
+
+1. Verify the target has correct `lint_command`, `test_command`, and `deploy_command` in `config/targets.yaml`
+2. Run `make scaffold-workflows TARGET_NAME=<target>`
+3. Review the generated workflows in the target repo
+4. Wire the preview and production deploy steps to the repo's real infrastructure
+5. Push those workflow files in the target repo and let Back Office start reporting the new automation coverage
 
 ### Add a new department
 

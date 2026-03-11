@@ -3,13 +3,14 @@ name: CI
 on:
   pull_request:
     branches: [main]
+  push:
+    branches-ignore: [main]
 
 permissions:
   contents: read
 
 jobs:
   validate:
-    name: Validate files
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,25 +19,28 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Check required files exist
-        run: |
-          echo "Checking dashboard files..."
-          for f in index.html backoffice.html qa.html seo.html ada.html compliance.html monetization.html; do
-            test -f "dashboard/$f" || { echo "FAIL: dashboard/$f missing"; exit 1; }
-            echo "  dashboard/$f OK"
-          done
+      - name: Install Python tooling
+        run: pip install ruff pyyaml
 
-          echo "Checking Python scripts..."
-          test -f scripts/aggregate-results.py || { echo "FAIL: scripts/aggregate-results.py missing"; exit 1; }
-          echo "  scripts/aggregate-results.py OK"
+      - name: Validate shell syntax
+        run: |
+          bash -n scripts/sync-dashboard.sh
+          bash -n scripts/quick-sync.sh
+          bash -n scripts/job-status.sh
+          bash -n agents/qa-scan.sh
+          bash -n agents/seo-audit.sh
+          bash -n agents/ada-audit.sh
+          bash -n agents/compliance-audit.sh
+          bash -n agents/monetization-audit.sh
+          bash -n agents/product-audit.sh
+          bash -n agents/fix-bugs.sh
+          bash -n agents/watch.sh
 
       - name: Validate Python syntax
-        run: |
-          echo "Checking Python syntax..."
-          python3 -m py_compile scripts/aggregate-results.py
-          echo "  scripts/aggregate-results.py OK"
+        run: python3 -m py_compile scripts/*.py
 
       - name: Lint Python scripts
-        run: |
-          pip install ruff
-          ruff check scripts/
+        run: ruff check scripts/
+
+      - name: Run Back Office regression suite
+        run: make test

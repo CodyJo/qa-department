@@ -1,0 +1,50 @@
+name: Nightly Back Office
+
+on:
+  schedule:
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: target-repo
+
+      - uses: actions/checkout@v4
+        with:
+          repository: CodyJo/back-office
+          path: back-office
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Prepare Back Office
+        run: |
+          cd back-office
+          python3 scripts/generate-delivery-data.py || true
+
+      - name: Run repo validation first
+        run: |
+          cd target-repo
+          __LINT_COMMAND__
+          __TEST_COMMAND__
+          __BUILD_COMMAND__
+
+      - name: Back Office overnight placeholder
+        run: |
+          echo "Wire this job to your agent runner, preview deploy flow, and PR creation logic."
+          echo "Recommended behavior:"
+          echo "1. audit repo"
+          echo "2. choose safe overnight candidates"
+          echo "3. implement on branches"
+          echo "4. open PRs"
+          echo "5. let CI + preview validate them"

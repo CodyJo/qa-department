@@ -1,0 +1,32 @@
+name: Preview
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build preview candidate
+        run: __BUILD_COMMAND__
+
+      - name: Smoke test hook
+        run: |
+          echo "Add repo-specific preview deployment and smoke tests here."
+          echo "Back Office expects this workflow to publish a preview URL and validate it."

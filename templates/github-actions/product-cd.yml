@@ -1,0 +1,36 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate release candidate
+        run: |
+          __LINT_COMMAND__
+          __TEST_COMMAND__
+          __BUILD_COMMAND__
+
+      - name: Deploy
+        run: |
+          echo "Replace this with the repo's production deployment command."
+          echo "Best practice: keep production behind environment approval."

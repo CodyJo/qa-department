@@ -29,6 +29,10 @@ AGGREGATE_SCRIPT = os.environ.get(
     "BACK_OFFICE_AGGREGATE_SCRIPT",
     os.path.join(QA_ROOT, "scripts", "aggregate-results.py"),
 )
+DELIVERY_SCRIPT = os.environ.get(
+    "BACK_OFFICE_DELIVERY_SCRIPT",
+    os.path.join(QA_ROOT, "scripts", "generate-delivery-data.py"),
+)
 JOB_STATUS_SCRIPT = os.environ.get(
     "BACK_OFFICE_JOB_STATUS_SCRIPT",
     os.path.join(QA_ROOT, "scripts", "job-status.sh"),
@@ -239,11 +243,23 @@ def write_audit_log(targets: list[dict]) -> None:
         f.write("\n".join(lines).rstrip() + "\n")
 
 
-def refresh_dashboard_artifacts(targets: list[dict]) -> None:
+def refresh_dashboard_artifacts(targets: list[dict], config_path: str = CONFIG_PATH) -> None:
     subprocess.run(
         ["python3", AGGREGATE_SCRIPT, RESULTS_DIR, os.path.join(DASHBOARD_DIR, "data.json")],
         cwd=QA_ROOT,
         check=True,
+    )
+    subprocess.run(
+        ["python3", DELIVERY_SCRIPT],
+        cwd=QA_ROOT,
+        check=True,
+        env={
+            **os.environ,
+            "BACK_OFFICE_ROOT": QA_ROOT,
+            "BACK_OFFICE_TARGETS_CONFIG": config_path,
+            "BACK_OFFICE_RESULTS_DIR": RESULTS_DIR,
+            "BACK_OFFICE_DASHBOARD_DIR": DASHBOARD_DIR,
+        },
     )
     write_audit_log(targets)
 
@@ -299,7 +315,7 @@ def handle_list_targets(args) -> int:
 @with_run_lock
 def handle_refresh(args) -> int:
     targets = load_targets(args.config)
-    refresh_dashboard_artifacts(targets)
+    refresh_dashboard_artifacts(targets, args.config)
     print("Refreshed dashboard data, self-audit data, and local audit log.")
     return 0
 
@@ -310,7 +326,7 @@ def handle_run_target(args) -> int:
     target = resolve_target(targets, args.target)
     departments = normalize_departments(args.departments, default_departments(target))
     run_target(target, departments)
-    refresh_dashboard_artifacts(targets)
+    refresh_dashboard_artifacts(targets, args.config)
     print(f"Completed local audit for {target['name']}: {', '.join(departments)}")
     return 0
 
@@ -326,7 +342,7 @@ def handle_run_all(args) -> int:
         departments = normalize_departments(args.departments, default_departments(target))
         print(f"==> {target['name']}: {', '.join(departments)}")
         run_target(target, departments)
-    refresh_dashboard_artifacts(targets)
+    refresh_dashboard_artifacts(targets, args.config)
     print(f"Completed local audits for {len(selected_targets)} target(s).")
     return 0
 

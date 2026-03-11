@@ -257,6 +257,23 @@
           <div class="criteria-list" id="sprintList"></div>
         </div>
       </section>
+
+      <section class="grid-2">
+        <div class="card">
+          <div class="section-header">
+            <h3>Delivery Pipeline</h3>
+            <div class="badge" id="pipelineBadge">0 repos</div>
+          </div>
+          <div class="criteria-list" id="pipelineList"></div>
+        </div>
+        <div class="card">
+          <div class="section-header">
+            <h3>Overnight Factory</h3>
+            <div class="badge" id="overnightBadge">0 candidates</div>
+          </div>
+          <div class="task-list" id="overnightList"></div>
+        </div>
+      </section>
     </div>
 
     <div class="foot"><span id="footer-brand">Cody Jo Method</span> Back Office</div>
@@ -276,6 +293,7 @@
 
     let orgData = null;
     let deptData = {};
+    let automationData = { targets: [] };
     let selectedProductKey = 'all';
     const SEVERITY_WEIGHT = { critical: 0, high: 1, medium: 2, low: 3, info: 4 };
 
@@ -301,12 +319,14 @@
     }
 
     async function boot() {
-      const [org, ...rest] = await Promise.all([
+      const [org, automation, ...rest] = await Promise.all([
         loadJson('org-data.json'),
+        loadJson('automation-data.json'),
         ...DEPARTMENT_SOURCES.map(source => loadJson(source.file))
       ]);
 
       orgData = org;
+      automationData = automation || { targets: [] };
       selectedProductKey = getInitialProductKey();
       DEPARTMENT_SOURCES.forEach((source, index) => {
         deptData[source.key] = rest[index];
@@ -318,7 +338,11 @@
     }
 
     async function refreshDepartments() {
-      const refreshed = await Promise.all(DEPARTMENT_SOURCES.map(source => loadJson(source.file)));
+      const [automation, ...refreshed] = await Promise.all([
+        loadJson('automation-data.json'),
+        ...DEPARTMENT_SOURCES.map(source => loadJson(source.file))
+      ]);
+      if (automation) automationData = automation;
       DEPARTMENT_SOURCES.forEach((source, index) => {
         if (refreshed[index]) deptData[source.key] = refreshed[index];
       });
@@ -482,6 +506,11 @@
       return map;
     }
 
+    function getAutomationRecord(repoName) {
+      const targets = automationData?.targets || [];
+      return targets.find(target => target.repo === repoName) || null;
+    }
+
     function collectDocsSignals(repoName) {
       const docFindings = [];
       ['qa', 'product', 'self-audit'].forEach(sourceKey => {
@@ -501,6 +530,7 @@
 
     function evaluateAcceptance(repoName) {
       const qaRepo = getQaRepoMap().get(repoName);
+      const automation = getAutomationRecord(repoName);
       const tests = qaRepo?.tests || {};
       const lint = qaRepo?.lint || {};
       const findings = qaRepo?.findings || [];
@@ -542,6 +572,26 @@
           label: 'Privacy gate respected',
           status: getDepartmentFindingCount('privacy') > 0 ? 'info' : 'good',
           summary: 'Product and monetization changes should remain gated by privacy review findings.',
+        },
+        {
+          label: 'CI workflow configured',
+          status: automation?.workflows?.ci?.configured ? 'good' : 'bad',
+          summary: automation?.workflows?.ci?.configured ? `Workflow: ${automation.workflows.ci.workflow}` : 'No PR validation workflow detected.',
+        },
+        {
+          label: 'Preview environment configured',
+          status: automation?.workflows?.preview?.configured ? 'good' : 'warn',
+          summary: automation?.workflows?.preview?.configured ? `Workflow: ${automation.workflows.preview.workflow}` : 'No preview or staging workflow detected.',
+        },
+        {
+          label: 'Production deploy gated',
+          status: automation?.workflows?.cd?.configured ? 'good' : 'warn',
+          summary: automation?.workflows?.cd?.configured ? `Workflow: ${automation.workflows.cd.workflow}` : 'No production deploy workflow detected.',
+        },
+        {
+          label: 'Nightly Back Office lane exists',
+          status: automation?.workflows?.nightly?.configured ? 'good' : 'warn',
+          summary: automation?.workflows?.nightly?.configured ? `Workflow: ${automation.workflows.nightly.workflow}` : 'No scheduled nightly workflow detected.',
         }
       ];
 
@@ -587,6 +637,7 @@
             const topFinding = [...(repo.findings || [])]
               .sort((left, right) => (SEVERITY_WEIGHT[(left.severity || 'info').toLowerCase()] ?? 99) - (SEVERITY_WEIGHT[(right.severity || 'info').toLowerCase()] ?? 99))[0];
             if (!topFinding) return;
+            const automation = getAutomationRecord(repo.name);
             assignments.push({
               repo: repo.name,
               product: getSelectedProduct().name,
@@ -596,7 +647,8 @@
               title: topFinding.title || `Review ${source.name}`,
               severity: (topFinding.severity || 'info').toLowerCase(),
               details: topFinding.description || topFinding.fix || 'No details available.',
-              file: topFinding.file || 'n/a'
+              file: topFinding.file || 'n/a',
+              pipeline: automation?.pr_status || 'workflow-missing'
             });
           });
       });
@@ -631,16 +683,38 @@
     }
 
     function buildSprintPlan() {
-      const repos = getReposForDepartment('product');
       const sprintMap = new Map();
+      const repoNames = getRepoNamesForSelection();
 
-      repos.forEach(repo => {
-        (repo.findings || []).forEach(finding => {
+      repoNames.forEach(repoName => {
+        const automation = getAutomationRecord(repoName);
+        if (automation?.sprints?.length) {
+          automation.sprints.forEach(lane => {
+            const items = sprintMap.get(lane.lane) || [];
+            lane.items.forEach(item => {
+              const owner = getSprintOwner(item);
+              items.push({
+                repo: item.repo || repoName,
+                title: item.title || 'Untitled finding',
+                severity: (item.severity || 'info').toLowerCase(),
+                effort: item.effort || 'unknown',
+                owner: owner?.name || 'Unassigned',
+                ownerTitle: owner?.title || 'Owner needed',
+                summary: item.summary || 'No details available.',
+              });
+            });
+            sprintMap.set(lane.lane, items);
+          });
+          return;
+        }
+
+        const productRepo = getReposForDepartment('product').find(repo => repo.name === repoName);
+        (productRepo?.findings || []).forEach(finding => {
           const lane = getSprintLane(finding);
           const owner = getSprintOwner(finding);
           const items = sprintMap.get(lane) || [];
           items.push({
-            repo: repo.name,
+            repo: productRepo.name,
             title: finding.title || 'Untitled finding',
             severity: (finding.severity || 'info').toLowerCase(),
             effort: finding.effort || 'unknown',
@@ -823,6 +897,7 @@
           </div>
           <div class="finding-meta">${esc(task.department)} · ${esc(task.repo)} · ${esc(task.file)}</div>
           <div class="finding-desc">${esc(task.details)}</div>
+          <div class="task-meta">PR lane: <strong>${esc(task.pipeline)}</strong></div>
         </article>
       `).join('') : '<div class="resume">No assignments are in scope for this product yet.</div>';
     }
@@ -890,6 +965,66 @@
       `).join('') : '<div class="resume">No sprint priorities are in scope for this product yet.</div>';
     }
 
+    function renderPipeline() {
+      const repoNames = getRepoNamesForSelection();
+      const items = repoNames.map(repoName => {
+        const automation = getAutomationRecord(repoName);
+        return {
+          repoName,
+          automation
+        };
+      });
+      document.getElementById('pipelineBadge').textContent = `${items.length} repos`;
+      document.getElementById('pipelineList').innerHTML = items.length ? items.map(item => {
+        const automation = item.automation;
+        const readiness = automation?.delivery_readiness ?? 0;
+        return `
+          <article class="criteria-card">
+            <div class="criteria-top">
+              <div>
+                <div class="employee-name">${esc(item.repoName)}</div>
+                <div class="criteria-owner">Delivery readiness ${readiness}%</div>
+              </div>
+              <span class="status-pill ${readiness >= 80 ? 'good' : readiness >= 60 ? 'warn' : 'bad'}">${automation ? 'tracked' : 'missing'}</span>
+            </div>
+            <div class="mini-list">
+              <div><span class="status-pill ${automation?.workflows?.ci?.configured ? 'good' : 'bad'}">CI</span> ${esc(automation?.workflows?.ci?.workflow || 'missing')}</div>
+              <div><span class="status-pill ${automation?.workflows?.preview?.configured ? 'good' : 'warn'}">Preview</span> ${esc(automation?.preview_status || 'missing')}</div>
+              <div><span class="status-pill ${automation?.workflows?.cd?.configured ? 'good' : 'warn'}">Production</span> ${esc(automation?.production_status || 'missing')}</div>
+              <div><span class="status-pill ${automation?.workflows?.nightly?.configured ? 'good' : 'info'}">Nightly</span> ${esc(automation?.nightly_status || 'missing')}</div>
+            </div>
+          </article>
+        `;
+      }).join('') : '<div class="resume">No delivery pipeline data is available yet.</div>';
+    }
+
+    function renderOvernightFactory() {
+      const repoNames = new Set(getRepoNamesForSelection());
+      const candidates = (automationData?.targets || [])
+        .filter(target => repoNames.has(target.repo))
+        .flatMap(target => (target.overnight?.safe_candidates || []).map(item => ({
+          ...item,
+          repo: target.repo
+        })))
+        .sort((left, right) => (SEVERITY_WEIGHT[left.severity] ?? 99) - (SEVERITY_WEIGHT[right.severity] ?? 99))
+        .slice(0, 10);
+
+      document.getElementById('overnightBadge').textContent = `${candidates.length} candidates`;
+      document.getElementById('overnightList').innerHTML = candidates.length ? candidates.map(item => `
+        <article class="task-card">
+          <div class="task-top">
+            <div>
+              <div class="employee-name">${esc(item.title)}</div>
+              <div class="task-owner">${esc(item.repo)} · ${esc(item.department)} · ${esc(item.bucket)}</div>
+            </div>
+            <span class="status-pill ${item.bucket === 'Overnight Now' ? 'good' : item.bucket === 'Next Overnight' ? 'warn' : 'info'}">${esc(item.effort)}</span>
+          </div>
+          <div class="finding-meta">${esc(item.file || 'no file')}</div>
+          <div class="finding-desc">${esc(item.reason)}</div>
+        </article>
+      `).join('') : '<div class="resume">No safe unattended candidates are currently in scope for this product.</div>';
+    }
+
     function renderProductSummary() {
       const product = getSelectedProduct();
       const domains = product.domains.length ? ` Domains: ${product.domains.join(', ')}.` : '';
@@ -910,6 +1045,8 @@
       renderCriteria();
       renderFixedItems();
       renderSprintPlan();
+      renderPipeline();
+      renderOvernightFactory();
     }
 
     boot();

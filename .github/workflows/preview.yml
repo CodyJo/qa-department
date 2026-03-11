@@ -1,0 +1,32 @@
+name: Preview Artifact
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python tooling
+        run: pip install pyyaml
+
+      - name: Generate current dashboard artifacts
+        run: |
+          python3 scripts/aggregate-results.py results dashboard/data.json
+          python3 scripts/generate-delivery-data.py
+
+      - name: Upload dashboard artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: back-office-dashboard-preview
+          path: dashboard/

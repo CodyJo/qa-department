@@ -28,6 +28,7 @@ def main():
     repo_root = Path(__file__).resolve().parents[1]
     script = repo_root / "scripts" / "local_audit_workflow.py"
     aggregate = repo_root / "scripts" / "aggregate-results.py"
+    delivery = repo_root / "scripts" / "generate-delivery-data.py"
 
     with tempfile.TemporaryDirectory() as tmp:
         tmpdir = Path(tmp)
@@ -51,6 +52,9 @@ def main():
                     "path": "/tmp/bible-app",
                     "language": "typescript",
                     "default_departments": ["product", "qa"],
+                    "lint_command": "npm run lint",
+                    "test_command": "npm test && npm run typecheck",
+                    "deploy_command": "npm run build",
                     "context": "Product target",
                 },
             ]
@@ -108,6 +112,7 @@ def main():
                 **env,
                 "BACK_OFFICE_ROOT": str(tmpdir),
                 "BACK_OFFICE_AGGREGATE_SCRIPT": str(aggregate),
+                "BACK_OFFICE_DELIVERY_SCRIPT": str(delivery),
             },
         )
 
@@ -123,6 +128,12 @@ def main():
 
         self_audit = json.loads((dashboard_dir / "self-audit-data.json").read_text())
         check("self_audit_generated", self_audit["repo"] == "back-office")
+
+        automation = json.loads((dashboard_dir / "automation-data.json").read_text())
+        check("automation_targets_generated", len(automation["targets"]) == 2)
+        bible_entry = next(item for item in automation["targets"] if item["repo"] == "bible-app")
+        check("automation_records_build_command", bible_entry["commands"]["build"]["configured"] is True)
+        check("automation_has_overnight_block", "overnight" in bible_entry)
 
         md = (dashboard_dir / "local-audit-log.md").read_text()
         check("markdown_mentions_bible_app", "## bible-app" in md)

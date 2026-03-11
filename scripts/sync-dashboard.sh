@@ -33,6 +33,7 @@ echo ""
 
 echo "Aggregating results..."
 python3 "$SCRIPT_DIR/aggregate-results.py" "$QA_ROOT/results" "$QA_ROOT/dashboard/data.json"
+python3 "$SCRIPT_DIR/generate-delivery-data.py"
 
 # ── Deploy to S3 ─────────────────────────────────────────────────────────────
 
@@ -81,6 +82,7 @@ agg_data_files = [
     ('privacy-data.json', 'privacy-data.json'),
     ('monetization-data.json', 'monetization-data.json'),
     ('product-data.json', 'product-data.json'),
+    ('automation-data.json', 'automation-data.json'),
     ('org-data.json', 'org-data.json'),
     ('.jobs.json', '.jobs.json'),
     ('.jobs-history.json', '.jobs-history.json'),
