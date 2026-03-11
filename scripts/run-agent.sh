@@ -8,6 +8,15 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+RUNNER_CONFIG_FILE="${BACK_OFFICE_RUNNER_CONFIG:-$ROOT_DIR/config/agent-runner.env}"
+
+if [ -f "$RUNNER_CONFIG_FILE" ]; then
+  # shellcheck disable=SC1090
+  . "$RUNNER_CONFIG_FILE"
+fi
+
 PROMPT=""
 TOOLS=""
 REPO_DIR=""

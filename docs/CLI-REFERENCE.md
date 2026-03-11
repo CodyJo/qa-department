@@ -8,6 +8,8 @@ Use it when you want one documented entry point instead of bouncing between Make
 
 ```bash
 python3 scripts/backoffice-cli.py setup --write-missing-configs
+python3 scripts/backoffice-cli.py runners
+python3 scripts/backoffice-cli.py activate-runner --runner codex --mode stdin-text
 python3 scripts/backoffice-cli.py list-targets
 python3 scripts/backoffice-cli.py refresh
 python3 scripts/backoffice-cli.py deploy
@@ -63,6 +65,28 @@ It reports:
 - available agent scripts and prompt files
 - current config file status
 - recent local agent usage from `local-audit-log.json`
+
+### `runners`
+
+Lists installed runner CLIs and shows the currently active persisted runner choice.
+
+Example:
+
+```bash
+python3 scripts/backoffice-cli.py runners
+```
+
+### `activate-runner`
+
+Persists the active runner choice to `config/agent-runner.env`, which `run-agent.sh` now reads automatically.
+
+Example:
+
+```bash
+python3 scripts/backoffice-cli.py activate-runner --runner codex --mode stdin-text
+```
+
+If you need a fuller command than just the binary, pass `--runner-command`.
 
 ### `list-targets`
 
@@ -203,4 +227,5 @@ Use Make when:
 - `scripts/scaffold-github-workflows.py`
 - `scripts/sync-dashboard.sh`
 - `scripts/quick-sync.sh`
+- `config/agent-runner.env`
 - `Makefile`

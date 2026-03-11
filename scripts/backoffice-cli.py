@@ -27,6 +27,11 @@ def build_parser() -> argparse.ArgumentParser:
     setup.add_argument("--check-only", action="store_true", help="Only report current setup state.")
     setup.add_argument("--write-missing-configs", action="store_true", help="Create missing config files from examples.")
     setup.add_argument("--interactive", action="store_true", help="Prompt before writing missing config files.")
+    subparsers.add_parser("runners", help="List installed runner CLIs and show the active runner config.")
+    activate_runner = subparsers.add_parser("activate-runner", help="Persist a runner choice from the CLIs installed on this system.")
+    activate_runner.add_argument("--runner", required=True, help="Runner binary name such as claude or codex.")
+    activate_runner.add_argument("--runner-command", help="Optional full command to persist instead of the bare binary.")
+    activate_runner.add_argument("--mode", help="Optional runner mode such as claude-print or stdin-text.")
     subparsers.add_parser("list-targets", help="List configured audit targets.")
     subparsers.add_parser("refresh", help="Refresh local dashboard data from existing results.")
     subparsers.add_parser("deploy", help="Publish dashboard assets using sync-dashboard.sh.")
@@ -61,6 +66,15 @@ def main(argv: list[str] | None = None) -> int:
         command.append("--write-missing-configs")
       if args.interactive:
         command.append("--interactive")
+      return run_command(command)
+    if args.command == "runners":
+      return run_command(["python3", "scripts/backoffice_setup.py", "--list-runners"])
+    if args.command == "activate-runner":
+      command = ["python3", "scripts/backoffice_setup.py", "--activate-runner", args.runner]
+      if args.runner_command:
+        command.extend(["--runner-command", args.runner_command])
+      if args.mode:
+        command.extend(["--mode", args.mode])
       return run_command(command)
     if args.command == "list-targets":
       return run_command(["python3", "scripts/local_audit_workflow.py", "list-targets"])

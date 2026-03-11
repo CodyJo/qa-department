@@ -16,6 +16,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG_DIR = ROOT / "config"
+RUNNER_CONFIG = CONFIG_DIR / "agent-runner.env"
 AGENTS_DIR = ROOT / "agents"
 PROMPTS_DIR = AGENTS_DIR / "prompts"
 SCRIPTS_DIR = ROOT / "scripts"
@@ -53,6 +54,24 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Prompt before writing missing config files when running in a TTY.",
     )
+    parser.add_argument(
+        "--list-runners",
+        action="store_true",
+        help="Only list detected runner CLIs and the active runner configuration.",
+    )
+    parser.add_argument(
+        "--activate-runner",
+        help="Runner binary to activate, for example claude or codex.",
+    )
+    parser.add_argument(
+        "--runner-command",
+        help="Full runner command to persist, for example 'codex --profile default'. Defaults to the runner binary.",
+    )
+    parser.add_argument(
+        "--mode",
+        default=None,
+        help="Runner mode to persist when activating a runner. Defaults to claude-print for claude and stdin-text for everything else.",
+    )
     return parser.parse_args(argv)
 
 
@@ -62,12 +81,32 @@ def print_header(title: str) -> None:
     print("-" * len(title))
 
 
-def detect_runner_status() -> tuple[str, str, list[str]]:
-    runner_cmd = os.environ.get("BACK_OFFICE_AGENT_RUNNER", "claude")
-    runner_mode = os.environ.get("BACK_OFFICE_AGENT_MODE", "claude-print")
+def load_runner_config_file() -> dict[str, str]:
+    values: dict[str, str] = {}
+    if not RUNNER_CONFIG.exists():
+        return values
+    for line in RUNNER_CONFIG.read_text().splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or "=" not in stripped:
+            continue
+        key, value = stripped.split("=", 1)
+        values[key.strip()] = value.strip().strip('"').strip("'")
+    return values
+
+
+def detect_runner_status() -> tuple[str, str, list[str], dict[str, str]]:
+    file_values = load_runner_config_file()
+    runner_cmd = os.environ.get(
+        "BACK_OFFICE_AGENT_RUNNER",
+        file_values.get("BACK_OFFICE_AGENT_RUNNER", "claude"),
+    )
+    runner_mode = os.environ.get(
+        "BACK_OFFICE_AGENT_MODE",
+        file_values.get("BACK_OFFICE_AGENT_MODE", "claude-print"),
+    )
     runner_bin = runner_cmd.split()[0]
     available = [name for name in KNOWN_RUNNERS if shutil.which(name)]
-    return runner_cmd, runner_mode, available
+    return runner_cmd, runner_mode, available, file_values
 
 
 def load_yaml(path: Path) -> dict:
@@ -108,17 +147,38 @@ def summarize_agent_scripts() -> None:
 
 def summarize_runner() -> bool:
     print_header("Agent Runner")
-    runner_cmd, runner_mode, available = detect_runner_status()
+    runner_cmd, runner_mode, available, file_values = detect_runner_status()
     runner_bin = runner_cmd.split()[0]
     runner_ok = shutil.which(runner_bin) is not None
     print(f"* Active runner command: {runner_cmd}")
     print(f"* Runner mode: {runner_mode}")
     print(f"* Active runner binary found: {'yes' if runner_ok else 'no'}")
     print(f"* Other detected runner CLIs: {', '.join(available) if available else 'none'}")
+    print(f"* Runner config file: {RUNNER_CONFIG.relative_to(ROOT)} {'present' if RUNNER_CONFIG.exists() else 'missing'}")
+    if file_values:
+        print(f"* Config-file runner command: {file_values.get('BACK_OFFICE_AGENT_RUNNER', 'n/a')}")
+        print(f"* Config-file runner mode: {file_values.get('BACK_OFFICE_AGENT_MODE', 'n/a')}")
     print("* Change runner:")
-    print("  export BACK_OFFICE_AGENT_RUNNER='codex'")
-    print("  export BACK_OFFICE_AGENT_MODE='stdin-text'")
+    print("  python3 scripts/backoffice-cli.py runners")
+    print("  python3 scripts/backoffice-cli.py activate-runner --runner codex --mode stdin-text")
     return runner_ok
+
+
+def persist_runner_config(runner: str, runner_command: str | None, mode: str | None) -> None:
+    if not shutil.which(runner):
+        raise SystemExit(f"Runner binary not found on PATH: {runner}")
+    chosen_mode = mode or ("claude-print" if runner == "claude" else "stdin-text")
+    chosen_command = runner_command or runner
+    RUNNER_CONFIG.write_text(
+        "# Back Office agent runner configuration\n"
+        f'BACK_OFFICE_AGENT_RUNNER="{chosen_command}"\n'
+        f'BACK_OFFICE_AGENT_MODE="{chosen_mode}"\n'
+    )
+    print_header("Runner Updated")
+    print(f"* Active runner binary: {runner}")
+    print(f"* Persisted command: {chosen_command}")
+    print(f"* Persisted mode: {chosen_mode}")
+    print(f"* Saved to: {RUNNER_CONFIG.relative_to(ROOT)}")
 
 
 def summarize_config_state(args: argparse.Namespace) -> None:
@@ -229,6 +289,15 @@ def summarize_recent_usage() -> None:
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
+
+    if args.activate_runner:
+        persist_runner_config(args.activate_runner, args.runner_command, args.mode)
+        return 0
+    if args.list_runners:
+        print("Back Office Setup")
+        print("=================")
+        summarize_runner()
+        return 0
 
     print("Back Office Setup")
     print("=================")
