@@ -7,11 +7,13 @@ Use it when you want one documented entry point instead of bouncing between Make
 ## Primary Command Surface
 
 ```bash
+python3 scripts/backoffice-cli.py setup --write-missing-configs
 python3 scripts/backoffice-cli.py list-targets
 python3 scripts/backoffice-cli.py refresh
 python3 scripts/backoffice-cli.py deploy
 python3 scripts/backoffice-cli.py test
 python3 scripts/backoffice-cli.py audit --target bible-app --departments qa,product
+python3 scripts/backoffice-cli.py audit-all
 python3 scripts/backoffice-cli.py audit-all --targets bible-app,thenewbeautifulme --departments qa,product
 python3 scripts/backoffice-cli.py scaffold-workflows --target bible-app
 python3 scripts/backoffice-cli.py quick-sync --department product --repo bible-app
@@ -22,6 +24,7 @@ python3 scripts/backoffice-cli.py quick-sync --department product --repo bible-a
 ```mermaid
 flowchart TD
     CLI[backoffice-cli.py] --> LT[list-targets]
+    CLI --> ST[setup]
     CLI --> RF[refresh]
     CLI --> DP[deploy]
     CLI --> TS[test]
@@ -30,6 +33,7 @@ flowchart TD
     CLI --> SC[scaffold-workflows]
     CLI --> QS[quick-sync]
 
+    ST --> SETUP[backoffice_setup.py]
     LT --> LAW[local_audit_workflow.py list-targets]
     RF --> LAW2[local_audit_workflow.py refresh]
     AU --> LAW3[local_audit_workflow.py run-target]
@@ -41,6 +45,24 @@ flowchart TD
 ```
 
 ## What Each Command Actually Does
+
+### `setup`
+
+Inspects the current operator environment and can create missing config files from the shipped examples.
+
+Example:
+
+```bash
+python3 scripts/backoffice-cli.py setup --write-missing-configs
+```
+
+It reports:
+
+- detected agent CLIs
+- active `BACK_OFFICE_AGENT_RUNNER` and `BACK_OFFICE_AGENT_MODE`
+- available agent scripts and prompt files
+- current config file status
+- recent local agent usage from `local-audit-log.json`
 
 ### `list-targets`
 
@@ -102,6 +124,12 @@ python3 scripts/backoffice-cli.py audit-all --targets bible-app,thenewbeautifulm
 
 If `--targets` is omitted, all configured targets run.
 
+Exact command for every configured target:
+
+```bash
+python3 scripts/backoffice-cli.py audit-all
+```
+
 ### `scaffold-workflows`
 
 Writes GitHub Actions starter workflows into a target repo.
@@ -134,6 +162,8 @@ Use it when you want a fast partial dashboard update instead of a full dashboard
 ### Rebuild and inspect
 
 ```bash
+python3 scripts/backoffice-cli.py setup --write-missing-configs
+python3 scripts/backoffice-cli.py audit-all
 python3 scripts/backoffice-cli.py refresh
 python3 scripts/backoffice-cli.py test
 ```
@@ -168,6 +198,7 @@ Use Make when:
 ## Related Files
 
 - `scripts/backoffice-cli.py`
+- `scripts/backoffice_setup.py`
 - `scripts/local_audit_workflow.py`
 - `scripts/scaffold-github-workflows.py`
 - `scripts/sync-dashboard.sh`

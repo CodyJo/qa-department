@@ -23,6 +23,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
+    setup = subparsers.add_parser("setup", help="Inspect agent/runtime setup and optionally create missing config files.")
+    setup.add_argument("--check-only", action="store_true", help="Only report current setup state.")
+    setup.add_argument("--write-missing-configs", action="store_true", help="Create missing config files from examples.")
+    setup.add_argument("--interactive", action="store_true", help="Prompt before writing missing config files.")
     subparsers.add_parser("list-targets", help="List configured audit targets.")
     subparsers.add_parser("refresh", help="Refresh local dashboard data from existing results.")
     subparsers.add_parser("deploy", help="Publish dashboard assets using sync-dashboard.sh.")
@@ -49,6 +53,15 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
+    if args.command == "setup":
+      command = ["python3", "scripts/backoffice_setup.py"]
+      if args.check_only:
+        command.append("--check-only")
+      if args.write_missing_configs:
+        command.append("--write-missing-configs")
+      if args.interactive:
+        command.append("--interactive")
+      return run_command(command)
     if args.command == "list-targets":
       return run_command(["python3", "scripts/local_audit_workflow.py", "list-targets"])
     if args.command == "refresh":

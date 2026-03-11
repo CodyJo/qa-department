@@ -22,6 +22,7 @@ Published dashboard docs:
 - `dashboard/documentation-github.html`
 - `dashboard/documentation-cicd.html`
 - `dashboard/documentation-cli.html`
+- `dashboard/metrics.html`
 
 ## What Back Office Does
 

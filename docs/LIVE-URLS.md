@@ -35,6 +35,7 @@ This file is the exact URL index for the current public site, protected Back Off
 - `https://admin.codyjo.com/documentation-github.html`
 - `https://admin.codyjo.com/documentation-cicd.html`
 - `https://admin.codyjo.com/documentation-cli.html`
+- `https://admin.codyjo.com/metrics.html`
 
 ## GitHub Repositories
 
