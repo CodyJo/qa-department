@@ -64,6 +64,11 @@ That means deploys are gated by:
 - lint
 - Back Office regression tests
 
+And production publishes now include:
+
+- the docs hub and reference pages
+- the metrics dashboard at `metrics.html`
+
 ### `nightly-backoffice.yml`
 
 Purpose: refresh delivery metadata and nightly dashboard artifacts.
@@ -125,6 +130,7 @@ Current production posture for Back Office dashboard publishing:
 - `.github/workflows/preview.yml`
 - `.github/workflows/deploy.yml`
 - `.github/workflows/nightly-backoffice.yml`
+- `dashboard/metrics.html`
 - `templates/github-actions/product-ci.yml`
 - `templates/github-actions/product-preview.yml`
 - `templates/github-actions/product-cd.yml`

@@ -12,6 +12,7 @@ Back Office is the control plane for Cody Jo Method's product operations. It doe
 ```mermaid
 flowchart TD
     A[config/targets.yaml] --> B[local_audit_workflow.py]
+    N[config/agent-runner.env] --> E
     A --> C[scaffold-github-workflows.py]
     B --> D[agents/*.sh]
     D --> E[run-agent.sh]
@@ -20,6 +21,8 @@ flowchart TD
     F --> H[generate-delivery-data.py]
     G --> I[dashboard/*.html + *-data.json]
     H --> I
+    B --> O[results/local-audit-log.json]
+    O --> P[dashboard/metrics.html]
     I --> J[sync-dashboard.sh]
     J --> K[admin.* dashboards]
     J --> L[www.codyjo.com/back-office handoff]
@@ -41,6 +44,20 @@ Each target can define:
 - lint, test, build, preview, deploy, and nightly command metadata
 - product context for prompts and dashboard grouping
 
+### `config/agent-runner.env`
+
+This is the local persisted runner choice for Back Office.
+
+It defines:
+
+- `BACK_OFFICE_AGENT_RUNNER`
+- `BACK_OFFICE_AGENT_MODE`
+
+Use the CLI to manage it:
+
+- `python3 scripts/backoffice-cli.py runners`
+- `python3 scripts/backoffice-cli.py activate-runner --runner codex --mode stdin-text`
+
 ### `scripts/local_audit_workflow.py`
 
 This is the reproducible local orchestration layer.
@@ -51,6 +68,10 @@ It supports four real commands:
 - `refresh`
 - `run-target`
 - `run-all`
+
+The CLI maps `audit-all` directly to `run-all`, so the exact command for all configured targets is:
+
+- `python3 scripts/backoffice-cli.py audit-all`
 
 Operationally it does this:
 
@@ -98,6 +119,16 @@ Outputs include:
 - `dashboard/product-data.json`
 - `dashboard/automation-data.json`
 - `dashboard/local-audit-log.json`
+
+### `dashboard/metrics.html`
+
+This is the aggregate metrics surface for:
+
+- code-quality findings across departments
+- fixable-by-agent backlog
+- recent agent runner usage
+- target health from the local audit log
+- delivery readiness from `automation-data.json`
 
 ### `scripts/generate-delivery-data.py`
 
@@ -170,3 +201,4 @@ Published docs surfaces live in the dashboard:
 - `dashboard/documentation-github.html`
 - `dashboard/documentation-cicd.html`
 - `dashboard/documentation-cli.html`
+- `dashboard/metrics.html`

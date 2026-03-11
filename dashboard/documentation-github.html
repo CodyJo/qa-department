@@ -102,12 +102,13 @@
         <h2>Repository split</h2>
         <div class="grid">
           <div>
-            <p><strong>Back Office repo</strong> owns the audit framework, dashboard UI, aggregators, workflow scaffolding templates, sync scripts, and documentation pages.</p>
+            <p><strong>Back Office repo</strong> owns the audit framework, dashboard UI, aggregators, workflow scaffolding templates, sync scripts, runner configuration conventions, and documentation pages.</p>
             <pre><code>agents/
 scripts/
 dashboard/
 templates/github-actions/
-config/targets.yaml</code></pre>
+config/targets.yaml
+config/agent-runner.env.example</code></pre>
           </div>
           <div>
             <p><strong>Target product repos</strong> own their application code, local lint/test/build commands, and the generated GitHub Actions files Back Office scaffolds into place.</p>
@@ -124,6 +125,7 @@ product docs</code></pre>
         <h2>What should change where</h2>
         <ul>
           <li>Change <code>config/targets.yaml</code> in Back Office when you need to register a repo, update audit context, or define lint, test, and deploy commands.</li>
+          <li>Change the local active runner with <code>python3 scripts/backoffice-cli.py activate-runner --runner ...</code>, which writes <code>config/agent-runner.env</code> for your operator machine.</li>
           <li>Change <code>templates/github-actions/</code> in Back Office when you want to improve the generated CI, preview, CD, or nightly workflow templates.</li>
           <li>Change product repo source code when Back Office findings identify issues or product work that belongs to that repo.</li>
           <li>Review generated workflow files inside the target repo before committing them. Back Office scaffolds them; it does not auto-merge them into production repos.</li>
@@ -158,6 +160,7 @@ product docs</code></pre>
           <li>The README in the Back Office repo should explain the framework, local operating model, deployment model, and links to dashboard documentation pages.</li>
           <li>Product repos should keep their own product-specific setup and deployment instructions. Back Office should not replace repo-level product docs.</li>
           <li>The dashboard documentation pages are the product-facing documentation surface. The README is the GitHub-facing documentation surface.</li>
+          <li>The metrics dashboard is the reporting surface for code-quality and agent-usage rollups: <code>metrics.html</code>.</li>
         </ul>
       </article>
 

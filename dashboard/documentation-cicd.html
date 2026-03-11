@@ -147,6 +147,7 @@
           <li><strong>Repo deploy path</strong>: push to <code>main</code> in the Back Office repo and let GitHub Actions handle the dashboard deploy workflow.</li>
           <li><strong>Direct sync path</strong>: run <code>bash scripts/sync-dashboard.sh</code> when you intentionally want to publish the static dashboards and payloads from a local operator environment.</li>
           <li>The direct sync path should still respect the same discipline: tests first, aggregation second, upload third.</li>
+          <li>Both paths publish the docs hub and the metrics surface, not just the HQ and department dashboards.</li>
         </ul>
       </article>
 
@@ -168,6 +169,7 @@ templates/github-actions/nightly-backoffice.yml</code></pre>
           <li>Whether CI, preview, production, and nightly workflows exist for each configured target.</li>
           <li>Whether lint, test, and build commands are actually configured for each target.</li>
           <li>Whether automation posture is good enough to consider a repo delivery-ready.</li>
+          <li>Code-quality and agent-usage rollups through the metrics dashboard.</li>
         </ul>
       </article>
     </section>

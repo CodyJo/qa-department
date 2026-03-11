@@ -24,6 +24,11 @@ Published dashboard docs:
 - `dashboard/documentation-cli.html`
 - `dashboard/metrics.html`
 
+Runner configuration:
+
+- local active runner file: `config/agent-runner.env`
+- example runner file: `config/agent-runner.env.example`
+
 ## What Back Office Does
 
 Back Office provides:
@@ -32,6 +37,7 @@ Back Office provides:
 - a product-first HQ dashboard that rolls those departments up by product
 - per-department dashboards with backlog, ratings, status buckets, and employee/agent coverage
 - local audit orchestration for one repo or many repos
+- persistent local runner selection for installed agent CLIs
 - deploy/sync tooling for publishing static dashboards and JSON payloads to S3 + CloudFront
 - an agent runner abstraction so the system is not tied to one model vendor
 
