@@ -7,7 +7,6 @@ import argparse
 import os
 import shutil
 import stat
-import subprocess
 import sys
 from pathlib import Path
 
@@ -104,7 +103,6 @@ def detect_runner_status() -> tuple[str, str, list[str], dict[str, str]]:
         "BACK_OFFICE_AGENT_MODE",
         file_values.get("BACK_OFFICE_AGENT_MODE", "claude-print"),
     )
-    runner_bin = runner_cmd.split()[0]
     available = [name for name in KNOWN_RUNNERS if shutil.which(name)]
     return runner_cmd, runner_mode, available, file_values
 
