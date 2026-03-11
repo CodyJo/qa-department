@@ -202,7 +202,6 @@
           </div>
           <div class="dept-grid" id="departmentGrid"></div>
         </div>
-        <div class="card employee-day" id="employeeOfDay"></div>
       </section>
 
       <section class="grid-2">
@@ -752,31 +751,6 @@
       }).join('');
     }
 
-    function renderEmployeeOfDay() {
-      const employees = getEmployeesForSelection();
-      const employee = employees[0];
-      const host = document.getElementById('employeeOfDay');
-      if (!employee) {
-        host.innerHTML = '<div class="headline">Employee of the Day</div><div class="resume">No employee matches this product yet.</div>';
-        return;
-      }
-      host.innerHTML = `
-        <div class="headline">Employee of the Day</div>
-        <div class="employee-top">
-          <div>
-            <div class="employee-name">${esc(employee.name)}</div>
-            <div class="employee-title">${esc(employee.title)}</div>
-          </div>
-          <div class="score-pill" style="color:${scoreClass(employee.daily_score)}">${employee.daily_score}</div>
-        </div>
-        <div class="employee-bio">${esc(employee.bio)}</div>
-        <div class="resume"><strong>Why today:</strong> ${esc(employee.persona)}</div>
-        <div class="resume"><strong>Fake resume:</strong> ${esc(employee.resume)}</div>
-        <div class="resume"><strong>Open findings in lane:</strong> ${getEmployeeFindingCount(employee)}</div>
-        <div class="chips">${employee.skills.map(skill => `<span class="chip">${esc(skill)}</span>`).join('')}</div>
-      `;
-    }
-
     function renderEmployees() {
       const employees = getEmployeesForSelection();
       document.getElementById('employeeGrid').innerHTML = employees.map(employee => `
@@ -933,7 +907,6 @@
       renderProductSummary();
       renderStats();
       renderDepartments();
-      renderEmployeeOfDay();
       renderEmployees();
       renderFindings();
       renderProductLead();
