@@ -55,7 +55,7 @@ dashboard_files = [
     'seo.html', 'ada.html', 'compliance.html', 'privacy.html', 'monetization.html', 'product.html',
     'jobs.html', 'faq.html', 'self-audit.html', 'admin.html',
     'selah.html', 'analogify.html', 'chromahaus.html', 'tnbm-tarot.html', 'back-office-hq.html',
-    'site-branding.js', 'favicon.svg',
+    'site-branding.js', 'department-context.js', 'favicon.svg',
 ]
 
 # Maps: raw findings filename -> dashboard data filename
