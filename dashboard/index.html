@@ -132,8 +132,8 @@
     .task-meta, .criteria-meta { color: var(--text-dim); font-size: 0.76rem; line-height: 1.5; margin-top: 0.35rem; }
     .status-pill {
       display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.25rem 0.55rem; border-radius: 999px;
-      border: 1px solid var(--border); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em;
-      background: var(--surface-2); color: var(--text-dim);
+      border: 1px solid var(--border); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em;
+      background: var(--surface-2); color: var(--text-dim); font-weight: 600;
     }
     .status-pill.good { color: var(--success); border-color: rgba(46, 213, 115, 0.3); background: rgba(46, 213, 115, 0.08); }
     .status-pill.warn { color: var(--medium); border-color: rgba(255, 209, 102, 0.3); background: rgba(255, 209, 102, 0.08); }
@@ -281,6 +281,62 @@
           <div class="task-list" id="overnightList"></div>
         </div>
       </section>
+
+      <section class="grid-1">
+        <div class="card">
+          <div class="section-header">
+            <h3>Manual Log</h3>
+            <div class="badge" id="manualBadge">0 items</div>
+          </div>
+          <form id="manualForm" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0.6rem;margin-bottom:0.9rem;">
+            <div>
+              <label class="select-label" for="manualTitle">Title</label>
+              <input id="manualTitle" name="title" type="text" placeholder="Brief title" required
+                     style="width:100%;background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.6rem 0.7rem;font-size:0.9rem;">
+            </div>
+            <div>
+              <label class="select-label" for="manualRepo">Repo</label>
+              <select id="manualRepo" name="repo" aria-label="Manual item repo"></select>
+            </div>
+            <div>
+              <label class="select-label" for="manualDepartment">Department</label>
+              <select id="manualDepartment" name="department" aria-label="Manual item department"></select>
+            </div>
+            <div>
+              <label class="select-label" for="manualSeverity">Severity</label>
+              <select id="manualSeverity" name="severity" aria-label="Manual item severity">
+                <option value="critical">Critical</option>
+                <option value="high">High</option>
+                <option value="medium" selected>Medium</option>
+                <option value="low">Low</option>
+                <option value="info">Info</option>
+              </select>
+            </div>
+            <div>
+              <label class="select-label" for="manualCategories">Categories</label>
+              <input id="manualCategories" name="categories" type="text" placeholder="qa, seo, ada..."
+                     style="width:100%;background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.6rem 0.7rem;font-size:0.9rem;">
+            </div>
+            <div>
+              <label class="select-label" for="manualBucket">Bucket</label>
+              <input id="manualBucket" name="bucket" type="text" placeholder="Sprint 1, backlog..."
+                     style="width:100%;background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.6rem 0.7rem;font-size:0.9rem;">
+            </div>
+            <div style="grid-column:1/-1;">
+              <label class="select-label" for="manualNotes">Notes</label>
+              <textarea id="manualNotes" name="notes" rows="2" placeholder="Details, acceptance criteria, links..."
+                        style="width:100%;background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.6rem 0.7rem;font-size:0.9rem;resize:vertical;"></textarea>
+            </div>
+            <div style="grid-column:1/-1;display:flex;justify-content:flex-end;">
+              <button type="submit"
+                      style="border:1px solid var(--accent);background:rgba(196,148,74,0.15);color:var(--accent);border-radius:999px;padding:0.5rem 1.1rem;font-size:0.8rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">
+                Add Manual Item
+              </button>
+            </div>
+          </form>
+          <div class="task-list" id="manualList"></div>
+        </div>
+      </section>
     </div>
 
     <div class="foot"><span id="footer-brand">Cody Jo Method</span> Back Office</div>
@@ -301,6 +357,7 @@
     let orgData = null;
     let deptData = {};
     let automationData = { targets: [] };
+    let manualItems = [];
     let selectedProductKey = 'all';
     const SEVERITY_WEIGHT = { critical: 0, high: 1, medium: 2, low: 3, info: 4 };
 
@@ -326,14 +383,16 @@
     }
 
     async function boot() {
-      const [org, automation, ...rest] = await Promise.all([
+      const [org, automation, manual, ...rest] = await Promise.all([
         loadJson('org-data.json'),
         loadJson('automation-data.json'),
+        loadJson('manual-items.json'),
         ...DEPARTMENT_SOURCES.map(source => loadJson(source.file))
       ]);
 
       orgData = org;
       automationData = automation || { targets: [] };
+      manualItems = Array.isArray(manual?.items) ? manual.items : [];
       selectedProductKey = getInitialProductKey();
       DEPARTMENT_SOURCES.forEach((source, index) => {
         deptData[source.key] = rest[index];
@@ -838,7 +897,7 @@
 
     function renderEmployees() {
       const employees = getEmployeesForSelection();
-      document.getElementById('employeeGrid').innerHTML = employees.map(employee => `
+      document.getElementById('employeeGrid').innerHTML = employees.length ? employees.map(employee => `
         <article class="employee-card">
           <div class="employee-top">
             <div>
@@ -853,7 +912,7 @@
           <div class="resume"><strong>Findings focus:</strong> ${esc(employee.finding_focus.join(', '))}</div>
           <div class="chips">${employee.skills.slice(0, 6).map(skill => `<span class="chip">${esc(skill)}</span>`).join('')}</div>
         </article>
-      `).join('');
+      `).join('') : '<div class="resume">No employees are mapped to this product yet.</div>';
     }
 
     function renderFindings() {
@@ -1040,6 +1099,108 @@
       `).join('') : '<div class="resume">No safe unattended candidates are currently in scope for this product.</div>';
     }
 
+    function getManualItemsForSelection() {
+      const product = getSelectedProduct();
+      const repos = new Set(product.key === 'all' ? orgData.products.flatMap(item => item.repos) : product.repos);
+      return (manualItems || []).filter(item => {
+        if (item.product_key && item.product_key !== product.key) return false;
+        if (item.repo && !repos.has(item.repo)) return false;
+        return true;
+      });
+    }
+
+    function renderManualLog() {
+      const items = getManualItemsForSelection();
+      document.getElementById('manualBadge').textContent = `${items.length} items`;
+      document.getElementById('manualList').innerHTML = items.length ? items.map(item => `
+        <article class="task-card">
+          <div class="task-top">
+            <div>
+              <div class="employee-name">${esc(item.title)}</div>
+              <div class="task-owner">
+                ${esc(item.repo || 'unmapped repo')}
+                ${item.department ? ` · ${esc(item.department)}` : ''}
+                ${item.bucket ? ` · ${esc(item.bucket)}` : ''}
+              </div>
+            </div>
+            <span class="status-pill ${item.severity === 'critical' || item.severity === 'high' ? 'bad' : item.severity === 'medium' ? 'warn' : 'info'}">
+              ${esc(item.severity || 'info')}
+            </span>
+          </div>
+          <div class="finding-meta">
+            ${Array.isArray(item.categories) && item.categories.length
+              ? item.categories.map(cat => `<span class="chip">${esc(cat)}</span>`).join(' ')
+              : 'No categories assigned yet.'}
+          </div>
+          <div class="finding-desc">${esc(item.notes || 'No additional notes recorded.')}</div>
+        </article>
+      `).join('') : '<div class="resume">No manual items are logged for this product yet.</div>';
+    }
+
+    function initManualForm() {
+      const form = document.getElementById('manualForm');
+      if (!form) return;
+
+      const repoSelect = document.getElementById('manualRepo');
+      const deptSelect = document.getElementById('manualDepartment');
+
+      // Populate repo and department options once orgData is available.
+      const allRepos = Array.from(new Set(orgData.products.flatMap(item => item.repos))).filter(Boolean);
+      repoSelect.innerHTML = [''].concat(allRepos).map(name =>
+        `<option value="${name}">${name || 'Unassigned'}</option>`
+      ).join('');
+
+      deptSelect.innerHTML = orgData.departments.map(dept =>
+        `<option value="${dept.key}">${dept.name}</option>`
+      ).join('');
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const titleEl = document.getElementById('manualTitle');
+        const title = titleEl.value.trim();
+        if (!title) {
+          alert('Title is required for a manual item.');
+          return;
+        }
+        const repo = document.getElementById('manualRepo').value.trim();
+        const departmentKey = document.getElementById('manualDepartment').value.trim();
+        const severity = document.getElementById('manualSeverity').value.trim().toLowerCase() || 'medium';
+        const categoriesRaw = document.getElementById('manualCategories').value;
+        const bucket = document.getElementById('manualBucket').value.trim();
+        const notes = document.getElementById('manualNotes').value.trim();
+
+        const categories = (categoriesRaw || '').split(',').map(c => c.trim()).filter(Boolean);
+        const department = departmentKey || '';
+        const product = getSelectedProduct();
+
+        try {
+          const resp = await fetch('api/manual-item', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title,
+              repo,
+              department,
+              severity,
+              categories,
+              bucket,
+              notes,
+              product_key: product.key,
+            }),
+          });
+          if (!resp.ok) throw new Error('Failed to save manual item');
+          const data = await resp.json();
+          if (Array.isArray(data.items)) {
+            manualItems = data.items;
+            renderManualLog();
+          }
+          form.reset();
+        } catch (error) {
+          alert('Could not save manual item. Check local server logs.');
+        }
+      });
+    }
+
     function renderProductSummary() {
       const product = getSelectedProduct();
       const domains = product.domains.length ? ` Domains: ${product.domains.join(', ')}.` : '';
@@ -1062,9 +1223,11 @@
       renderSprintPlan();
       renderPipeline();
       renderOvernightFactory();
+      renderManualLog();
     }
 
     boot();
+    document.addEventListener('DOMContentLoaded', initManualForm);
   </script>
 </body>
 </html>

@@ -17,6 +17,7 @@ import subprocess
 import sys
 import threading
 import time
+from datetime import datetime, timezone
 from urllib.parse import urlparse
 
 PORT = 8070
@@ -36,9 +37,44 @@ DEPT_SCRIPTS = {
 
 ALL_DEPTS = list(DEPT_SCRIPTS.keys())
 
+MANUAL_ITEMS_RESULT = os.path.join(QA_ROOT, "results", "manual-items.json")
+MANUAL_ITEMS_DASHBOARD = os.path.join(DASHBOARD_DIR, "manual-items.json")
+
 # Track running processes to prevent double-starts
 running_jobs = set()
 running_lock = threading.Lock()
+
+
+def _load_manual_items():
+    try:
+        with open(MANUAL_ITEMS_RESULT) as f:
+            raw = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+
+    if isinstance(raw, dict):
+        items = raw.get("items", [])
+    else:
+        items = raw
+
+    return [item for item in items if isinstance(item, dict)]
+
+
+def _save_manual_items(items):
+    payload = {
+        "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "items": items,
+    }
+    os.makedirs(os.path.dirname(MANUAL_ITEMS_RESULT), exist_ok=True)
+    with open(MANUAL_ITEMS_RESULT, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2)
+        f.write("\n")
+
+    # Mirror into dashboard directory so the front-end can fetch manual-items.json directly.
+    os.makedirs(os.path.dirname(MANUAL_ITEMS_DASHBOARD), exist_ok=True)
+    with open(MANUAL_ITEMS_DASHBOARD, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2)
+        f.write("\n")
 
 
 def run_agent(dept, target, sync=False):
@@ -99,6 +135,8 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             self._handle_run_all()
         elif path == "/api/run-regression":
             self._handle_run_regression()
+        elif path == "/api/manual-item":
+            self._handle_manual_item()
         else:
             self.send_error(404, "Not found")
 
@@ -247,6 +285,49 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         t = threading.Thread(target=_run, daemon=True)
         t.start()
         self._json_response(200, {"status": "started"})
+
+    def _handle_manual_item(self):
+        """Append a manual backlog item and mirror to dashboard."""
+        if self._origin_allowed() is False:
+            self.send_error(403, "Origin not allowed")
+            return
+
+        body = self._read_body()
+        title = (body.get("title") or "").strip()
+        if not title:
+            self._json_response(400, {"error": "title is required"})
+            return
+
+        repo = (body.get("repo") or "").strip()
+        department = (body.get("department") or "").strip()
+        severity = (body.get("severity") or "medium").strip().lower()
+        category = (body.get("category") or "").strip()
+        bucket = (body.get("bucket") or "").strip()
+        notes = (body.get("notes") or "").strip()
+        product_key = (body.get("product_key") or "").strip()
+        categories = body.get("categories") or []
+        if isinstance(categories, str):
+            categories = [c.strip() for c in categories.split(",") if c.strip()]
+
+        items = _load_manual_items()
+        now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+        new_id = f"MAN-{len(items) + 1:03d}"
+        item = {
+            "id": new_id,
+            "title": title,
+            "repo": repo,
+            "department": department,
+            "severity": severity,
+            "category": category,
+            "categories": categories,
+            "bucket": bucket,
+            "notes": notes,
+            "product_key": product_key,
+            "created_at": now,
+        }
+        items.append(item)
+        _save_manual_items(items)
+        self._json_response(200, {"ok": True, "items": items})
 
     def do_OPTIONS(self):
         """Handle CORS preflight."""
