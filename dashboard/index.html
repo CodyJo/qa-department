@@ -1226,8 +1226,9 @@
       renderManualLog();
     }
 
-    boot();
-    document.addEventListener('DOMContentLoaded', initManualForm);
+    boot().then(() => {
+      initManualForm();
+    });
   </script>
 </body>
 </html>
