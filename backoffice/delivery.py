@@ -1,26 +1,25 @@
-#!/usr/bin/env python3
-"""Generate delivery automation metadata for the Back Office dashboard."""
+"""Generate delivery automation metadata for the Back Office dashboard.
+
+Ported from scripts/generate-delivery-data.py. Accepts paths as function
+arguments / Config object instead of env-var-only lookups, and uses
+structured logging instead of print().
+"""
 
 from __future__ import annotations
 
 import json
+import logging
 import os
 from datetime import datetime, timezone
 from pathlib import Path
 
 import yaml
 
-QA_ROOT = Path(
-    os.environ.get(
-        "BACK_OFFICE_ROOT",
-        Path(__file__).resolve().parents[1],
-    )
-)
-CONFIG_PATH = Path(os.environ.get("BACK_OFFICE_TARGETS_CONFIG", QA_ROOT / "config" / "targets.yaml"))
-EXAMPLE_CONFIG_PATH = QA_ROOT / "config" / "targets.example.yaml"
-RESULTS_DIR = Path(os.environ.get("BACK_OFFICE_RESULTS_DIR", QA_ROOT / "results"))
-DASHBOARD_DIR = Path(os.environ.get("BACK_OFFICE_DASHBOARD_DIR", QA_ROOT / "dashboard"))
-OUTPUT_PATH = Path(os.environ.get("BACK_OFFICE_DELIVERY_OUTPUT", DASHBOARD_DIR / "automation-data.json"))
+logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Constants (identical to original)
+# ---------------------------------------------------------------------------
 
 WORKFLOW_FILE_GLOBS = ("*.yml", "*.yaml")
 SAFE_EFFORTS = {"tiny", "small", "low", "medium"}
@@ -57,24 +56,23 @@ DEPARTMENT_FILES = {
 }
 
 
+# ---------------------------------------------------------------------------
+# Utilities
+# ---------------------------------------------------------------------------
+
 def iso_now() -> str:
+    """Return the current UTC time as an ISO 8601 string."""
     return datetime.now(timezone.utc).isoformat()
 
 
 def load_yaml(path: Path):
+    """Load a YAML file, returning an empty dict on missing/empty file."""
     with path.open() as handle:
         return yaml.safe_load(handle) or {}
 
 
-def load_targets_config():
-    if CONFIG_PATH.exists():
-        return load_yaml(CONFIG_PATH)
-    if EXAMPLE_CONFIG_PATH.exists():
-        return load_yaml(EXAMPLE_CONFIG_PATH)
-    return {"targets": []}
-
-
 def load_json(path: Path):
+    """Load a JSON file, returning None on missing file or parse error."""
     try:
         with path.open() as handle:
             return json.load(handle)
@@ -82,9 +80,39 @@ def load_json(path: Path):
         return None
 
 
+def load_targets_config(
+    config_path: Path | None = None,
+    example_config_path: Path | None = None,
+):
+    """Load the targets configuration from YAML.
+
+    Tries *config_path* first, falls back to *example_config_path*, and
+    returns ``{"targets": []}`` if neither exists.
+    """
+    if config_path is None:
+        root = Path(os.environ.get("BACK_OFFICE_ROOT", Path(__file__).resolve().parents[1]))
+        config_path = Path(
+            os.environ.get("BACK_OFFICE_TARGETS_CONFIG", root / "config" / "targets.yaml")
+        )
+    if example_config_path is None:
+        root = Path(os.environ.get("BACK_OFFICE_ROOT", Path(__file__).resolve().parents[1]))
+        example_config_path = root / "config" / "targets.example.yaml"
+
+    if config_path.exists():
+        return load_yaml(config_path)
+    if example_config_path.exists():
+        return load_yaml(example_config_path)
+    return {"targets": []}
+
+
+# ---------------------------------------------------------------------------
+# Workflow detection
+# ---------------------------------------------------------------------------
+
 def list_workflows(repo_path: Path) -> list[dict]:
+    """Return a list of parsed workflow dicts from .github/workflows/."""
     workflow_dir = repo_path / ".github" / "workflows"
-    files = []
+    files: list[Path] = []
     if not workflow_dir.exists():
         return files
     for pattern in WORKFLOW_FILE_GLOBS:
@@ -110,6 +138,7 @@ def list_workflows(repo_path: Path) -> list[dict]:
 
 
 def contains_schedule(trigger) -> bool:
+    """Return True if the workflow trigger includes a schedule."""
     if isinstance(trigger, dict):
         return "schedule" in trigger
     if isinstance(trigger, list):
@@ -118,6 +147,7 @@ def contains_schedule(trigger) -> bool:
 
 
 def contains_pull_request(trigger) -> bool:
+    """Return True if the workflow trigger includes pull_request."""
     if isinstance(trigger, dict):
         return "pull_request" in trigger
     if isinstance(trigger, list):
@@ -126,6 +156,7 @@ def contains_pull_request(trigger) -> bool:
 
 
 def contains_push_main(trigger) -> bool:
+    """Return True if the workflow trigger includes a push to main."""
     if not isinstance(trigger, dict):
         return False
     push = trigger.get("push")
@@ -138,6 +169,7 @@ def contains_push_main(trigger) -> bool:
 
 
 def detect_workflow_status(workflows: list[dict]) -> dict:
+    """Classify a list of workflow dicts into ci/preview/cd/nightly status."""
     statuses = {
         "ci": {"configured": False, "workflow": "", "status": "missing"},
         "preview": {"configured": False, "workflow": "", "status": "missing"},
@@ -205,7 +237,12 @@ def detect_workflow_status(workflows: list[dict]) -> dict:
     return statuses
 
 
+# ---------------------------------------------------------------------------
+# Command coverage detection
+# ---------------------------------------------------------------------------
+
 def read_package_scripts(repo_path: Path) -> dict:
+    """Return the ``scripts`` dict from package.json, or {} if absent."""
     package_json = load_json(repo_path / "package.json")
     if not package_json:
         return {}
@@ -214,6 +251,7 @@ def read_package_scripts(repo_path: Path) -> dict:
 
 
 def detect_command_coverage(target: dict, repo_path: Path) -> dict:
+    """Return lint/test/build/coverage coverage status for a target."""
     package_scripts = read_package_scripts(repo_path) if repo_path.exists() else {}
 
     def has_script(*names: str) -> bool:
@@ -238,19 +276,31 @@ def detect_command_coverage(target: dict, repo_path: Path) -> dict:
             "command": target.get("deploy_command", ""),
             "script_detected": has_script("build"),
         },
+        "coverage": {
+            "configured": bool(target.get("coverage_command")),
+            "status": "configured" if target.get("coverage_command") else "missing",
+            "command": target.get("coverage_command", ""),
+            "script_detected": has_script("test:coverage", "coverage"),
+        },
     }
 
 
+# ---------------------------------------------------------------------------
+# Findings + candidate logic
+# ---------------------------------------------------------------------------
+
 def find_product_key(repo_name: str, products: list[dict]) -> str:
+    """Return the product key for a repo, defaulting to ``'all'``."""
     for product in products:
         if repo_name in (product.get("repos") or []):
             return product.get("key", "all")
     return "all"
 
 
-def read_findings(repo_name: str) -> dict:
-    repo_dir = RESULTS_DIR / repo_name
-    findings = {}
+def read_findings(repo_name: str, results_dir: Path) -> dict:
+    """Load all department findings for *repo_name* from *results_dir*."""
+    repo_dir = results_dir / repo_name
+    findings: dict[str, list] = {}
     for department, filename in DEPARTMENT_FILES.items():
         payload = load_json(repo_dir / filename)
         if payload:
@@ -259,6 +309,7 @@ def read_findings(repo_name: str) -> dict:
 
 
 def is_safe_candidate(department: str, finding: dict) -> bool:
+    """Return True if *finding* is safe for unattended overnight fixing."""
     severity = str(finding.get("severity", "info")).lower()
     effort = str(finding.get("effort", "")).lower()
     status = str(finding.get("status", "open")).lower()
@@ -269,7 +320,7 @@ def is_safe_candidate(department: str, finding: dict) -> bool:
     fixable = bool(finding.get("fixable") or finding.get("fixable_by_agent"))
 
     if department in {"compliance", "privacy"}:
-      return False
+        return False
     if status not in {"open", "in-progress", ""}:
         return False
     if not fixable:
@@ -282,6 +333,7 @@ def is_safe_candidate(department: str, finding: dict) -> bool:
 
 
 def overnight_bucket(finding: dict) -> str:
+    """Classify a finding into an overnight scheduling bucket."""
     severity = str(finding.get("severity", "info")).lower()
     effort = str(finding.get("effort", "")).lower()
     if severity in {"low", "info"} and effort in {"tiny", "small", "low"}:
@@ -292,6 +344,7 @@ def overnight_bucket(finding: dict) -> str:
 
 
 def sprint_bucket(finding: dict) -> str:
+    """Classify a product finding into a sprint scheduling bucket."""
     phase = str(finding.get("priority_phase", "")).lower()
     if phase == "must-have":
         return "Sprint Now"
@@ -308,8 +361,10 @@ def sprint_bucket(finding: dict) -> str:
 
 
 def summarize_candidates(repo_name: str, findings_by_department: dict) -> dict:
-    candidates = []
+    """Build safe-candidate and sprint-lane summaries from all department findings."""
+    candidates: list[dict] = []
     sprint_map: dict[str, list[dict]] = {}
+
     for department, findings in findings_by_department.items():
         for finding in findings:
             if is_safe_candidate(department, finding):
@@ -354,7 +409,12 @@ def summarize_candidates(repo_name: str, findings_by_department: dict) -> dict:
     }
 
 
+# ---------------------------------------------------------------------------
+# Readiness scoring
+# ---------------------------------------------------------------------------
+
 def delivery_readiness(workflows: dict, commands: dict, candidate_count: int) -> int:
+    """Compute a 0–100 delivery readiness score."""
     score = 0
     score += 30 if workflows["ci"]["configured"] else 0
     score += 20 if commands["test"]["configured"] else 0
@@ -368,12 +428,21 @@ def delivery_readiness(workflows: dict, commands: dict, candidate_count: int) ->
     return min(score, 100)
 
 
-def target_summary(target: dict, products: list[dict]) -> dict:
+# ---------------------------------------------------------------------------
+# Per-target summary
+# ---------------------------------------------------------------------------
+
+def target_summary(target: dict, products: list[dict], results_dir: Path) -> dict:
+    """Build the full delivery summary dict for a single target."""
     repo_name = target["name"]
     repo_path = Path(target["path"])
-    workflows = detect_workflow_status(list_workflows(repo_path)) if repo_path.exists() else detect_workflow_status([])
+    workflows = (
+        detect_workflow_status(list_workflows(repo_path))
+        if repo_path.exists()
+        else detect_workflow_status([])
+    )
     commands = detect_command_coverage(target, repo_path)
-    findings_by_department = read_findings(repo_name)
+    findings_by_department = read_findings(repo_name, results_dir)
     candidate_summary = summarize_candidates(repo_name, findings_by_department)
     readiness = delivery_readiness(workflows, commands, candidate_summary["safe_candidate_count"])
 
@@ -397,21 +466,75 @@ def target_summary(target: dict, products: list[dict]) -> dict:
     }
 
 
-def main() -> int:
-    config = load_targets_config()
-    targets = config.get("targets") or []
-    org_data = load_json(DASHBOARD_DIR / "org-data.json") or {"products": []}
+# ---------------------------------------------------------------------------
+# Entry point
+# ---------------------------------------------------------------------------
+
+def main(config=None) -> int:
+    """Generate automation-data.json from targets config and results.
+
+    Args:
+        config: Optional ``backoffice.config.Config`` instance. When provided
+            its ``root`` path is used to resolve default directory locations.
+            Explicit path keyword arguments take precedence.
+
+    Returns:
+        0 on success.
+    """
+    # Resolve root from config object or env/default
+    if config is not None:
+        default_root = config.root
+    else:
+        default_root = Path(
+            os.environ.get("BACK_OFFICE_ROOT", Path(__file__).resolve().parents[1])
+        )
+
+    results_dir = Path(os.environ.get("BACK_OFFICE_RESULTS_DIR", default_root / "results"))
+    dashboard_dir = Path(
+        os.environ.get("BACK_OFFICE_DASHBOARD_DIR", default_root / "dashboard")
+    )
+    output_path = Path(
+        os.environ.get("BACK_OFFICE_DELIVERY_OUTPUT", dashboard_dir / "automation-data.json")
+    )
+
+    # Use new Config.targets if available, otherwise fall back to targets.yaml
+    if config is not None and config.targets:
+        raw_targets = [
+            {
+                "name": name,
+                "path": target.path,
+                "language": target.language,
+                "lint_command": target.lint_command,
+                "test_command": target.test_command,
+                "deploy_command": target.deploy_command,
+                "coverage_command": target.coverage_command,
+            }
+            for name, target in config.targets.items()
+        ]
+    else:
+        targets_config = load_targets_config()
+        raw_targets = targets_config.get("targets") or []
+
+    org_data = load_json(dashboard_dir / "org-data.json") or {"products": []}
+    products = org_data.get("products") or []
 
     payload = {
         "generated_at": iso_now(),
-        "targets": [target_summary(target, org_data.get("products") or []) for target in targets],
+        "targets": [
+            target_summary(target, products, results_dir) for target in raw_targets
+        ],
     }
 
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with OUTPUT_PATH.open("w") as handle:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with output_path.open("w") as handle:
         json.dump(payload, handle, indent=2)
         handle.write("\n")
 
+    logger.info(
+        "Delivery data written to %s (%d targets)",
+        output_path,
+        len(payload["targets"]),
+    )
     return 0
 
 

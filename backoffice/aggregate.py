@@ -1,10 +1,15 @@
-#!/usr/bin/env python3
-"""Aggregate all results/ subdirectories into department-specific dashboard JSON payloads."""
+"""Aggregate all results/ subdirectories into department-specific dashboard JSON payloads.
+
+Ported from scripts/aggregate-results.py. Accepts paths as function arguments
+instead of CLI argv, and uses structured logging instead of print().
+"""
 
 import json
+import logging
 import os
-import sys
 from datetime import datetime, timezone
+
+logger = logging.getLogger(__name__)
 
 PRIVACY_KEYWORDS = (
     "privacy",
@@ -74,14 +79,19 @@ PRIVACY_REPO_META = {
 
 
 def load_json(path):
+    """Load a JSON file, returning None on missing file or parse error."""
     try:
         with open(path) as f:
             return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
+    except FileNotFoundError:
+        return None
+    except json.JSONDecodeError:
+        logger.warning("Skipping malformed JSON: %s", path)
         return None
 
 
 def count_severities(findings):
+    """Count findings by severity level."""
     counts = {"critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0}
     for finding in findings:
         severity = finding.get("severity", "info")
@@ -92,6 +102,11 @@ def count_severities(findings):
 
 
 def normalize_precalculated_summary(data, findings, department_name):
+    """Merge pre-calculated summary with live finding counts.
+
+    Trusts the actual findings payload over stale summary totals for
+    severity counts and total. Preserves department-specific score fields.
+    """
     raw_summary = data.get("summary")
     summary = dict(raw_summary) if isinstance(raw_summary, dict) else {}
     counts = count_severities(findings)
@@ -139,9 +154,18 @@ def normalize_precalculated_summary(data, findings, department_name):
 def aggregate_qa(results_dir, dashboard_dir):
     """Aggregate QA findings into qa-data.json (original behavior)."""
     repos = []
-    totals = {"critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0,
-              "total_findings": 0, "total_fixed": 0, "total_failed": 0,
-              "total_skipped": 0, "total_in_progress": 0}
+    totals = {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 0,
+        "total_findings": 0,
+        "total_fixed": 0,
+        "total_failed": 0,
+        "total_skipped": 0,
+        "total_in_progress": 0,
+    }
 
     for repo_name in sorted(os.listdir(results_dir)):
         repo_dir = os.path.join(results_dir, repo_name)
@@ -190,8 +214,9 @@ def aggregate_qa(results_dir, dashboard_dir):
         totals["medium"] += summary.get("medium", summary.get("medium_value", 0))
         totals["low"] += summary.get("low", summary.get("low_value", 0))
         totals["info"] += summary.get("info", 0)
-        totals["total_findings"] += summary.get("total",
-            summary.get("total_opportunities", len(findings)))
+        totals["total_findings"] += summary.get(
+            "total", summary.get("total_opportunities", len(findings))
+        )
         totals["total_fixed"] += fixed
         totals["total_failed"] += failed
         totals["total_skipped"] += skipped
@@ -202,7 +227,9 @@ def aggregate_qa(results_dir, dashboard_dir):
             "scanned_at": findings_data.get("scanned_at", ""),
             "summary": summary,
             "fix_summary": {
-                "fixed": fixed, "failed": failed, "skipped": skipped,
+                "fixed": fixed,
+                "failed": failed,
+                "skipped": skipped,
                 "in_progress": in_progress,
                 "open": len(enriched) - fixed - failed - skipped - in_progress,
             },
@@ -222,8 +249,14 @@ def aggregate_qa(results_dir, dashboard_dir):
 def aggregate_department(results_dir, findings_filename, department_name):
     """Aggregate department-specific findings across all repos."""
     repos = []
-    totals = {"critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0,
-              "total_findings": 0}
+    totals = {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 0,
+        "total_findings": 0,
+    }
 
     for repo_name in sorted(os.listdir(results_dir)):
         repo_dir = os.path.join(results_dir, repo_name)
@@ -242,27 +275,34 @@ def aggregate_department(results_dir, findings_filename, department_name):
         totals["medium"] += summary.get("medium", summary.get("medium_value", 0))
         totals["low"] += summary.get("low", summary.get("low_value", 0))
         totals["info"] += summary.get("info", 0)
-        totals["total_findings"] += summary.get("total",
-            summary.get("total_opportunities", len(findings)))
+        totals["total_findings"] += summary.get(
+            "total", summary.get("total_opportunities", len(findings))
+        )
 
         repo_entry = {
             "name": repo_name,
             "scanned_at": data.get("scanned_at", ""),
             "summary": summary,
-            "findings": [{
-                "id": f["id"],
-                "severity": f.get("severity", f.get("value", "medium")),
-                "category": f["category"],
-                "title": f["title"],
-                "file": f.get("file") or f.get("location", ""),
-                "line": f.get("line"),
-                "effort": f.get("effort", f.get("implementation_effort", "unknown")),
-                "fixable": f.get("fixable_by_agent", False),
-                "status": "open",
-                # Monetization-specific fields (if present)
-                **({"revenue_estimate": f["revenue_estimate"], "phase": f["phase"]}
-                   if "revenue_estimate" in f else {}),
-            } for f in findings],
+            "findings": [
+                {
+                    "id": f["id"],
+                    "severity": f.get("severity", f.get("value", "medium")),
+                    "category": f["category"],
+                    "title": f["title"],
+                    "file": f.get("file") or f.get("location", ""),
+                    "line": f.get("line"),
+                    "effort": f.get("effort", f.get("implementation_effort", "unknown")),
+                    "fixable": f.get("fixable_by_agent", False),
+                    "status": "open",
+                    # Monetization-specific fields (if present)
+                    **(
+                        {"revenue_estimate": f["revenue_estimate"], "phase": f["phase"]}
+                        if "revenue_estimate" in f
+                        else {}
+                    ),
+                }
+                for f in findings
+            ],
         }
 
         # Include department-specific metadata
@@ -294,14 +334,24 @@ def aggregate_department(results_dir, findings_filename, department_name):
 
 
 def is_privacy_finding(finding):
+    """Return True if the finding touches a privacy-related topic."""
     haystack = " ".join(
         str(finding.get(field, ""))
-        for field in ("title", "description", "regulation", "legal_risk", "evidence", "fix_suggestion", "category")
+        for field in (
+            "title",
+            "description",
+            "regulation",
+            "legal_risk",
+            "evidence",
+            "fix_suggestion",
+            "category",
+        )
     ).lower()
     return any(keyword in haystack for keyword in PRIVACY_KEYWORDS)
 
 
 def privacy_score(findings):
+    """Compute a 0-100 privacy health score from a list of findings."""
     counts = count_severities(findings)
     return max(
         0,
@@ -315,8 +365,16 @@ def privacy_score(findings):
 
 
 def aggregate_privacy(results_dir):
+    """Aggregate privacy-related findings filtered from compliance findings."""
     repos = []
-    totals = {"critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0, "total_findings": 0}
+    totals = {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 0,
+        "total_findings": 0,
+    }
 
     for repo_name in sorted(os.listdir(results_dir)):
         repo_dir = os.path.join(results_dir, repo_name)
@@ -361,7 +419,9 @@ def aggregate_privacy(results_dir):
                 "privacy_score": privacy_score(findings),
                 "gdpr_score": (frameworks.get("gdpr") or {}).get("score"),
                 "age_score": (frameworks.get("age_verification") or {}).get("score"),
-                "compliance_score": ((compliance.get("summary") or {}).get("compliance_score")),
+                "compliance_score": (
+                    (compliance.get("summary") or {}).get("compliance_score")
+                ),
             },
             "findings": [
                 {
@@ -393,6 +453,7 @@ def aggregate_privacy(results_dir):
 
 
 def write_json(data, path):
+    """Write data as indented JSON, creating parent directories as needed."""
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     with open(path, "w") as f:
         json.dump(data, f, indent=2)
@@ -411,67 +472,125 @@ def aggregate_self_audit(results_dir, dashboard_dir):
 
 
 def aggregate(results_dir, output_path):
+    """Orchestrate aggregation of all departments and write dashboard JSON files."""
     dashboard_dir = os.path.dirname(output_path) or "."
 
     # QA department (backward-compatible — also writes data.json)
     qa_data = aggregate_qa(results_dir, dashboard_dir)
     write_json(qa_data, output_path)  # data.json (backward compat)
     write_json(qa_data, os.path.join(dashboard_dir, "qa-data.json"))
-    print(f"QA: {qa_data['totals']['total_findings']} findings across "
-          f"{len(qa_data['repos'])} repos, {qa_data['totals']['total_fixed']} fixed")
+    logger.info(
+        "QA: %d findings across %d repos, %d fixed",
+        qa_data["totals"]["total_findings"],
+        len(qa_data["repos"]),
+        qa_data["totals"]["total_fixed"],
+    )
 
     # SEO department
     seo_data = aggregate_department(results_dir, "seo-findings.json", "seo")
     write_json(seo_data, os.path.join(dashboard_dir, "seo-data.json"))
-    print(f"SEO: {seo_data['totals']['total_findings']} findings across "
-          f"{len(seo_data['repos'])} repos")
+    logger.info(
+        "SEO: %d findings across %d repos",
+        seo_data["totals"]["total_findings"],
+        len(seo_data["repos"]),
+    )
 
     # ADA department
     ada_data = aggregate_department(results_dir, "ada-findings.json", "ada")
     write_json(ada_data, os.path.join(dashboard_dir, "ada-data.json"))
-    print(f"ADA: {ada_data['totals']['total_findings']} findings across "
-          f"{len(ada_data['repos'])} repos")
+    logger.info(
+        "ADA: %d findings across %d repos",
+        ada_data["totals"]["total_findings"],
+        len(ada_data["repos"]),
+    )
 
     # Compliance department
-    comp_data = aggregate_department(results_dir, "compliance-findings.json", "compliance")
+    comp_data = aggregate_department(
+        results_dir, "compliance-findings.json", "compliance"
+    )
     write_json(comp_data, os.path.join(dashboard_dir, "compliance-data.json"))
-    print(f"Compliance: {comp_data['totals']['total_findings']} findings across "
-          f"{len(comp_data['repos'])} repos")
+    logger.info(
+        "Compliance: %d findings across %d repos",
+        comp_data["totals"]["total_findings"],
+        len(comp_data["repos"]),
+    )
 
+    # Privacy department (derived from compliance findings)
     privacy_data = aggregate_privacy(results_dir)
     write_json(privacy_data, os.path.join(dashboard_dir, "privacy-data.json"))
-    print(f"Privacy: {privacy_data['totals']['total_findings']} findings across "
-          f"{len(privacy_data['repos'])} repos")
+    logger.info(
+        "Privacy: %d findings across %d repos",
+        privacy_data["totals"]["total_findings"],
+        len(privacy_data["repos"]),
+    )
 
     # Monetization department
-    mon_data = aggregate_department(results_dir, "monetization-findings.json", "monetization")
+    mon_data = aggregate_department(
+        results_dir, "monetization-findings.json", "monetization"
+    )
     write_json(mon_data, os.path.join(dashboard_dir, "monetization-data.json"))
-    print(f"Monetization: {mon_data['totals']['total_findings']} findings across "
-          f"{len(mon_data['repos'])} repos")
+    logger.info(
+        "Monetization: %d findings across %d repos",
+        mon_data["totals"]["total_findings"],
+        len(mon_data["repos"]),
+    )
 
     # Product department
-    prod_data = aggregate_department(results_dir, "product-findings.json", "product")
+    prod_data = aggregate_department(
+        results_dir, "product-findings.json", "product"
+    )
     write_json(prod_data, os.path.join(dashboard_dir, "product-data.json"))
-    print(f"Product: {prod_data['totals']['total_findings']} findings across "
-          f"{len(prod_data['repos'])} repos")
+    logger.info(
+        "Product: %d findings across %d repos",
+        prod_data["totals"]["total_findings"],
+        len(prod_data["repos"]),
+    )
 
+    # Self-audit (back-office repo)
     self_audit_data = aggregate_self_audit(results_dir, dashboard_dir)
     if self_audit_data:
         summary = self_audit_data.get("summary", {})
-        total = summary.get("total", summary.get("total_findings", len(self_audit_data.get("findings", []))))
-        print(f"Self-Audit: {total} findings for back-office")
+        total = summary.get(
+            "total",
+            summary.get("total_findings", len(self_audit_data.get("findings", []))),
+        )
+        logger.info("Self-Audit: %d findings for back-office", total)
 
-    # Summary
-    total = (qa_data["totals"]["total_findings"] + seo_data["totals"]["total_findings"] +
-             ada_data["totals"]["total_findings"] + comp_data["totals"]["total_findings"] +
-             privacy_data["totals"]["total_findings"] +
-             mon_data["totals"]["total_findings"] + prod_data["totals"]["total_findings"])
-    print(f"\nTotal across all departments: {total} findings")
+    # Grand total
+    total = (
+        qa_data["totals"]["total_findings"]
+        + seo_data["totals"]["total_findings"]
+        + ada_data["totals"]["total_findings"]
+        + comp_data["totals"]["total_findings"]
+        + privacy_data["totals"]["total_findings"]
+        + mon_data["totals"]["total_findings"]
+        + prod_data["totals"]["total_findings"]
+    )
+    logger.info("Total across all departments: %d findings", total)
 
 
-if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: aggregate-results.py <results-dir> <output.json>",
-              file=sys.stderr)
+def main(results_dir=None, output_path=None):
+    """Entry point for programmatic use.
+
+    Args:
+        results_dir: Path to the results directory. Defaults to the
+            ``results/`` directory adjacent to this package root.
+        output_path: Destination for the backward-compatible ``data.json``
+            file. Defaults to ``dashboard/data.json`` relative to the
+            package root.
+    """
+    import sys
+    from pathlib import Path
+
+    # Resolve defaults relative to the repo root (two levels above this file)
+    package_root = Path(__file__).resolve().parent.parent
+    if results_dir is None:
+        results_dir = str(package_root / "results")
+    if output_path is None:
+        output_path = str(package_root / "dashboard" / "data.json")
+
+    if not os.path.isdir(results_dir):
+        logger.error("results_dir does not exist: %s", results_dir)
         sys.exit(1)
-    aggregate(sys.argv[1], sys.argv[2])
+
+    aggregate(results_dir, output_path)

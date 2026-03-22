@@ -1,9 +1,13 @@
-#!/usr/bin/env python3
-"""Guided setup and environment inspection for Back Office."""
+"""Guided setup and environment inspection for Back Office.
 
+Ported from scripts/backoffice_setup.py.
+Key change: runner config is persisted to config/backoffice.yaml (runner section)
+instead of config/agent-runner.env.
+"""
 from __future__ import annotations
 
 import argparse
+import logging
 import os
 import shutil
 import stat
@@ -13,9 +17,11 @@ from pathlib import Path
 import yaml
 
 
+logger = logging.getLogger(__name__)
+
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG_DIR = ROOT / "config"
-RUNNER_CONFIG = CONFIG_DIR / "agent-runner.env"
+RUNNER_CONFIG = CONFIG_DIR / "backoffice.yaml"
 AGENTS_DIR = ROOT / "agents"
 PROMPTS_DIR = AGENTS_DIR / "prompts"
 SCRIPTS_DIR = ROOT / "scripts"
@@ -81,19 +87,27 @@ def print_header(title: str) -> None:
 
 
 def load_runner_config_file() -> dict[str, str]:
+    """Load runner config values from config/backoffice.yaml runner section."""
     values: dict[str, str] = {}
     if not RUNNER_CONFIG.exists():
         return values
-    for line in RUNNER_CONFIG.read_text().splitlines():
-        stripped = line.strip()
-        if not stripped or stripped.startswith("#") or "=" not in stripped:
-            continue
-        key, value = stripped.split("=", 1)
-        values[key.strip()] = value.strip().strip('"').strip("'")
+    try:
+        raw = yaml.safe_load(RUNNER_CONFIG.read_text()) or {}
+    except yaml.YAMLError:
+        logger.warning("Could not parse %s as YAML", RUNNER_CONFIG)
+        return values
+    runner_section = raw.get("runner", {}) or {}
+    command = runner_section.get("command")
+    mode = runner_section.get("mode")
+    if command:
+        values["BACK_OFFICE_AGENT_RUNNER"] = str(command)
+    if mode:
+        values["BACK_OFFICE_AGENT_MODE"] = str(mode)
     return values
 
 
 def detect_runner_status() -> tuple[str, str, list[str], dict[str, str]]:
+    """Return (runner_cmd, runner_mode, available_runners, file_values)."""
     file_values = load_runner_config_file()
     runner_cmd = os.environ.get(
         "BACK_OFFICE_AGENT_RUNNER",
@@ -110,7 +124,10 @@ def detect_runner_status() -> tuple[str, str, list[str], dict[str, str]]:
 def load_yaml(path: Path) -> dict:
     if not path.exists():
         return {}
-    return yaml.safe_load(path.read_text()) or {}
+    try:
+        return yaml.safe_load(path.read_text()) or {}
+    except yaml.YAMLError:
+        return {}
 
 
 def ensure_executable(path: Path) -> None:
@@ -118,13 +135,23 @@ def ensure_executable(path: Path) -> None:
     path.chmod(current | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
 
 
-def maybe_copy_file(source: Path, destination: Path, *, enabled: bool, interactive: bool) -> bool:
+def maybe_copy_file(
+    source: Path,
+    destination: Path,
+    *,
+    enabled: bool,
+    interactive: bool,
+) -> bool:
     if destination.exists():
         return False
     if not enabled:
         return False
     if interactive and sys.stdin.isatty():
-        answer = input(f"Create {destination.relative_to(ROOT)} from example? [Y/n] ").strip().lower()
+        answer = (
+            input(f"Create {destination.relative_to(ROOT)} from example? [Y/n] ")
+            .strip()
+            .lower()
+        )
         if answer not in ("", "y", "yes"):
             return False
     shutil.copy2(source, destination)
@@ -144,6 +171,7 @@ def summarize_agent_scripts() -> None:
 
 
 def summarize_runner() -> bool:
+    """Print runner status and return True if the active runner binary is found."""
     print_header("Agent Runner")
     runner_cmd, runner_mode, available, file_values = detect_runner_status()
     runner_bin = runner_cmd.split()[0]
@@ -152,7 +180,10 @@ def summarize_runner() -> bool:
     print(f"* Runner mode: {runner_mode}")
     print(f"* Active runner binary found: {'yes' if runner_ok else 'no'}")
     print(f"* Other detected runner CLIs: {', '.join(available) if available else 'none'}")
-    print(f"* Runner config file: {RUNNER_CONFIG.relative_to(ROOT)} {'present' if RUNNER_CONFIG.exists() else 'missing'}")
+    print(
+        f"* Runner config file: {RUNNER_CONFIG.relative_to(ROOT)} "
+        f"{'present' if RUNNER_CONFIG.exists() else 'missing'}"
+    )
     if file_values:
         print(f"* Config-file runner command: {file_values.get('BACK_OFFICE_AGENT_RUNNER', 'n/a')}")
         print(f"* Config-file runner mode: {file_values.get('BACK_OFFICE_AGENT_MODE', 'n/a')}")
@@ -162,16 +193,55 @@ def summarize_runner() -> bool:
     return runner_ok
 
 
-def persist_runner_config(runner: str, runner_command: str | None, mode: str | None) -> None:
+def persist_runner_config(
+    runner: str,
+    runner_command: str | None,
+    mode: str | None,
+) -> None:
+    """Write runner.command and runner.mode into config/backoffice.yaml.
+
+    Raises SystemExit if the runner binary is not on PATH.
+    Creates config/backoffice.yaml from the example template when it doesn't exist.
+    """
     if not shutil.which(runner):
         raise SystemExit(f"Runner binary not found on PATH: {runner}")
+
     chosen_mode = mode or ("claude-print" if runner == "claude" else "stdin-text")
     chosen_command = runner_command or runner
+
+    # Load existing config or start from example template
+    if RUNNER_CONFIG.exists():
+        try:
+            raw = yaml.safe_load(RUNNER_CONFIG.read_text()) or {}
+        except yaml.YAMLError:
+            raw = {}
+    else:
+        example = CONFIG_DIR / "backoffice.example.yaml"
+        if example.exists():
+            try:
+                raw = yaml.safe_load(example.read_text()) or {}
+            except yaml.YAMLError:
+                raw = {}
+        else:
+            raw = {}
+        CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+
+    if not isinstance(raw, dict):
+        raw = {}
+
+    runner_section = raw.get("runner", {}) or {}
+    if not isinstance(runner_section, dict):
+        runner_section = {}
+    runner_section["command"] = chosen_command
+    runner_section["mode"] = chosen_mode
+    raw["runner"] = runner_section
+
     RUNNER_CONFIG.write_text(
-        "# Back Office agent runner configuration\n"
-        f'BACK_OFFICE_AGENT_RUNNER="{chosen_command}"\n'
-        f'BACK_OFFICE_AGENT_MODE="{chosen_mode}"\n'
+        "# Back Office — Unified Configuration\n"
+        + yaml.dump(raw, default_flow_style=False, allow_unicode=True)
     )
+
+    logger.info("Runner config updated: command=%s mode=%s", chosen_command, chosen_mode)
     print_header("Runner Updated")
     print(f"* Active runner binary: {runner}")
     print(f"* Persisted command: {chosen_command}")
@@ -208,8 +278,12 @@ def summarize_config_state(args: argparse.Namespace) -> None:
 
     qa_payload = load_yaml(qa_config)
     targets_payload = load_yaml(targets_config)
-    dashboard_targets = qa_payload.get("dashboard_targets", []) if isinstance(qa_payload, dict) else []
-    targets = targets_payload.get("targets", []) if isinstance(targets_payload, dict) else []
+    dashboard_targets = (
+        qa_payload.get("dashboard_targets", []) if isinstance(qa_payload, dict) else []
+    )
+    targets = (
+        targets_payload.get("targets", []) if isinstance(targets_payload, dict) else []
+    )
     print(f"* Dashboard deploy targets configured: {len(dashboard_targets)}")
     print(f"* Local audit targets configured: {len(targets)}")
     if targets:
@@ -219,19 +293,8 @@ def summarize_config_state(args: argparse.Namespace) -> None:
     print("  nano config/targets.yaml")
 
 
-def ensure_workspace(args: argparse.Namespace) -> None:
-    print_header("Workspace State")
-    if not args.check_only:
-        RESULTS_DIR.mkdir(exist_ok=True)
-        for path in AGENTS_DIR.glob("*.sh"):
-            ensure_executable(path)
-        for path in SCRIPTS_DIR.glob("*.sh"):
-            ensure_executable(path)
-    print(f"* results/: {'present' if RESULTS_DIR.exists() else 'missing'}")
-    print("* Shell scripts executable: yes")
-
-
 def summarize_prereqs() -> bool:
+    """Print prerequisite check results and return True if all are satisfied."""
     print_header("Prerequisites")
     required = {
         "git": shutil.which("git"),
@@ -253,6 +316,18 @@ def summarize_prereqs() -> bool:
     print("* Install missing Python dependency:")
     print("  pip3 install pyyaml ruff")
     return ok
+
+
+def ensure_workspace(args: argparse.Namespace) -> None:
+    print_header("Workspace State")
+    if not args.check_only:
+        RESULTS_DIR.mkdir(exist_ok=True)
+        for path in AGENTS_DIR.glob("*.sh"):
+            ensure_executable(path)
+        for path in SCRIPTS_DIR.glob("*.sh"):
+            ensure_executable(path)
+    print(f"* results/: {'present' if RESULTS_DIR.exists() else 'missing'}")
+    print("* Shell scripts executable: yes")
 
 
 def summarize_recent_usage() -> None:
@@ -281,7 +356,10 @@ def summarize_recent_usage() -> None:
             elapsed = job.get("elapsed_seconds")
             findings = job.get("findings_count")
             print(
-                f"  - {name}: status={status}, findings={findings if findings is not None else 'n/a'}, elapsed={elapsed if elapsed is not None else 'n/a'}s, runner={agent}, mode={mode}"
+                f"  - {name}: status={status}, "
+                f"findings={findings if findings is not None else 'n/a'}, "
+                f"elapsed={elapsed if elapsed is not None else 'n/a'}s, "
+                f"runner={agent}, mode={mode}"
             )
 
 
