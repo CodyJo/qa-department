@@ -498,3 +498,398 @@ class TestModuleConstants:
     def test_expected_departments_present(self) -> None:
         for dept in ("qa", "seo", "ada", "compliance", "monetization", "product"):
             assert dept in DEPT_SCRIPTS
+
+
+# ===========================================================================
+# backoffice.api_server tests
+# ===========================================================================
+
+import http.server as _http_server  # noqa: E402 (needed by api_server fixtures)
+
+from backoffice.api_server import (  # noqa: E402
+    ALL_DEPTS as API_ALL_DEPTS,
+    DEPT_SCRIPTS as API_DEPT_SCRIPTS,
+    APIHandler,
+    create_api_handler,
+    resolve_target,
+    run_agent as api_run_agent,
+    running_jobs as api_running_jobs,
+    running_lock as api_running_lock,
+)
+
+
+# ---------------------------------------------------------------------------
+# Fixtures
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture()
+def api_tmp_root(tmp_path: Path) -> Path:
+    """Return a temp tree that mirrors the real project layout."""
+    (tmp_path / "dashboard").mkdir()
+    (tmp_path / "results").mkdir()
+    (tmp_path / "agents").mkdir()
+    (tmp_path / "scripts").mkdir()
+    return tmp_path
+
+
+@pytest.fixture()
+def _clean_api_running_jobs():
+    """Ensure api_running_jobs is empty before and after each test."""
+    with api_running_lock:
+        api_running_jobs.clear()
+    yield
+    with api_running_lock:
+        api_running_jobs.clear()
+
+
+def _make_api_server(tmp_root: Path, api_key: str = "", origins: list[str] | None = None):
+    """Spin up a real HTTPServer for the API server; return (server, host, port)."""
+    if origins is None:
+        origins = []  # will be patched after binding
+
+    handler_cls = create_api_handler(
+        root=tmp_root,
+        api_key=api_key,
+        allowed_origins=origins,
+        targets={},
+    )
+    server = _http_server.HTTPServer(("127.0.0.1", 0), handler_cls)
+    port = server.server_address[1]
+
+    # Patch origins to the real port if caller left them empty
+    if not origins:
+        server.RequestHandlerClass._allowed_origins = [
+            f"http://localhost:{port}",
+            f"http://127.0.0.1:{port}",
+        ]
+
+    return server, "127.0.0.1", port
+
+
+@pytest.fixture()
+def live_api_server(api_tmp_root: Path):
+    """Spin up a real API HTTPServer on a random port; yield (host, port)."""
+    server, host, port = _make_api_server(api_tmp_root)
+    t = threading.Thread(target=server.serve_forever, daemon=True)
+    t.start()
+    yield host, port
+    server.shutdown()
+
+
+@pytest.fixture()
+def live_api_server_with_key(api_tmp_root: Path):
+    """Spin up a real API server requiring X-API-Key; yield (host, port, key)."""
+    secret = "test-secret-key-42"
+    server, host, port = _make_api_server(api_tmp_root, api_key=secret)
+    t = threading.Thread(target=server.serve_forever, daemon=True)
+    t.start()
+    yield host, port, secret
+    server.shutdown()
+
+
+# ---------------------------------------------------------------------------
+# Unit: resolve_target
+# ---------------------------------------------------------------------------
+
+
+class TestResolveTarget:
+    def test_direct_path_when_directory_exists(self, tmp_path: Path) -> None:
+        result = resolve_target(str(tmp_path), targets={})
+        assert result == str(tmp_path)
+
+    def test_named_target_lookup(self) -> None:
+        class _T:
+            path = "/some/repo"
+
+        result = resolve_target("mysite", targets={"mysite": _T()})
+        assert result == "/some/repo"
+
+    def test_first_target_fallback(self) -> None:
+        class _T:
+            path = "/fallback/repo"
+
+        result = resolve_target(None, targets={"only": _T()})
+        assert result == "/fallback/repo"
+
+    def test_returns_none_when_no_targets(self) -> None:
+        result = resolve_target(None, targets={})
+        assert result is None
+
+    def test_unknown_hint_with_no_targets_returns_none(self) -> None:
+        result = resolve_target("bogus-site", targets={})
+        assert result is None
+
+    def test_unknown_hint_falls_back_to_first_target(self) -> None:
+        class _T:
+            path = "/first/repo"
+
+        result = resolve_target("unknown", targets={"first": _T()})
+        assert result == "/first/repo"
+
+
+# ---------------------------------------------------------------------------
+# Integration: health endpoint
+# ---------------------------------------------------------------------------
+
+
+class TestAPIHealthEndpoint:
+    def test_get_health_returns_200(self, live_api_server) -> None:
+        host, port = live_api_server
+        conn = HTTPConnection(host, port, timeout=5)
+        conn.request("GET", "/api/health")
+        resp = conn.getresponse()
+        body = json.loads(resp.read().decode())
+        assert resp.status == 200
+        assert body["status"] == "ok"
+
+    def test_health_does_not_require_auth(self, live_api_server_with_key) -> None:
+        host, port, _key = live_api_server_with_key
+        conn = HTTPConnection(host, port, timeout=5)
+        conn.request("GET", "/api/health")
+        resp = conn.getresponse()
+        assert resp.status == 200
+
+    def test_health_content_type_is_json(self, live_api_server) -> None:
+        host, port = live_api_server
+        conn = HTTPConnection(host, port, timeout=5)
+        conn.request("GET", "/api/health")
+        resp = conn.getresponse()
+        resp.read()
+        assert "application/json" in (resp.getheader("Content-Type") or "")
+
+
+# ---------------------------------------------------------------------------
+# Integration: auth enforcement
+# ---------------------------------------------------------------------------
+
+
+class TestAPIAuthEnforcement:
+    def _post(self, host: str, port: int, path: str, body: dict,
+              api_key: str | None = None) -> tuple[int, dict]:
+        encoded = json.dumps(body).encode()
+        headers = {
+            "Content-Type": "application/json",
+            "Content-Length": str(len(encoded)),
+        }
+        if api_key is not None:
+            headers["X-API-Key"] = api_key
+        conn = HTTPConnection(host, port, timeout=5)
+        conn.request("POST", path, body=encoded, headers=headers)
+        resp = conn.getresponse()
+        data = json.loads(resp.read().decode())
+        return resp.status, data
+
+    def test_post_without_key_returns_401(self, live_api_server_with_key) -> None:
+        host, port, _key = live_api_server_with_key
+        status, data = self._post(host, port, "/api/run-scan", {"department": "qa"})
+        assert status == 401
+        assert "Invalid API key" in data["error"]
+
+    def test_post_with_wrong_key_returns_401(self, live_api_server_with_key) -> None:
+        host, port, _key = live_api_server_with_key
+        status, data = self._post(
+            host, port, "/api/run-scan", {"department": "qa"}, api_key="wrong-key"
+        )
+        assert status == 401
+
+    def test_post_with_correct_key_passes_auth(self, live_api_server_with_key) -> None:
+        host, port, key = live_api_server_with_key
+        # No target configured — but auth should pass (error is 400, not 401)
+        status, data = self._post(
+            host, port, "/api/run-scan", {"department": "qa"}, api_key=key
+        )
+        assert status != 401
+
+    def test_no_key_configured_allows_requests(self, live_api_server) -> None:
+        """When api_key is empty, all POST requests pass auth."""
+        host, port = live_api_server
+        encoded = json.dumps({"department": "qa"}).encode()
+        headers = {
+            "Content-Type": "application/json",
+            "Content-Length": str(len(encoded)),
+        }
+        conn = HTTPConnection(host, port, timeout=5)
+        conn.request("POST", "/api/run-scan", body=encoded, headers=headers)
+        resp = conn.getresponse()
+        resp.read()
+        # Not a 401 — auth is disabled
+        assert resp.status != 401
+
+    def test_timing_safe_comparison_used(self) -> None:
+        """_check_auth uses hmac.compare_digest (timing-safe)."""
+        import hmac as _hmac
+        import inspect
+        src = inspect.getsource(APIHandler._check_auth)
+        assert "compare_digest" in src
+
+
+# ---------------------------------------------------------------------------
+# Integration: target resolution via HTTP
+# ---------------------------------------------------------------------------
+
+
+class TestAPITargetResolution:
+    def _post_run_scan(self, host: str, port: int, payload: dict) -> tuple[int, dict]:
+        encoded = json.dumps(payload).encode()
+        headers = {
+            "Content-Type": "application/json",
+            "Content-Length": str(len(encoded)),
+        }
+        conn = HTTPConnection(host, port, timeout=5)
+        conn.request("POST", "/api/run-scan", body=encoded, headers=headers)
+        resp = conn.getresponse()
+        data = json.loads(resp.read().decode())
+        return resp.status, data
+
+    def test_no_target_returns_400(self, live_api_server) -> None:
+        host, port = live_api_server
+        status, data = self._post_run_scan(host, port, {"department": "qa"})
+        assert status == 400
+        assert "target" in data["error"].lower() or "No target" in data["error"]
+
+    def test_unknown_department_returns_400(self, live_api_server) -> None:
+        host, port = live_api_server
+        status, data = self._post_run_scan(host, port, {"department": "bogus"})
+        assert status == 400
+        assert "Unknown department" in data["error"]
+        assert "valid" in data
+
+    def test_valid_departments_listed_in_error(self, live_api_server) -> None:
+        host, port = live_api_server
+        status, data = self._post_run_scan(host, port, {"department": "bogus"})
+        assert status == 400
+        for dept in API_ALL_DEPTS:
+            assert dept in data["valid"]
+
+    def test_target_path_accepted_directly(self, live_api_server,
+                                           api_tmp_root: Path) -> None:
+        """Passing an existing directory path as target is accepted."""
+        host, port = live_api_server
+        # Target path exists but no agent script → agent start fails gracefully
+        status, data = self._post_run_scan(host, port, {
+            "department": "qa",
+            "target": str(api_tmp_root),
+        })
+        # May be 200 (started) or 409 (already_running) but NOT 400 (no target)
+        assert status in (200, 409)
+        assert data.get("target") == str(api_tmp_root)
+
+
+# ---------------------------------------------------------------------------
+# Integration: CORS headers
+# ---------------------------------------------------------------------------
+
+
+class TestAPICORSHeaders:
+    def test_options_preflight_returns_200(self, live_api_server) -> None:
+        host, port = live_api_server
+        conn = HTTPConnection(host, port, timeout=5)
+        conn.request(
+            "OPTIONS",
+            "/api/run-scan",
+            headers={
+                "Origin": f"http://localhost:{port}",
+                "Access-Control-Request-Method": "POST",
+            },
+        )
+        resp = conn.getresponse()
+        resp.read()
+        assert resp.status == 200
+
+    def test_allowed_origin_reflected_in_cors_header(self, live_api_server) -> None:
+        host, port = live_api_server
+        conn = HTTPConnection(host, port, timeout=5)
+        conn.request(
+            "OPTIONS",
+            "/api/health",
+            headers={"Origin": f"http://localhost:{port}"},
+        )
+        resp = conn.getresponse()
+        resp.read()
+        acao = resp.getheader("Access-Control-Allow-Origin")
+        assert acao == f"http://localhost:{port}"
+
+    def test_cors_methods_header_present(self, live_api_server) -> None:
+        host, port = live_api_server
+        conn = HTTPConnection(host, port, timeout=5)
+        conn.request(
+            "OPTIONS",
+            "/api/health",
+            headers={"Origin": f"http://localhost:{port}"},
+        )
+        resp = conn.getresponse()
+        resp.read()
+        acam = resp.getheader("Access-Control-Allow-Methods")
+        assert acam is not None
+        assert "POST" in acam
+
+    def test_cors_headers_present_on_json_response(self, live_api_server) -> None:
+        host, port = live_api_server
+        conn = HTTPConnection(host, port, timeout=5)
+        conn.request(
+            "GET",
+            "/api/health",
+            headers={"Origin": f"http://localhost:{port}"},
+        )
+        resp = conn.getresponse()
+        resp.read()
+        acao = resp.getheader("Access-Control-Allow-Origin")
+        assert acao == f"http://localhost:{port}"
+
+    def test_wildcard_origin_passes_any_origin(self, api_tmp_root: Path) -> None:
+        handler_cls = create_api_handler(
+            root=api_tmp_root,
+            api_key="",
+            allowed_origins=["*"],
+            targets={},
+        )
+        server = _http_server.HTTPServer(("127.0.0.1", 0), handler_cls)
+        port = server.server_address[1]
+        t = threading.Thread(target=server.serve_forever, daemon=True)
+        t.start()
+        try:
+            conn = HTTPConnection("127.0.0.1", port, timeout=5)
+            conn.request(
+                "OPTIONS",
+                "/api/health",
+                headers={"Origin": "http://any.example.com"},
+            )
+            resp = conn.getresponse()
+            resp.read()
+            acao = resp.getheader("Access-Control-Allow-Origin")
+            assert acao == "http://any.example.com"
+        finally:
+            server.shutdown()
+
+    def test_status_endpoint_returns_200(self, live_api_server) -> None:
+        host, port = live_api_server
+        conn = HTTPConnection(host, port, timeout=5)
+        conn.request("GET", "/api/status")
+        resp = conn.getresponse()
+        data = json.loads(resp.read().decode())
+        assert resp.status == 200
+        assert "available_departments" in data
+        assert "running" in data
+
+    def test_unknown_get_path_returns_404(self, live_api_server) -> None:
+        host, port = live_api_server
+        conn = HTTPConnection(host, port, timeout=5)
+        conn.request("GET", "/api/does-not-exist")
+        resp = conn.getresponse()
+        resp.read()
+        assert resp.status == 404
+
+
+# ---------------------------------------------------------------------------
+# Unit: API server module constants
+# ---------------------------------------------------------------------------
+
+
+class TestAPIModuleConstants:
+    def test_dept_scripts_keys_match_all_depts(self) -> None:
+        assert set(API_DEPT_SCRIPTS.keys()) == set(API_ALL_DEPTS)
+
+    def test_expected_departments_present(self) -> None:
+        for dept in ("qa", "seo", "ada", "compliance", "monetization", "product"):
+            assert dept in API_DEPT_SCRIPTS
