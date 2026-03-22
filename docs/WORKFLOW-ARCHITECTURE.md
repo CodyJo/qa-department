@@ -11,14 +11,14 @@ Back Office is the control plane for Cody Jo Method's product operations. It doe
 
 ```mermaid
 flowchart TD
-    A[config/targets.yaml] --> B[local_audit_workflow.py]
+    A[config/targets.yaml] --> B[backoffice/workflow.py]
     N[config/agent-runner.env] --> E
     A --> C[scaffold-github-workflows.py]
     B --> D[agents/*.sh]
     D --> E[run-agent.sh]
     E --> F[results/<repo>/*-findings.json]
-    F --> G[aggregate-results.py]
-    F --> H[generate-delivery-data.py]
+    F --> G[backoffice.aggregate]
+    F --> H[backoffice.delivery]
     G --> I[dashboard/*.html + *-data.json]
     H --> I
     B --> O[results/local-audit-log.json]
@@ -55,10 +55,10 @@ It defines:
 
 Use the CLI to manage it:
 
-- `python3 scripts/backoffice-cli.py runners`
-- `python3 scripts/backoffice-cli.py activate-runner --runner codex --mode stdin-text`
+- `python -m backoffice runners`
+- `python -m backoffice activate-runner --runner codex --mode stdin-text`
 
-### `scripts/local_audit_workflow.py`
+### `backoffice/workflow.py`
 
 This is the reproducible local orchestration layer.
 
@@ -77,7 +77,7 @@ It supports four real commands:
 
 The CLI maps `audit-all` directly to `run-all`, so the exact command for all configured targets is:
 
-- `python3 scripts/backoffice-cli.py audit-all`
+- `python -m backoffice audit-all`
 
 Operationally it does this:
 
@@ -88,8 +88,8 @@ flowchart TD
     C --> D[Run job-status.sh init]
     D --> E[Run department agent scripts]
     E --> F[Run job-status.sh finalize]
-    F --> G[aggregate-results.py]
-    F --> H[generate-delivery-data.py]
+    F --> G[backoffice.aggregate]
+    F --> H[backoffice.delivery]
     G --> I[dashboard/data.json + dept payloads]
     H --> I
     I --> J[results/local-audit-log.*]
@@ -110,7 +110,7 @@ Current local departments:
 
 This separation matters because Back Office is built around accountable lanes, not a single vague super-prompt.
 
-### `scripts/aggregate-results.py`
+### `backoffice.aggregate`
 
 This transforms raw findings into dashboard-ready payloads.
 
@@ -136,7 +136,7 @@ This is the aggregate metrics surface for:
 - target health from the local audit log
 - delivery readiness from `automation-data.json`
 
-### `scripts/generate-delivery-data.py`
+### `backoffice.delivery`
 
 This inspects target repos and records delivery posture.
 
@@ -197,7 +197,6 @@ GitHub-facing docs live here:
 
 - [`README.md`](../README.md)
 - [`docs/WORKFLOW-ARCHITECTURE.md`](./WORKFLOW-ARCHITECTURE.md)
-- [`docs/CLI-REFERENCE.md`](./CLI-REFERENCE.md)
 - [`docs/CICD-REFERENCE.md`](./CICD-REFERENCE.md)
 - [`docs/LIVE-URLS.md`](./LIVE-URLS.md)
 
