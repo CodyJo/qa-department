@@ -104,8 +104,7 @@ config/agent-runner.env
 scripts/parse-config.py    — Agent scripts (agents/*.sh) call this; becomes thin wrapper
                              delegating to backoffice.config for target field lookups.
                              Preserves the null-delimited output interface.
-config/targets.yaml        — Kept until all agent scripts are migrated (future work).
-                             parse-config.py wrapper reads from backoffice.yaml instead.
+                             Reads from backoffice.yaml (not targets.yaml).
 ```
 
 ---
@@ -1165,8 +1164,8 @@ class FakeCDN(CDNProvider):
     def __init__(self):
         self.invalidations = []
 
-    def invalidate(self, paths):
-        self.invalidations.append(paths)
+    def invalidate(self, distribution_id, paths):
+        self.invalidations.append({"dist": distribution_id, "paths": paths})
 
 
 def test_fake_storage_satisfies_interface():
@@ -1177,7 +1176,7 @@ def test_fake_storage_satisfies_interface():
 
 def test_fake_cdn_satisfies_interface():
     c = FakeCDN()
-    c.invalidate(["/index.html"])
+    c.invalidate("EXXXXX", ["/index.html"])
     assert len(c.invalidations) == 1
 ```
 
@@ -1217,8 +1216,8 @@ class CDNProvider(ABC):
     """Interface for invalidating CDN cache."""
 
     @abstractmethod
-    def invalidate(self, paths: list[str]) -> None:
-        """Invalidate the given paths in the CDN cache."""
+    def invalidate(self, distribution_id: str, paths: list[str]) -> None:
+        """Invalidate the given paths for a specific distribution/zone."""
 ```
 
 - [ ] **Step 4: Implement aws.py**
@@ -1305,7 +1304,7 @@ class AWSCloudFront(CDNProvider):
         import boto3
         self._cf = boto3.client("cloudfront", region_name=region)
 
-    def invalidate_distribution(self, distribution_id: str, paths: list[str]) -> None:
+    def invalidate(self, distribution_id: str, paths: list[str]) -> None:
         """Invalidate specific paths on a CloudFront distribution."""
         if not distribution_id or not paths:
             return
@@ -1323,10 +1322,6 @@ class AWSCloudFront(CDNProvider):
         except Exception as exc:
             logger.warning("CloudFront invalidation failed for %s: %s",
                          distribution_id, exc)
-
-    def invalidate(self, paths: list[str]) -> None:
-        # Generic interface — distribution ID must be set separately
-        logger.warning("invalidate() called without distribution_id; use invalidate_distribution()")
 ```
 
 - [ ] **Step 5: Implement providers/__init__.py factory**
@@ -1395,35 +1390,25 @@ class MemoryStorage(StorageProvider):
     def __init__(self):
         self.uploads = []
 
-    def upload_file(self, local_path, remote_key, content_type, cache_control):
-        self.uploads.append({"local_path": local_path, "remote_key": remote_key,
-                            "content_type": content_type})
-
-    def upload_files(self, file_mappings):
-        for m in file_mappings:
-            self.upload_file(m["local_path"], m["remote_key"],
-                           m["content_type"], m["cache_control"])
-
-    def upload_to_bucket(self, bucket, local_path, remote_key, content_type, cache_control):
+    def upload_file(self, bucket, local_path, remote_key, content_type, cache_control):
         self.uploads.append({"bucket": bucket, "local_path": local_path,
                             "remote_key": remote_key, "content_type": content_type})
 
-    def list_keys(self, prefix):
-        return []
+    def upload_files(self, file_mappings):
+        for m in file_mappings:
+            self.upload_file(m["bucket"], m["local_path"], m["remote_key"],
+                           m["content_type"], m["cache_control"])
 
-    def sync_directory(self, local_dir, remote_prefix, delete=False):
-        self.uploads.append({"sync": local_dir, "prefix": remote_prefix})
+    def sync_directory(self, bucket, local_dir, remote_prefix, delete=False):
+        self.uploads.append({"sync": local_dir, "bucket": bucket, "prefix": remote_prefix})
 
 
 class MemoryCDN(CDNProvider):
     def __init__(self):
         self.invalidations = []
 
-    def invalidate(self, paths):
-        self.invalidations.append(paths)
-
-    def invalidate_distribution(self, dist_id, paths):
-        self.invalidations.append({"dist": dist_id, "paths": paths})
+    def invalidate(self, distribution_id, paths):
+        self.invalidations.append({"dist": distribution_id, "paths": paths})
 
 
 @pytest.fixture
@@ -2072,7 +2057,7 @@ git commit -m "refactor: update Makefile, CI, and shell wrappers to use backoffi
 
 **Files:**
 - Delete: 10 Python scripts from `scripts/` (NOT parse-config.py — it stays as a wrapper)
-- Delete: 3 config files (NOT targets.yaml — parse-config.py reads backoffice.yaml now but keeping targets.yaml as safety net until verified)
+- Delete: 4 config files (targets.yaml is safe to delete — parse-config.py wrapper reads from backoffice.yaml)
 - Update: `config/*.example.yaml`
 
 - [ ] **Step 1: Delete old scripts**
