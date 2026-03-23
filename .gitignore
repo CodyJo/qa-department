@@ -43,10 +43,10 @@ Thumbs.db
 # Logs
 *.log
 
-# Generated dashboard/runtime state
+# Generated dashboard data (synced to S3, regenerated every scan)
+dashboard/*.json
 dashboard/.jobs.json
 dashboard/.jobs-history.json
-dashboard/automation-data.json
 dashboard/local-audit-log.json
 dashboard/local-audit-log.md
 
