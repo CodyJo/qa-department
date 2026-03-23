@@ -39,8 +39,10 @@ No code changes to `backoffice/backlog.py` for status storage — the `status` f
 Scans produce findings with `status: "open"`, which would overwrite `"queued"` on the next aggregation run. Fix: add a `STICKY_STATUSES` set and preserve those during merge.
 
 ```python
-STICKY_STATUSES = {"queued", "fix_failed"}
+STICKY_STATUSES = {"queued", "fix_failed", "fixed", "skipped"}
 ```
+
+This also fixes a pre-existing issue where scans could overwrite `"fixed"` or `"skipped"` statuses back to `"open"`.
 
 In `merge_backlog()`, replace the status update line:
 
@@ -65,8 +67,9 @@ Add queue endpoints to the existing `backoffice/server.py` (runs on `make jobs` 
 - Returns 400 if not fixable, 404 if hash not found
 - Returns `{status: "queued", hash: "...", title: "..."}`
 
-**`DELETE /api/queue/{hash}`** — Dequeue finding (set status to `"open"`, or preserve `"fix_failed"` if that was the previous status before it was re-queued)
+**`POST /api/queue/{hash}/remove`** — Dequeue finding (set status back to `"open"`)
 - Returns `{status: "open", hash: "...", title: "..."}`
+- Uses POST (not DELETE) for consistency with the existing server, which only implements `do_GET`, `do_POST`, and `do_OPTIONS`
 
 **`GET /api/queue`** — List all queued findings
 - Returns `{count: N, findings: [{hash, repo, department, title, severity, effort}]}`
@@ -102,11 +105,13 @@ Button states based on finding status and fixability:
 - Status `"fix_failed"` → orange "Re-queue for Fix" button
 - Status `"fixed"`, `"skipped"`, or `fixable_by_agent: false` → no button
 
-**API call:** `fetch('/api/queue/{hash}', {method: 'POST'})` or `DELETE`. On success, update the finding's status in local `backlogData` and re-render the detail panel + findings list.
+**API call:** `fetch('/api/queue/{hash}', {method: 'POST'})` to queue, `fetch('/api/queue/{hash}/remove', {method: 'POST'})` to dequeue. On success, update the finding's status in local `backlogData` and re-render the detail panel + findings list.
 
 **Finding list badges:** Queued findings get a purple "Queued" badge. Fix-failed findings get an orange "Fix Failed" badge. Both in the findings list rows alongside the existing "AI fixable" badge.
 
-**Needs Attention feed:** Queued findings surface in the top-15 "Needs Attention" feed on the main dashboard, grouped with a "Fix Queue" label.
+**Status filter dropdown:** Add `Queued` and `Fix Failed` options to the existing `filterStatus` dropdown (lines 573-578 of `index.html`) so users can filter the findings list to show only queued or failed items.
+
+**Needs Attention feed:** Queued findings surface in the top-15 "Needs Attention" feed on the main dashboard, grouped with a "Fix Queue" label. The current `renderNeedsAttention()` function reads from `deptData` (not `backlogData`), so the implementation must cross-reference finding hashes against `backlogData.findings` to read queue status. Match on the finding's content hash (`findingHash(dept, repo, title, file)`).
 
 ### 5. Fix Agent — Queue Mode
 
@@ -122,7 +127,19 @@ Flow:
 7. On failure: update backlog status to `"fix_failed"`
 8. Run `backoffice refresh` to update dashboard data
 
-**Change to `agents/fix-bugs.sh`:** Accept optional `--findings <filename>` flag to override the default `findings.json` input. When not provided, behavior is unchanged.
+**Change to `agents/fix-bugs.sh`:** Accept optional `--findings <filename>` flag to override the default `findings.json` input. The value is resolved relative to `$RESULTS_DIR` (since `fix-queued.sh` writes `queued-findings.json` to `results/{repo}/`). In the existing arg parsing `case` block (around lines 25-30), add:
+
+```bash
+    --findings) FINDINGS_OVERRIDE="$2"; shift ;;
+```
+
+Then where `FINDINGS_FILE` is set (around line 39), add:
+
+```bash
+FINDINGS_FILE="${FINDINGS_OVERRIDE:-$RESULTS_DIR/findings.json}"
+```
+
+When not provided, behavior is unchanged.
 
 **No changes to the fix agent prompt** — it already works with any findings list.
 
