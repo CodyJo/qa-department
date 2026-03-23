@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-10T22:45:00Z",
+  "generated_at": "2026-03-23T12:00:00Z",
   "products": [
     {
       "key": "all",
@@ -18,16 +18,9 @@
     {
       "key": "analogify-studio",
       "name": "Analogify Studio",
-      "repos": ["photo-gallery", "photo-gallery-client-portal"],
-      "description": "Gallery platform, delivery flows, admin tooling, and client portal work.",
+      "repos": ["analogify"],
+      "description": "Photographer client gallery platform. Python 3.12, Lambda, Terraform.",
       "domains": ["galleries.codyjo.com"]
-    },
-    {
-      "key": "chromahaus",
-      "name": "ChromaHaus",
-      "repos": ["photo-gallery"],
-      "description": "Image processing and grading engine represented inside the Analogify platform repo.",
-      "domains": ["www.codyjo.com/chromahaus"]
     },
     {
       "key": "tnbm-tarot",
@@ -39,23 +32,44 @@
     {
       "key": "selah",
       "name": "Selah",
-      "repos": ["bible-app"],
+      "repos": ["selah"],
       "description": "Bible study, journaling, translation fidelity, and AI study workflows.",
       "domains": ["selah.codyjo.com"]
     },
     {
-      "key": "etheos",
-      "name": "Etheos",
-      "repos": ["etheos-app"],
-      "description": "Privacy-first event app factory for retreats, conferences, conventions, vendor fairs, and organizer self-serve previews.",
-      "domains": ["etheos.codyjo.com"]
+      "key": "cordivent",
+      "name": "Cordivent",
+      "repos": ["cordivent"],
+      "description": "Mobile-first event sites platform.",
+      "domains": ["cordivent.com"]
+    },
+    {
+      "key": "fuel",
+      "name": "Fuel",
+      "repos": ["fuel"],
+      "description": "GLP-1 diet and exercise tracker.",
+      "domains": ["fuel.codyjo.com"]
+    },
+    {
+      "key": "certstudy",
+      "name": "CertStudy",
+      "repos": ["certstudy"],
+      "description": "AI certification study platform.",
+      "domains": ["study.codyjo.com"]
+    },
+    {
+      "key": "auth-service",
+      "name": "Auth Service",
+      "repos": ["auth-service"],
+      "description": "Shared authentication Lambda for TNBM and Selah.",
+      "domains": ["auth.thenewbeautifulme.com", "auth.selahscripture.com"]
     },
     {
       "key": "back-office",
       "name": "Back Office",
       "repos": ["back-office"],
-      "description": "Internal audit system, dashboards, orchestration, personas, and self-audit.",
-      "domains": ["www.codyjo.com/back-office"]
+      "description": "Internal audit system, dashboards, orchestration, and self-audit.",
+      "domains": ["admin.codyjo.com"]
     }
   ],
   "departments": [
@@ -134,7 +148,7 @@
     {
       "key": "hr",
       "name": "HR & People Ops",
-      "purpose": "Team roster, role definitions, employee bios, fake resumes, daily ranking, and skills visibility.",
+      "purpose": "Team roster, role definitions, employee bios, daily ranking, and skills visibility.",
       "persona": "Tracks who should own what work, who is strongest today, and where capability gaps exist.",
       "skills": ["Org Design", "Role Definition", "Skills Inventory", "Performance Signals", "Staffing"]
     }
@@ -145,8 +159,8 @@
       "name": "Ava Sterling",
       "title": "Principal Front End Engineer",
       "department": "frontend",
-      "projects": ["codyjo-method", "analogify-studio", "tnbm-tarot", "selah", "etheos"],
-      "repos": ["codyjo.com", "photo-gallery", "thenewbeautifulme", "bible-app", "etheos-app"],
+      "projects": ["codyjo-method", "analogify-studio", "tnbm-tarot", "selah", "cordivent", "fuel", "certstudy"],
+      "repos": ["codyjo.com", "analogify", "thenewbeautifulme", "selah", "cordivent", "fuel", "certstudy"],
       "bio": "Ava specializes in high-trust interfaces where typography, accessibility, and flow clarity matter more than shiny effects.",
       "resume": "11 years across editorial product design systems, conversion landing pages, and accessibility-heavy React platforms. Known for turning complex workflows into calm, premium interfaces.",
       "skills": ["Astro", "Next.js", "React 19", "Accessible UI", "Design Systems", "Form UX"],
@@ -159,8 +173,8 @@
       "name": "Marcus Hale",
       "title": "Senior Back End Engineer",
       "department": "backend",
-      "projects": ["analogify-studio", "tnbm-tarot", "selah", "etheos"],
-      "repos": ["photo-gallery", "thenewbeautifulme", "bible-app", "etheos-app"],
+      "projects": ["analogify-studio", "tnbm-tarot", "selah", "auth-service", "cordivent", "fuel", "certstudy"],
+      "repos": ["analogify", "thenewbeautifulme", "selah", "auth-service", "cordivent", "fuel", "certstudy"],
       "bio": "Marcus owns auth, APIs, persistence, and the kinds of failure modes most users never see because he got there first.",
       "resume": "10 years in serverless APIs, auth hardening, and DynamoDB-heavy systems. Strongest in Python and Node-based cloud back ends.",
       "skills": ["Python", "Node.js", "AWS Lambda", "API Gateway", "DynamoDB", "JWT"],
@@ -173,8 +187,8 @@
       "name": "Iona Rivera",
       "title": "Platform & CI/CD Engineer",
       "department": "platform",
-      "projects": ["analogify-studio", "selah", "tnbm-tarot", "etheos", "back-office"],
-      "repos": ["photo-gallery", "bible-app", "thenewbeautifulme", "etheos-app", "back-office"],
+      "projects": ["analogify-studio", "selah", "tnbm-tarot", "cordivent", "fuel", "certstudy", "auth-service", "back-office"],
+      "repos": ["analogify", "selah", "thenewbeautifulme", "cordivent", "fuel", "certstudy", "auth-service", "back-office"],
       "bio": "Iona thinks in environments, blast radius, rollback plans, and Terraform drift before most teams even remember to ask.",
       "resume": "12 years in infrastructure automation, release engineering, observability, and production safety for distributed AWS systems.",
       "skills": ["Terraform", "GitHub Actions", "CloudFront", "IAM", "AWS", "Release Engineering"],
@@ -187,8 +201,8 @@
       "name": "Naomi Vale",
       "title": "Privacy Specialist",
       "department": "privacy",
-      "projects": ["codyjo-method", "analogify-studio", "tnbm-tarot", "selah", "etheos", "back-office"],
-      "repos": ["codyjo.com", "photo-gallery", "thenewbeautifulme", "bible-app", "etheos-app", "back-office"],
+      "projects": ["codyjo-method", "analogify-studio", "tnbm-tarot", "selah", "cordivent", "fuel", "certstudy", "auth-service", "back-office"],
+      "repos": ["codyjo.com", "analogify", "thenewbeautifulme", "selah", "cordivent", "fuel", "certstudy", "auth-service", "back-office"],
       "bio": "Naomi specializes in plain-language privacy posture, deletion/retention logic, and keeping AI products from becoming trust liabilities.",
       "resume": "8 years auditing consumer and enterprise products for privacy-by-design, cross-border vendor exposure, and data-subject rights workflows.",
       "skills": ["GDPR", "CCPA", "Privacy Policy Design", "Consent", "Retention", "AI Data Boundaries"],
@@ -201,10 +215,10 @@
       "name": "Jordan Mercer",
       "title": "Studio Product Lead",
       "department": "product",
-      "projects": ["codyjo-method", "analogify-studio", "chromahaus", "tnbm-tarot", "selah", "etheos", "back-office"],
-      "repos": ["codyjo.com", "photo-gallery", "photo-gallery-client-portal", "thenewbeautifulme", "bible-app", "etheos-app", "back-office"],
+      "projects": ["codyjo-method", "analogify-studio", "tnbm-tarot", "selah", "cordivent", "fuel", "certstudy", "auth-service", "back-office"],
+      "repos": ["codyjo.com", "analogify", "thenewbeautifulme", "selah", "cordivent", "fuel", "certstudy", "auth-service", "back-office"],
       "bio": "Jordan owns product acceptance criteria, launch sequencing, and the conversion of audit findings into clear work the rest of the org can execute.",
-      "resume": "12 years across B2B SaaS, workflow products, and multi-surface platforms. Strongest at turning ambiguous founder intent into acceptance criteria, release plans, and measurable product outcomes.",
+      "resume": "12 years across B2B SaaS, workflow products, and multi-surface platforms.",
       "skills": ["Acceptance Criteria", "PRDs", "Roadmapping", "Launch Planning", "Cross-functional Leadership", "Risk Review"],
       "persona": "Assigns the work, defines done, and checks that QA has real test coverage against acceptance criteria before anything is considered ready.",
       "daily_score": 97,
@@ -215,10 +229,10 @@
       "name": "Sloane Bennett",
       "title": "Growth Monetization Lead",
       "department": "monetization",
-      "projects": ["analogify-studio", "chromahaus", "tnbm-tarot", "selah", "etheos", "back-office"],
-      "repos": ["photo-gallery", "photo-gallery-client-portal", "thenewbeautifulme", "bible-app", "etheos-app", "back-office"],
+      "projects": ["analogify-studio", "tnbm-tarot", "selah", "cordivent", "fuel", "certstudy", "back-office"],
+      "repos": ["analogify", "thenewbeautifulme", "selah", "cordivent", "fuel", "certstudy", "back-office"],
       "bio": "Sloane focuses on pricing clarity, offer sequencing, and retention loops that feel native to the product instead of bolted on.",
-      "resume": "10 years across consumer subscriptions, creator tools, and conversion programs. Strongest where product trust and monetization need to coexist without cheapening the experience.",
+      "resume": "10 years across consumer subscriptions, creator tools, and conversion programs.",
       "skills": ["Pricing", "Packaging", "Lifecycle Messaging", "Experiment Design", "Revenue Ops", "Retention"],
       "persona": "Turns monetization findings into shippable offers, better upgrade paths, and revenue discipline that still respects the brand.",
       "daily_score": 92,
@@ -229,8 +243,8 @@
       "name": "Elijah Brooks",
       "title": "AI Systems Engineer",
       "department": "ai-systems",
-      "projects": ["tnbm-tarot", "selah", "etheos", "back-office"],
-      "repos": ["thenewbeautifulme", "bible-app", "etheos-app", "back-office"],
+      "projects": ["tnbm-tarot", "selah", "certstudy", "back-office"],
+      "repos": ["thenewbeautifulme", "selah", "certstudy", "back-office"],
       "bio": "Elijah owns prompt quality, evaluation loops, agent contracts, and the invisible rails that keep AI features aligned.",
       "resume": "7 years in applied AI systems, prompt testing, RAG evaluation, and productionizing model-powered workflows without overpromising.",
       "skills": ["LLM Orchestration", "Prompting", "Evaluation", "Agent Systems", "Guardrails", "Content Safety"],
@@ -243,8 +257,8 @@
       "name": "Dahlia Cole",
       "title": "QA Lead",
       "department": "qa",
-      "projects": ["analogify-studio", "tnbm-tarot", "selah", "etheos", "back-office"],
-      "repos": ["photo-gallery", "thenewbeautifulme", "bible-app", "etheos-app", "back-office"],
+      "projects": ["analogify-studio", "tnbm-tarot", "selah", "cordivent", "fuel", "certstudy", "auth-service", "back-office"],
+      "repos": ["analogify", "thenewbeautifulme", "selah", "cordivent", "fuel", "certstudy", "auth-service", "back-office"],
       "bio": "Dahlia runs structured test discipline across UI, API, and deployment surfaces and hates hand-wavy confidence.",
       "resume": "9 years in test strategy, regression detection, and release readiness across consumer and internal platforms.",
       "skills": ["Pytest", "Vitest", "Regression Suites", "Release Gates", "Risk Scoring"],
