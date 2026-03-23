@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Operations Panel — Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f; --surface: #12121a; --surface-2: #1a1a26; --surface-3: #22222e;
+    --border: #2a2a3a; --text: #e4e4ef; --text-dim: #8888a0; --accent: #c4944a;
+    --critical: #ff4757; --high: #ff8c42; --medium: #ffd166; --low: #4ecdc4;
+    --success: #2ed573; --info: #74b9ff; --purple: #6c5ce7; --radius: 12px;
+    --sans: 'Inter', -apple-system, sans-serif; --mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; padding: 1.5rem; }
+
+  h2 { font-size: 1.2rem; margin-bottom: 1rem; }
+  .subtitle { color: var(--text-dim); font-size: 0.85rem; margin-bottom: 1.5rem; }
+
+  /* Tabs */
+  .ops-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .ops-tab { padding: 0.7rem 1.25rem; font-size: 0.82rem; color: var(--text-dim); cursor: pointer; border-bottom: 2px solid transparent; background: none; border-top: none; border-left: none; border-right: none; font-family: var(--sans); }
+  .ops-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .ops-tab:hover { color: var(--text); }
+
+  /* Cards */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+  .card-title { font-size: 0.82rem; font-weight: 600; }
+  .card-subtitle { font-size: 0.72rem; color: var(--text-dim); }
+
+  /* Status badges */
+  .badge { font-size: 0.65rem; font-weight: 600; padding: 0.2rem 0.55rem; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .badge-running { background: rgba(108,92,231,0.15); color: var(--purple); }
+  .badge-complete { background: rgba(46,213,115,0.15); color: var(--success); }
+  .badge-failed { background: rgba(255,71,87,0.15); color: var(--critical); }
+  .badge-idle { background: rgba(136,136,160,0.1); color: var(--text-dim); }
+  .badge-healthy { background: rgba(46,213,115,0.15); color: var(--success); }
+  .badge-unavailable { background: rgba(255,71,87,0.15); color: var(--critical); }
+
+  /* Buttons */
+  .btn { padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.78rem; font-family: var(--sans); cursor: pointer; border: 1px solid var(--border); transition: all 0.15s; }
+  .btn-primary { background: var(--accent); color: #0a0a0f; border-color: var(--accent); font-weight: 600; }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-danger { background: rgba(255,71,87,0.1); color: var(--critical); border-color: rgba(255,71,87,0.3); }
+  .btn-danger:hover { background: rgba(255,71,87,0.2); }
+  .btn-ghost { background: transparent; color: var(--text-dim); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+  .btn-sm { padding: 0.35rem 0.7rem; font-size: 0.72rem; }
+
+  /* Form elements */
+  .form-group { margin-bottom: 1rem; }
+  .form-label { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); margin-bottom: 0.4rem; }
+  .form-select, .form-input { width: 100%; background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 0.55rem 0.75rem; font-family: var(--sans); font-size: 0.85rem; }
+  .form-input::placeholder { color: #5a5a70; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .form-check { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; cursor: pointer; }
+  .form-check input { accent-color: var(--accent); }
+
+  /* Job list */
+  .job-row { display: grid; grid-template-columns: 100px 1fr 80px 100px 60px; align-items: center; gap: 0.75rem; padding: 0.65rem 0.85rem; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+  .job-row:last-child { border-bottom: none; }
+  .job-dept { font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); }
+  .job-target { font-weight: 500; }
+  .job-time { font-size: 0.72rem; color: var(--text-dim); font-family: var(--mono); }
+  .progress-bar { height: 4px; background: var(--surface-3); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--purple); border-radius: 2px; transition: width 0.3s; }
+
+  /* Overnight section */
+  .overnight-status { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.25rem; }
+  .overnight-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem; text-align: center; }
+  .overnight-stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); margin-bottom: 0.35rem; }
+  .overnight-stat-value { font-size: 1.2rem; font-weight: 700; }
+
+  /* Cycle history */
+  .cycle-row { display: grid; grid-template-columns: 180px 1fr 60px 60px 60px 80px; align-items: center; gap: 0.75rem; padding: 0.6rem 0.85rem; border-bottom: 1px solid var(--border); font-size: 0.78rem; }
+  .cycle-id { font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); }
+
+  /* Backend cards */
+  .backend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .backend-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
+  .backend-name { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+  .backend-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.75rem; }
+  .backend-stat { font-size: 0.75rem; color: var(--text-dim); }
+  .backend-stat strong { color: var(--text); }
+
+  /* Add product */
+  .source-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.25rem; }
+  .source-card { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius); padding: 1.25rem; text-align: center; cursor: pointer; transition: all 0.15s; }
+  .source-card:hover { border-color: var(--accent); }
+  .source-card.selected { border-color: var(--accent); background: rgba(196,148,74,0.05); }
+  .source-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .source-label { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .source-desc { font-size: 0.72rem; color: var(--text-dim); }
+
+  /* Command box */
+  .cmd-box { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; font-family: var(--mono); font-size: 0.78rem; color: var(--medium); display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; }
+  .cmd-copy { font-size: 0.65rem; color: var(--accent); cursor: pointer; border: 1px solid var(--accent); padding: 0.2rem 0.5rem; border-radius: 4px; background: none; font-family: var(--sans); }
+
+  /* Sections */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .demo-label { position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 0.5rem 1.25rem; font-size: 0.75rem; color: var(--text-dim); z-index: 200; }
+</style>
+</head>
+<body>
+
+<h2>Operations</h2>
+<p class="subtitle">Control plane for Back Office — manage audits, overnight loop, backends, and products</p>
+
+<!-- Tabs -->
+<div class="ops-tabs">
+  <button class="ops-tab active" onclick="showTab('jobs')">Live Jobs</button>
+  <button class="ops-tab" onclick="showTab('audit')">Run Audit</button>
+  <button class="ops-tab" onclick="showTab('overnight')">Overnight Loop</button>
+  <button class="ops-tab" onclick="showTab('backends')">Backends</button>
+  <button class="ops-tab" onclick="showTab('products')">Add Product</button>
+</div>
+
+<!-- ═══ LIVE JOBS ═══ -->
+<div class="section active" id="sec-jobs">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Active Jobs</div>
+        <div class="card-subtitle">3 running, 2 queued</div>
+      </div>
+      <button class="btn btn-ghost btn-sm">Refresh</button>
+    </div>
+
+    <div class="job-row" style="font-weight:600;color:var(--text-dim);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;">
+      <span>Department</span><span>Target</span><span>Status</span><span>Elapsed</span><span></span>
+    </div>
+    <div class="job-row">
+      <span class="job-dept">QA</span>
+      <span class="job-target">analogify</span>
+      <span><span class="badge badge-running">Running</span></span>
+      <span class="job-time">4m 12s</span>
+      <div class="progress-bar"><div class="progress-fill" style="width:65%"></div></div>
+    </div>
+    <div class="job-row">
+      <span class="job-dept">SEO</span>
+      <span class="job-target">analogify</span>
+      <span><span class="badge badge-running">Running</span></span>
+      <span class="job-time">3m 48s</span>
+      <div class="progress-bar"><div class="progress-fill" style="width:55%"></div></div>
+    </div>
+    <div class="job-row">
+      <span class="job-dept">ADA</span>
+      <span class="job-target">analogify</span>
+      <span><span class="badge badge-running">Running</span></span>
+      <span class="job-time">3m 22s</span>
+      <div class="progress-bar"><div class="progress-fill" style="width:48%"></div></div>
+    </div>
+    <div class="job-row">
+      <span class="job-dept">Compliance</span>
+      <span class="job-target">analogify</span>
+      <span><span class="badge badge-idle">Queued</span></span>
+      <span class="job-time">—</span>
+      <span></span>
+    </div>
+    <div class="job-row">
+      <span class="job-dept">Product</span>
+      <span class="job-target">analogify</span>
+      <span><span class="badge badge-idle">Queued</span></span>
+      <span class="job-time">—</span>
+      <span></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Recent Completions</div>
+    </div>
+    <div class="job-row">
+      <span class="job-dept">QA</span>
+      <span class="job-target">codyjo.com</span>
+      <span><span class="badge badge-complete">Done</span></span>
+      <span class="job-time">6m 31s</span>
+      <span style="font-size:0.72rem;color:var(--success);">6 findings</span>
+    </div>
+    <div class="job-row">
+      <span class="job-dept">SEO</span>
+      <span class="job-target">codyjo.com</span>
+      <span><span class="badge badge-complete">Done</span></span>
+      <span class="job-time">5m 18s</span>
+      <span style="font-size:0.72rem;color:var(--success);">8 findings</span>
+    </div>
+    <div class="job-row">
+      <span class="job-dept">Fix Agent</span>
+      <span class="job-target">thenewbeautifulme</span>
+      <span><span class="badge badge-failed">Failed</span></span>
+      <span class="job-time">2m 05s</span>
+      <span style="font-size:0.72rem;color:var(--critical);">tests failed</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ RUN AUDIT ═══ -->
+<div class="section" id="sec-audit">
+  <div class="card">
+    <div class="card-title" style="margin-bottom:1rem;">Run Audit</div>
+
+    <div class="form-group">
+      <label class="form-label">Target</label>
+      <select class="form-select">
+        <option>All targets</option>
+        <option selected>analogify</option>
+        <option>codyjo.com</option>
+        <option>cordivent</option>
+        <option>selah</option>
+        <option>thenewbeautifulme</option>
+        <option>fuel</option>
+        <option>certstudy</option>
+        <option>back-office</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Departments</label>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <label class="form-check"><input type="checkbox" checked> QA</label>
+        <label class="form-check"><input type="checkbox" checked> SEO</label>
+        <label class="form-check"><input type="checkbox" checked> ADA</label>
+        <label class="form-check"><input type="checkbox" checked> Compliance</label>
+        <label class="form-check"><input type="checkbox" checked> Monetization</label>
+        <label class="form-check"><input type="checkbox" checked> Product</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Mode</label>
+      <div style="display:flex;gap:0.75rem;">
+        <label class="form-check"><input type="radio" name="mode" checked> Parallel (2 waves)</label>
+        <label class="form-check"><input type="radio" name="mode"> Sequential</label>
+        <label class="form-check"><input type="radio" name="mode"> Full scan + fix</label>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;align-items:center;margin-top:1.25rem;">
+      <button class="btn btn-primary">Start Audit</button>
+      <span style="font-size:0.72rem;color:var(--text-dim);">or paste in terminal:</span>
+    </div>
+
+    <div class="cmd-box">
+      make audit-all-parallel TARGET=/home/merm/projects/analogify
+      <button class="cmd-copy">Copy</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ OVERNIGHT LOOP ═══ -->
+<div class="section" id="sec-overnight">
+  <div class="overnight-status">
+    <div class="overnight-stat">
+      <div class="overnight-stat-label">Status</div>
+      <div class="overnight-stat-value" style="color:var(--success);">Running</div>
+    </div>
+    <div class="overnight-stat">
+      <div class="overnight-stat-label">Current Phase</div>
+      <div class="overnight-stat-value" style="font-size:0.9rem;">AUDIT (3/8)</div>
+    </div>
+    <div class="overnight-stat">
+      <div class="overnight-stat-label">Cycle #</div>
+      <div class="overnight-stat-value">4</div>
+    </div>
+    <div class="overnight-stat">
+      <div class="overnight-stat-label">Next Cycle</div>
+      <div class="overnight-stat-value" style="font-size:0.9rem;">1h 42m</div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:0.75rem;margin-bottom:1.25rem;">
+    <button class="btn btn-primary">Start Loop</button>
+    <button class="btn btn-danger">Stop Gracefully</button>
+    <button class="btn btn-ghost">View Log</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="margin-bottom:0.5rem;">Loop Settings</div>
+    <div class="form-row" style="margin-bottom:0.75rem;">
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Interval (minutes)</label>
+        <input class="form-input" type="number" value="120" style="width:100px;">
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">Targets</label>
+        <select class="form-select"><option>All targets</option></select>
+      </div>
+    </div>
+    <div class="cmd-box">
+      tmux new-session -d -s overnight 'cd /home/merm/projects/back-office && make overnight INTERVAL=120'
+      <button class="cmd-copy">Copy</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Latest Plan (Product Owner)</div>
+      <div class="card-subtitle">Decided 45 min ago</div>
+    </div>
+    <div style="font-size:0.82rem;color:var(--text-dim);margin-bottom:0.75rem;font-style:italic;">
+      "Focus on portis-app SEO (score: 1) and analogify monetization (score: 48). Critical SEO fix first, then ADA form labels."
+    </div>
+    <div style="font-size:0.78rem;">
+      <div style="margin-bottom:0.35rem;"><span class="badge badge-running" style="margin-right:0.5rem;">FIX</span> portis-app — No meta description or OG tags <span style="color:var(--text-dim);">(critical, SEO)</span></div>
+      <div style="margin-bottom:0.35rem;"><span class="badge badge-complete" style="margin-right:0.5rem;">FIX</span> analogify — Missing form labels <span style="color:var(--text-dim);">(high, ADA)</span></div>
+      <div style="margin-bottom:0.35rem;"><span class="badge badge-idle" style="margin-right:0.5rem;">FEAT</span> cordivent — Add OG social cards <span style="color:var(--text-dim);">(moderate, SEO)</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="margin-bottom:0.75rem;">Cycle History</div>
+    <div class="cycle-row" style="font-weight:600;color:var(--text-dim);font-size:0.65rem;text-transform:uppercase;">
+      <span>Cycle</span><span>Rationale</span><span>Fixes</span><span>Features</span><span>Deploys</span><span>Status</span>
+    </div>
+    <div class="cycle-row">
+      <span class="cycle-id">03-22 23:00</span>
+      <span style="font-size:0.75rem;">SEO + ADA priority for portis-app</span>
+      <span style="color:var(--success);">2/3</span>
+      <span style="color:var(--success);">1/1</span>
+      <span>2</span>
+      <span><span class="badge badge-complete">Done</span></span>
+    </div>
+    <div class="cycle-row">
+      <span class="cycle-id">03-22 21:00</span>
+      <span style="font-size:0.75rem;">Compliance gaps across 3 repos</span>
+      <span style="color:var(--success);">4/5</span>
+      <span style="color:var(--medium);">0/1</span>
+      <span>3</span>
+      <span><span class="badge badge-complete">Done</span></span>
+    </div>
+    <div class="cycle-row">
+      <span class="cycle-id">03-22 19:00</span>
+      <span style="font-size:0.75rem;">First cycle — critical QA fixes</span>
+      <span style="color:var(--success);">3/3</span>
+      <span>0/0</span>
+      <span>2</span>
+      <span><span class="badge badge-complete">Done</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ BACKENDS ═══ -->
+<div class="section" id="sec-backends">
+  <div class="backend-grid">
+    <div class="backend-card">
+      <div class="backend-name">Claude <span class="badge badge-healthy">Healthy</span></div>
+      <div style="font-size:0.78rem;color:var(--text-dim);">claude --model haiku (claude-print mode)</div>
+      <div class="backend-stats">
+        <div class="backend-stat">Context: <strong>200K tokens</strong></div>
+        <div class="backend-stat">Parallelism: <strong>2</strong></div>
+        <div class="backend-stat">Rate limit: <strong>OK</strong></div>
+        <div class="backend-stat">Structured output: <strong>Yes</strong></div>
+      </div>
+      <div style="margin-top:0.75rem;font-size:0.72rem;color:var(--text-dim);">
+        Preferred for: planning, audits, synthesis, review
+      </div>
+    </div>
+    <div class="backend-card" style="opacity:0.6;">
+      <div class="backend-name">Codex <span class="badge badge-unavailable">Not Configured</span></div>
+      <div style="font-size:0.78rem;color:var(--text-dim);">Not enabled in config</div>
+      <div class="backend-stats">
+        <div class="backend-stat">Context: <strong>—</strong></div>
+        <div class="backend-stat">Parallelism: <strong>—</strong></div>
+        <div class="backend-stat">Rate limit: <strong>—</strong></div>
+        <div class="backend-stat">Structured output: <strong>—</strong></div>
+      </div>
+      <div style="margin-top:0.75rem;">
+        <button class="btn btn-ghost btn-sm">Enable Codex</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="margin-bottom:0.75rem;">Routing Policy</div>
+    <div style="font-size:0.78rem;">
+      <div style="display:grid;grid-template-columns:200px 1fr;gap:0.35rem 1rem;">
+        <span style="color:var(--text-dim);">prioritize_backlog</span><span>Claude &rarr; Codex</span>
+        <span style="color:var(--text-dim);">audit_repo</span><span>Claude &rarr; Codex</span>
+        <span style="color:var(--text-dim);">fix_finding</span><span>Codex &rarr; Claude</span>
+        <span style="color:var(--text-dim);">implement_feature</span><span>Codex &rarr; Claude</span>
+        <span style="color:var(--text-dim);">summarize_cycle</span><span>Claude &rarr; Codex</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ADD PRODUCT ═══ -->
+<div class="section" id="sec-products">
+  <div class="card">
+    <div class="card-title" style="margin-bottom:1rem;">Add a New Product</div>
+
+    <label class="form-label">Source</label>
+    <div class="source-cards">
+      <div class="source-card" onclick="selectSource(this, 'local')">
+        <div class="source-icon">&#128193;</div>
+        <div class="source-label">Local Only</div>
+        <div class="source-desc">Already on disk. Just add to Back Office config.</div>
+      </div>
+      <div class="source-card selected" onclick="selectSource(this, 'github')">
+        <div class="source-icon">&#128025;</div>
+        <div class="source-label">GitHub</div>
+        <div class="source-desc">Clone from GitHub and add to config.</div>
+      </div>
+      <div class="source-card" onclick="selectSource(this, 'both')">
+        <div class="source-icon">&#128259;</div>
+        <div class="source-label">GitHub + Local</div>
+        <div class="source-desc">Link existing local repo to GitHub remote and add to config.</div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Product Name</label>
+        <input class="form-input" placeholder="my-app" value="my-new-project">
+      </div>
+      <div class="form-group">
+        <label class="form-label">GitHub Repo (owner/name)</label>
+        <input class="form-input" placeholder="CodyJo/my-app" value="CodyJo/my-new-project">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Language</label>
+        <select class="form-select">
+          <option>typescript</option>
+          <option>python</option>
+          <option>astro</option>
+          <option>terraform</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Local Path</label>
+        <input class="form-input" value="/home/merm/projects/my-new-project" placeholder="/home/merm/projects/...">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Departments</label>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <label class="form-check"><input type="checkbox" checked> QA</label>
+        <label class="form-check"><input type="checkbox" checked> SEO</label>
+        <label class="form-check"><input type="checkbox" checked> ADA</label>
+        <label class="form-check"><input type="checkbox" checked> Compliance</label>
+        <label class="form-check"><input type="checkbox" checked> Monetization</label>
+        <label class="form-check"><input type="checkbox" checked> Product</label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Autonomy Policy</label>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <label class="form-check"><input type="checkbox" checked> Allow fixes</label>
+        <label class="form-check"><input type="checkbox"> Allow feature dev</label>
+        <label class="form-check"><input type="checkbox"> Allow auto-merge</label>
+        <label class="form-check"><input type="checkbox"> Allow auto-deploy</label>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:0.75rem;align-items:center;margin-top:1.25rem;">
+      <button class="btn btn-primary">Add Product</button>
+      <span style="font-size:0.72rem;color:var(--text-dim);">This will:</span>
+    </div>
+
+    <div style="font-size:0.78rem;color:var(--text-dim);margin-top:0.5rem;padding-left:1rem;">
+      1. Clone CodyJo/my-new-project to /home/merm/projects/my-new-project<br>
+      2. Add target entry to config/targets.yaml<br>
+      3. Run initial QA audit to verify setup<br>
+      4. Refresh dashboard data
+    </div>
+
+    <div class="cmd-box" style="margin-top:0.75rem;">
+      gh repo clone CodyJo/my-new-project /home/merm/projects/my-new-project
+      <button class="cmd-copy">Copy</button>
+    </div>
+  </div>
+</div>
+
+<div class="demo-label">Mockup — click the tabs to see each section. Open http://localhost:54354</div>
+
+<script>
+function showTab(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.ops-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+function selectSource(el, type) {
+  document.querySelectorAll('.source-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+</script>
+</body>
+</html>

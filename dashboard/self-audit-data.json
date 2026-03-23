@@ -1,184 +1,178 @@
 {
-  "scan_id": "qa-scan-20260322-v2",
+  "scan_id": "back-office-qa-scan-20260323",
   "repo_name": "back-office",
   "repo_path": "/home/merm/projects/back-office",
-  "scanned_at": "2026-03-22T15:30:00Z",
-  "scan_duration_seconds": 90,
+  "scanned_at": "2026-03-23T17:58:40.412757+00:00",
+  "scan_duration_seconds": 45,
   "summary": {
     "total": 9,
     "critical": 0,
     "high": 2,
-    "medium": 4,
-    "low": 3,
-    "info": 0
+    "medium": 5,
+    "low": 2,
+    "info": 0,
+    "scanned_at": "2026-03-23T17:58:40.412757+00:00"
   },
   "lint_results": {
     "passed": false,
-    "errors": 40,
+    "errors": 46,
     "warnings": 0,
-    "output": "40 linter errors found by ruff: 35 fixable with --fix. Errors include 28 unused imports (F401), 1 unused variable (F841), 3 ambiguous variable names (E741), and 8 other issues."
+    "output": "46 linting issues found via ruff: 40 unused imports (fixable), 3 ambiguous variable names (E741), 3 f-strings without placeholders. Run 'ruff check --fix' to auto-fix."
   },
   "test_results": {
     "passed": true,
-    "total": 616,
+    "total": 690,
     "failed": 0,
     "errors": 0,
-    "output": "pytest tests/ -v: 616 passed in 25.87s"
+    "output": "All 690 tests passed successfully in 22.64s"
   },
   "findings": [
     {
       "id": "FIND-001",
       "severity": "high",
       "category": "code-quality",
-      "title": "40 linter errors - unused imports and variables",
-      "description": "Ruff linter detected 40 errors across the codebase. Most are unused imports (F401) and unused variables (F841). 35 errors are automatically fixable with ruff --fix.",
-      "file": "multiple files",
-      "line": 0,
-      "evidence": "Key issues:\n- backoffice/config.py:12 - unused 'sys' import\n- backoffice/regression.py:24 - unused 'sys' import\n- backoffice/server.py:18 - unused 'os' import\n- tests/test_aggregate.py:6 - unused 'pytest' import\n- tests/test_delivery.py:782,798,804 - ambiguous variable name 'l'",
-      "impact": "Code cleanliness, potential hidden bugs, reduced maintainability. Unused imports consume memory.",
-      "fix_suggestion": "Run 'python3 -m ruff check . --fix' to automatically remove unused imports and variables. Manually rename ambiguous variable names like 'l' to clearer names like 'lane'.",
-      "effort": "tiny",
+      "title": "Shell command construction with unquoted file paths",
+      "description": "In regression.py:256, the pytest coverage command is constructed with an f-string that includes an unquoted file path: f\"python3 -m pytest --cov=. --cov-report=json:{cov_json} --cov-report=term\". If the path contains spaces or shell metacharacters, the command will fail or have unexpected behavior.",
+      "file": "backoffice/regression.py",
+      "line": 256,
+      "evidence": "cov_cmd = f\"python3 -m pytest --cov=. --cov-report=json:{cov_json} --cov-report=term\"",
+      "impact": "Commands with paths containing spaces or special characters will break, potentially causing regression tests to fail with confusing error messages.",
+      "fix_suggestion": "Quote the path: use shlex.quote(cov_json) or f\"python3 -m pytest --cov=. --cov-report=json:'{cov_json}' --cov-report=term\"",
+      "effort": "small",
       "fixable_by_agent": true,
       "references": [
-        "F401",
-        "F841",
-        "E741"
+        "CWE-427"
       ]
     },
     {
       "id": "FIND-002",
       "severity": "high",
       "category": "code-quality",
-      "title": "Broad exception handling masks real errors",
-      "description": "6 files use broad 'except Exception:' or bare 'except:' clauses that catch all exceptions including SystemExit and KeyboardInterrupt, making debugging difficult.",
-      "file": "backoffice/regression.py, backoffice/server.py, backoffice/sync/engine.py, backoffice/sync/providers/aws.py, backoffice/setup.py, tests/test_servers.py",
-      "line": 191,
-      "evidence": "backoffice/regression.py:191,205,206 - bare 'except Exception:' in LCOV parsing\nbackoffice/server.py:75 - broad exception in _load_manual_items()\nMultiple sync provider files with unspecific exception handling",
-      "impact": "Masks errors during development, makes debugging harder, can hide real bugs in error handling paths.",
-      "fix_suggestion": "Replace broad except clauses with specific exception types:\n- Instead of 'except Exception:', use 'except (json.JSONDecodeError, OSError)'\n- Use 'except FileNotFoundError:' instead of bare except\n- Add explicit re-raise for unexpected exceptions",
-      "effort": "small",
+      "title": "Subprocess shell=True usage with command injection potential",
+      "description": "The run_cmd function in regression.py uses subprocess.run with shell=True. While the commands come from configuration (trusted input), using shell=True increases the attack surface and makes the code more fragile. Best practice is to avoid shell=True and pass arguments as a list.",
+      "file": "backoffice/regression.py",
+      "line": 93,
+      "evidence": "proc = subprocess.run(\n    cmd,\n    cwd=cwd,\n    shell=True,\n    capture_output=True,\n    text=True,\n    timeout=timeout_s,\n    env={**os.environ},\n)",
+      "impact": "Increased risk if configuration is ever loaded from untrusted sources. Current design mitigates this by using config-based commands, but the pattern is fragile.",
+      "fix_suggestion": "Consider redesigning to use subprocess.run with shlex.split() to parse the command string safely, or break commands into components. Document that test_command must be a valid shell command.",
+      "effort": "medium",
       "fixable_by_agent": true,
       "references": [
-        "PEP 8"
+        "CWE-78",
+        "CWE-94"
       ]
     },
     {
       "id": "FIND-003",
       "severity": "medium",
-      "category": "security",
-      "title": "Use of shell=True in subprocess.run()",
-      "description": "backoffice/regression.py line 96 uses subprocess.run() with shell=True. While commands come from config file, this is a security anti-pattern vulnerable to injection if config format changes.",
-      "file": "backoffice/regression.py",
-      "line": 96,
-      "evidence": "proc = subprocess.run(\n    cmd,\n    cwd=cwd,\n    shell=True,  # SECURITY ISSUE\n    capture_output=True,\n    text=True,\n    timeout=timeout_s,\n    env={**os.environ},\n)",
-      "impact": "If configuration handling changes to accept user input, this becomes a shell injection vulnerability. Commands with dynamic interpolation could be exploited.",
-      "fix_suggestion": "Use list-based command passing instead of shell=True. Replace:\nsubprocess.run('python3 -m pytest --cov=.', shell=True)\nWith:\nsubprocess.run(['python3', '-m', 'pytest', '--cov', '.'], shell=False)\nFor dynamic commands, use shlex.split() to safely tokenize.",
-      "effort": "medium",
+      "category": "code-quality",
+      "title": "46 unused imports and code quality issues from ruff linter",
+      "description": "Ruff linter found 46 issues: 40 unused imports (automatically fixable), 3 ambiguous variable names (E741 - using 'l' as a variable in lambdas/comprehensions), and 3 f-strings without placeholders. These should be fixed to maintain code quality and clarity.",
+      "file": "backoffice/",
+      "line": null,
+      "evidence": "Examples: backoffice/aggregate.py:615 imports normalize_finding but doesn't use it; tests/test_delivery.py:782 uses 'l' in lambda expression; tests/test_servers.py:48 has f-string without placeholders",
+      "impact": "Reduces code clarity, increases maintenance burden, and indicates incomplete refactoring in some areas.",
+      "fix_suggestion": "Run 'python3 -m ruff check --fix backoffice/ tests/' to automatically fix 40 issues. Manually rename 'l' to clearer names like 'lane' or 'item' to fix E741 warnings.",
+      "effort": "tiny",
       "fixable_by_agent": true,
-      "references": [
-        "CWE-78",
-        "OWASP A03:2021 - Injection"
-      ]
+      "references": []
     },
     {
       "id": "FIND-004",
       "severity": "medium",
-      "category": "security",
-      "title": "Potential CORS logic issue in api_server.py",
-      "description": "The CORS header logic has a subtle issue: if '*' is in allowed_origins, the code echoes back the origin without validating it, defeating CORS protection.",
+      "category": "code-quality",
+      "title": "CORS header echoing with wildcard allowlist",
+      "description": "In api_server.py:184-187, if the allowed_origins list contains '*', the code will echo back the user-provided Origin header value instead of sending just '*'. This is incorrect CORS behavior.",
       "file": "backoffice/api_server.py",
-      "line": 184,
-      "evidence": "if \"*\" in allowed or origin in allowed:\n    self.send_header(\"Access-Control-Allow-Origin\", origin or \"*\")\nelif allowed:\n    self.send_header(\"Access-Control-Allow-Origin\", allowed[0])",
-      "impact": "If '*' is ever added to allowed_origins, the server echoes any origin sent by browser. This defeats CORS protection by allowing any site to read responses.",
-      "fix_suggestion": "Rewrite CORS logic to be explicit about allowing all vs. whitelisting:\nif \"*\" in allowed:\n    self.send_header(\"Access-Control-Allow-Origin\", \"*\")\nelif origin and origin in allowed:\n    self.send_header(\"Access-Control-Allow-Origin\", origin)",
+      "line": 185,
+      "evidence": "if \"*\" in allowed or origin in allowed:\n    self.send_header(\"Access-Control-Allow-Origin\", origin or \"*\")",
+      "impact": "Incorrect CORS behavior if wildcard is in allowlist. Current defaults (localhost only) are not affected, but future configuration changes could introduce this issue.",
+      "fix_suggestion": "Fix the logic: if \"*\" in allowed: self.send_header(\"Access-Control-Allow-Origin\", \"*\") elif origin in allowed: self.send_header(\"Access-Control-Allow-Origin\", origin)",
       "effort": "small",
       "fixable_by_agent": true,
       "references": [
-        "OWASP: CORS",
-        "CWE-942"
+        "CORS specification"
       ]
     },
     {
       "id": "FIND-005",
       "severity": "medium",
       "category": "code-quality",
-      "title": "Missing error handling for subprocess calls",
-      "description": "Multiple subprocess.run() calls in api_server.py and server.py do not check return codes. Agent script failures are silently ignored.",
-      "file": "backoffice/api_server.py, backoffice/server.py",
-      "line": 102,
-      "evidence": "api_server.py run_agent() at line 102:\nsubprocess.run(args, cwd=str(r))\nNo check of returncode - failures are silent",
-      "impact": "If agent scripts fail to start or crash, user gets 200 OK saying scan started, but scan never runs. Silent failures lead to missed findings.",
-      "fix_suggestion": "Check return codes and log failures:\nresult = subprocess.run(args, cwd=str(r), capture_output=True)\nif result.returncode != 0:\n    logger.error(f\"Agent {dept} failed: {result.stderr}\")",
-      "effort": "small",
-      "fixable_by_agent": true,
-      "references": [
-        "PEP 3134"
-      ]
+      "title": "Large file complexity: server.py (933 lines)",
+      "description": "The server.py file is the largest module at 933 lines, containing DashboardServer, APIHandler, and supporting functions. Large files become harder to understand, test, and maintain.",
+      "file": "backoffice/server.py",
+      "line": 1,
+      "evidence": "server.py is 933 lines total, containing multiple classes and concerns mixed together.",
+      "impact": "Harder to understand, test in isolation, and maintain. Changes to one concern may inadvertently affect another.",
+      "fix_suggestion": "Consider breaking into separate modules in a future refactoring: server_base.py (DashboardServer), api_handler.py (APIHandler), server_main.py (setup). This is not urgent but would improve maintainability.",
+      "effort": "large",
+      "fixable_by_agent": false,
+      "references": []
     },
     {
       "id": "FIND-006",
-      "severity": "medium",
+      "severity": "low",
       "category": "code-quality",
-      "title": "Race condition in running_jobs tracking",
-      "description": "The running_jobs dict is checked under lock, but the thread starts after lock is released, creating a window for duplicate job starts.",
-      "file": "backoffice/api_server.py, backoffice/server.py",
-      "line": 107,
-      "evidence": "with running_lock:\n    if dept in running_jobs:\n        return False\n    t = threading.Thread(...)\n    running_jobs[dept] = t\n\nt.start()  # <-- Lock released, thread not yet started",
-      "impact": "If two requests come in for same department simultaneously, both could pass lock check and start duplicate jobs, wasting resources.",
-      "fix_suggestion": "Start the thread inside the lock:\nwith running_lock:\n    if dept in running_jobs:\n        return False\n    t = threading.Thread(...)\n    running_jobs[dept] = t\n    t.start()  # <-- Inside lock",
-      "effort": "tiny",
+      "title": "Bare exception handler in try_read_json",
+      "description": "In regression.py:126, a bare 'except Exception:' catches all exceptions. While intentional for robustness, it silently swallows errors that might indicate real problems like MemoryError.",
+      "file": "backoffice/regression.py",
+      "line": 126,
+      "evidence": "except Exception:\n    return None",
+      "impact": "May hide unexpected errors. Callers won't know why a file couldn't be read.",
+      "fix_suggestion": "Catch specific exceptions: 'except (json.JSONDecodeError, FileNotFoundError, OSError)' instead of bare Exception.",
+      "effort": "small",
       "fixable_by_agent": true,
       "references": [
-        "CWE-366"
+        "PEP-8"
       ]
     },
     {
       "id": "FIND-007",
       "severity": "low",
       "category": "code-quality",
-      "title": "Ambiguous variable names in tests",
-      "description": "tests/test_delivery.py uses 'l' (lowercase letter L) as loop variable in list comprehensions. This is ambiguous with '1' and violates PEP 8.",
-      "file": "tests/test_delivery.py",
-      "line": 782,
-      "evidence": "Line 782: sprint_now = next(l for l in result['sprint_lanes'] if l['lane'] == 'Sprint Now')\nLine 798: sprint_now = next(l for l in ...\nLine 804: lanes = {l['lane'] for l in ...}",
-      "impact": "Reduced code readability, increased typo risk during maintenance.",
-      "fix_suggestion": "Rename 'l' to 'lane':\nsprint_now = next(lane for lane in result['sprint_lanes'] if lane['lane'] == 'Sprint Now')",
-      "effort": "tiny",
+      "title": "Missing validation of Content-Length header",
+      "description": "In api_server.py:213, the Content-Length header is converted to int without bounds checking. A large value could cause memory issues when reading the request body.",
+      "file": "backoffice/api_server.py",
+      "line": 213,
+      "evidence": "length = int(self.headers.get(\"Content-Length\", 0))",
+      "impact": "Potential DoS via large Content-Length headers, though mitigated by HTTP server's built-in limits.",
+      "fix_suggestion": "Add bounds check: MAX_REQUEST_SIZE = 1024 * 1024; if length > MAX_REQUEST_SIZE: raise ValueError(\"Request too large\")",
+      "effort": "small",
       "fixable_by_agent": true,
       "references": [
-        "PEP 8 - E741"
+        "CWE-400"
       ]
     },
     {
       "id": "FIND-008",
       "severity": "low",
       "category": "performance",
-      "title": "Unnecessary environment dict copy in subprocess",
-      "description": "backoffice/regression.py line 100 uses {**os.environ} creating an unnecessary dict copy. subprocess.run() uses os.environ by default.",
-      "file": "backoffice/regression.py",
-      "line": 100,
-      "evidence": "env={**os.environ},  # Unnecessary copy",
-      "impact": "Creates dict copy on each subprocess call, wasting memory and CPU for large environments.",
-      "fix_suggestion": "Remove the env parameter or pass None:\nBefore: subprocess.run(..., env={**os.environ})\nAfter: subprocess.run(...)\nOr: subprocess.run(..., env=None)",
-      "effort": "tiny",
-      "fixable_by_agent": true,
+      "title": "Potential inefficiency in finding normalization",
+      "description": "The normalize_finding function is called for every finding in the backlog merge. While correct, the code could benefit from caching if the same finding is normalized multiple times.",
+      "file": "backoffice/backlog.py",
+      "line": null,
+      "evidence": "Finding normalization is repeated in loops across multiple findings.",
+      "impact": "Minor performance impact on large portfolios. Not currently an issue but could become one as the system scales to thousands of findings.",
+      "fix_suggestion": "Monitor performance in production. If profiling shows this as a bottleneck, consider memoizing normalize_finding. Currently acceptable.",
+      "effort": "medium",
+      "fixable_by_agent": false,
       "references": []
     },
     {
       "id": "FIND-009",
       "severity": "low",
       "category": "code-quality",
-      "title": "Some functions lack comprehensive docstrings",
-      "description": "Some public functions in aggregate.py and sync/engine.py have minimal docstrings without parameter or return documentation.",
-      "file": "backoffice/aggregate.py, backoffice/sync/engine.py",
-      "line": 0,
-      "evidence": "Functions like load_json(), count_severities() have minimal docs.\nNo parameter types or return types documented for many utilities.",
-      "impact": "Reduced API clarity, harder developer onboarding, less IDE autocomplete support.",
-      "fix_suggestion": "Add comprehensive docstrings with parameter and return type documentation following Google or NumPy format.",
+      "title": "Inconsistent path handling: mixing os.path and pathlib.Path",
+      "description": "Several files mix os.path operations with string paths instead of consistently using pathlib.Path. While functional, this reduces consistency with modern Python best practices.",
+      "file": "backoffice/regression.py",
+      "line": 89,
+      "evidence": "stdout_path = os.path.join(out_dir, f\"{label}.stdout.log\")",
+      "impact": "Reduced code consistency and clarity.",
+      "fix_suggestion": "Convert to pathlib: stdout_path = Path(out_dir) / f\"{label}.stdout.log\"",
       "effort": "small",
-      "fixable_by_agent": false,
+      "fixable_by_agent": true,
       "references": [
-        "PEP 257"
+        "PEP-20"
       ]
     }
   ]

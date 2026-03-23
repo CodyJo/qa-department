@@ -1,152 +1,95 @@
 {
-  "scan_id": "5277500b-93f8-49d0-8bb3-236a1ce4067d",
+  "scan_id": "codyjo-seo-2026-03-23",
   "repo_name": "codyjo.com",
   "repo_path": "/home/merm/projects/codyjo.com",
-  "scanned_at": "2026-03-12T03:29:03.382851+00:00",
-  "scan_duration_seconds": 240,
+  "scanned_at": "2026-03-23T19:15:00Z",
+  "scan_duration_seconds": 12,
   "summary": {
-    "total": 8,
+    "total": 4,
     "critical": 0,
-    "high": 3,
-    "medium": 5,
-    "low": 0,
+    "high": 0,
+    "medium": 2,
+    "low": 2,
     "info": 0,
-    "seo_score": 90,
-    "scanned_at": "2026-03-12T03:29:03.382851+00:00"
+    "seo_score": 92
   },
   "categories": {
     "technical_seo": {
-      "score": 80,
-      "issues": 3
+      "score": 95,
+      "issues": 1
     },
     "ai_optimization": {
-      "score": 92,
-      "issues": 2
+      "score": 90,
+      "issues": 1
     },
     "content_seo": {
-      "score": 88,
-      "issues": 2
+      "score": 95,
+      "issues": 1
     },
     "performance_seo": {
-      "score": 100,
-      "issues": 0
+      "score": 90,
+      "issues": 1
     },
     "social_meta": {
-      "score": 96,
-      "issues": 1
+      "score": 100,
+      "issues": 0
     }
   },
   "findings": [
     {
       "id": "SEO-001",
-      "severity": "high",
+      "severity": "medium",
       "category": "technical-seo",
-      "title": "Noindex Back Office routes are still published in the sitemap",
-      "description": "The generated sitemap includes Back Office admin/demo/dashboard-launch routes that explicitly send `noindex, nofollow`. That creates conflicting crawl signals: the sitemap asks crawlers to discover the URLs while the page-level robots tag asks them not to index them.",
-      "file": "/home/merm/projects/codyjo.com/dist/sitemap-0.xml",
-      "line": 1,
-      "evidence": "<loc>https://codyjo.com/back-office/admin/</loc> ... <loc>https://codyjo.com/back-office/demo/</loc> ... <loc>https://codyjo.com/back-office/selah/</loc>\n\n<Base ... noindex={true}> in src/pages/back-office/admin.astro:5-9, src/pages/back-office/demo.astro:172, and src/pages/back-office/[product].astro:30-34",
-      "impact": "Conflicting sitemap and robots signals waste crawl budget and increase the chance that utility pages, protected launch pages, or demo surfaces are crawled more aggressively than intended.",
-      "fix_suggestion": "Exclude all `noindex` routes from sitemap generation. In Astro, either move those routes out of the public sitemap path, or filter them out when generating the sitemap so only canonical indexable URLs are emitted.",
+      "title": "Blog product archive pages missing explicit breadcrumb navigation",
+      "description": "Product archive pages like /blog/product/tnbm-tarot have BreadcrumbList schema but lack visible breadcrumb UI. Users see only a back-link to '/blog', losing clear path context. Schema helps search engines but visible breadcrumbs improve UX and crawl priority signals.",
+      "file": "src/pages/blog/product/[product].astro",
+      "line": 45,
+      "evidence": "Back-link only: <a href=\"/blog\" class=\"back-link\">&larr; All posts</a>. BreadcrumbList defined in schema but no matching UI component.",
+      "impact": "Search engines and users benefit from explicit breadcrumb trails. Missing UI reduces navigation clarity and slightly impacts crawl priority signals.",
+      "fix_suggestion": "Add breadcrumb UI component:\n<nav class=\"breadcrumb\" aria-label=\"Breadcrumb\">\n  <ol>\n    <li><a href=\"/\">Home</a></li>\n    <li><a href=\"/blog\">Blog</a></li>\n    <li><span aria-current=\"page\">{product.blogName}</span></li>\n  </ol>\n</nav>",
       "effort": "small",
       "fixable_by_agent": true
     },
     {
       "id": "SEO-002",
-      "severity": "high",
-      "category": "technical-seo",
-      "title": "The public documentation endpoint is missing a canonical URL",
-      "description": "The `/back-office/documentation.html` route is generated as raw HTML instead of using the shared `Base` layout, and it omits a canonical tag entirely.",
-      "file": "/home/merm/projects/codyjo.com/src/pages/back-office/documentation.html.ts",
-      "line": 6,
-      "evidence": "<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Back Office CI/CD Reference Architecture</title>\n  <meta name=\"description\" content=\"Published Back Office documentation ...\">\n  <style>...",
-      "impact": "Without a self-referencing canonical, crawlers get no canonical hint for this public documentation page, which weakens normalization if the page is linked with variants or mirrored under another host.",
-      "fix_suggestion": "Add `<link rel=\"canonical\" href=\"https://codyjo.com/back-office/documentation.html\">` to the head, or migrate the page into an Astro page that reuses `Base.astro` so canonical generation stays consistent site-wide.",
-      "effort": "tiny",
-      "fixable_by_agent": true
+      "severity": "medium",
+      "category": "ai-optimization",
+      "title": "Missing FAQ schema on blog articles with implicit Q&A structure",
+      "description": "FAQPage schema is only included when frontmatter has 'faqs' array. Articles with question-style headings and answer paragraphs lack FAQ markup. AI search engines and voice assistants miss Q&A content patterns and can't extract answers for indexing.",
+      "file": "src/pages/blog/[id].astro",
+      "line": 72,
+      "evidence": "FAQPage schema conditionally applied only when post.data.faqs exists. Articles with implicit Q&A patterns (e.g., 'tnbm-reflective-ai.md') don't trigger schema.",
+      "impact": "Voice assistants and AI search engines (Alexa, Google Assistant, Bing Chat) rely on FAQPage schema. Without it, this content is missed for Q&A indexing and featured snippets.",
+      "fix_suggestion": "Add explicit 'faqs' to blog frontmatter:\nfaqs:\n  - question: \"Is The New Beautiful Me a fortune-telling app?\"\n    answer: \"No. It uses tarot as a framework for self-reflection...\"",
+      "effort": "medium",
+      "fixable_by_agent": false
     },
     {
       "id": "SEO-003",
-      "severity": "medium",
-      "category": "ai-optimization",
-      "title": "The public documentation page ships with no JSON-LD or entity schema",
-      "description": "The same `/back-office/documentation.html` endpoint lacks structured data entirely, so search engines and AI systems only see untyped HTML rather than explicit documentation, organization, or article entities.",
-      "file": "/home/merm/projects/codyjo.com/src/pages/back-office/documentation.html.ts",
-      "line": 6,
-      "evidence": "<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Back Office CI/CD Reference Architecture</title>\n  <meta name=\"description\" content=\"Published Back Office documentation ...\">\n  <style>...",
-      "impact": "AI retrieval and search features lose explicit context about what this page is, who published it, and how it relates to Back Office, which reduces discoverability for documentation-style queries.",
-      "fix_suggestion": "Add JSON-LD for `TechArticle` or `Article` plus publisher/organization metadata, or move the page onto the shared layout and pass a page-specific schema object.",
+      "severity": "low",
+      "category": "content-seo",
+      "title": "Product blog archive meta descriptions are generic",
+      "description": "Product archive pages use a template-generated description that's repetitive and lacks keyword variety. Descriptions like 'A journaling app covering... Built for individuals, with a privacy-first product posture' don't optimize for search intent (tarot app, journaling software, self-reflection tools).",
+      "file": "src/pages/blog/product/[product].astro",
+      "line": 30,
+      "evidence": "Template: description={`${product.blogName} covering ${product.description.toLowerCase()} Built for ${product.audience}, with a privacy-first product posture.`}",
+      "impact": "Generic descriptions reduce click-through rates in search results. Unique, keyword-rich descriptions improve CTR and content relevance signals.",
+      "fix_suggestion": "Add blogDescription field to product data with unique, keyword-optimized descriptions for each product. Example: 'Explore tarot journaling, self-reflection tools, and AI-powered insights. Read articles on tarot apps, reflection practices, and privacy-first design.'",
       "effort": "small",
       "fixable_by_agent": true
     },
     {
       "id": "SEO-004",
-      "severity": "medium",
-      "category": "social-meta",
-      "title": "The public documentation page has no Open Graph or Twitter Card tags",
-      "description": "Because `/back-office/documentation.html` bypasses `Base.astro`, it also misses the site-wide social meta implementation.",
-      "file": "/home/merm/projects/codyjo.com/src/pages/back-office/documentation.html.ts",
-      "line": 6,
-      "evidence": "<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <title>Back Office CI/CD Reference Architecture</title>\n  <meta name=\"description\" content=\"Published Back Office documentation ...\">\n  <style>...",
-      "impact": "Shares of the documentation page will render with weak or inconsistent link previews, which reduces click-through rate and makes the page less reusable in social and chat surfaces.",
-      "fix_suggestion": "Add `og:title`, `og:description`, `og:url`, `og:image`, `twitter:card`, `twitter:title`, `twitter:description`, and `twitter:image`, or migrate the page to the shared layout.",
-      "effort": "small",
-      "fixable_by_agent": true
-    },
-    {
-      "id": "SEO-005",
-      "severity": "medium",
-      "category": "technical-seo",
-      "title": "All sitemap lastmod values are set to build time instead of page freshness",
-      "description": "The Astro sitemap integration is configured with `lastmod: new Date()`, so every URL in the sitemap gets the same timestamp from the build rather than an actual content modification date.",
-      "file": "/home/merm/projects/codyjo.com/astro.config.mjs",
-      "line": 7,
-      "evidence": "integrations: [sitemap({\n  lastmod: new Date(),\n})]",
-      "impact": "Search engines receive inaccurate freshness signals. That can cause needless recrawls of unchanged pages and makes real content updates harder to distinguish from routine deploys.",
-      "fix_suggestion": "Remove the global build-time `lastmod`, or compute per-page dates from content frontmatter or git timestamps so blog posts and static pages emit meaningful freshness data.",
-      "effort": "small",
-      "fixable_by_agent": true
-    },
-    {
-      "id": "SEO-006",
-      "severity": "medium",
-      "category": "ai-optimization",
-      "title": "Flagship product pages only expose generic WebSite schema",
-      "description": "Product landing pages such as Analogify, ChromaHaus, Selah, and SEO Privacy Tracker call `Base` without a page-specific schema, so the layout falls back to a generic `WebSite` entity instead of `SoftwareApplication`, `Product`, or another product-specific type.",
-      "file": "/home/merm/projects/codyjo.com/src/layouts/Base.astro",
-      "line": 27,
-      "evidence": "const defaultSchema = {\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"WebSite\",\n  \"name\": \"Cody Jo Method\",\n  ...\n};\n\n<Base title={pageTitle} description={pageDescription}> in src/pages/analogify.astro:9 and src/pages/selah.astro:9",
-      "impact": "AI systems and search engines get weaker entity signals for the site's primary products, reducing the odds of strong product understanding, richer knowledge extraction, and software-specific search features.",
-      "fix_suggestion": "Pass page-level JSON-LD to each product page using `SoftwareApplication` or `Product` with name, description, URL, applicationCategory, audience, and publisher fields.",
+      "severity": "low",
+      "category": "performance-seo",
+      "title": "Parallax and fade-in animations may impact Core Web Vitals on slower devices",
+      "description": "Homepage uses parallax scrolling (data-parallax) and staggered fade-in animations requiring JavaScript execution during scroll. This can cause layout shifts and input delays on slower devices, impacting Interaction to Next Paint (INP) and perceived performance.",
+      "file": "src/pages/index.astro",
+      "line": 64,
+      "evidence": "Parallax divs: <div class=\"hero-bg\" data-parallax=\"0.3\">. Fade-in: <div class=\"fade-in fade-in-delay-1\">. Both require JS handlers.",
+      "impact": "Parallax and animation handlers increase main-thread work on scroll, affecting INP on slower devices. Visual appeal is high but performance ranking may be slightly impacted.",
+      "fix_suggestion": "Optimize by: 1) Respecting prefers-reduced-motion media query, 2) Adding explicit container heights to prevent CLS, 3) Disabling parallax on slower connections using navigator.connection, 4) Deferring parallax handler loading.",
       "effort": "medium",
-      "fixable_by_agent": true
-    },
-    {
-      "id": "SEO-007",
-      "severity": "high",
-      "category": "content-seo",
-      "title": "The blog article title template produces titles far beyond recommended length",
-      "description": "Blog post pages append the full product blog name to every article title. That pushes many generated titles into the 85-119 character range, well beyond the requested 50-60 character target.",
-      "file": "/home/merm/projects/codyjo.com/src/pages/blog/[id].astro",
-      "line": 87,
-      "evidence": "title={`${post.data.title} \u2014 ${product?.blogName ?? 'Cody Jo Method Blog'}`}\nGenerated examples: `Back Office CLI Guide: The Fastest Way to Run Product Audits Across Multiple Repos \u2014 Back Office Blog` (101 chars) and `CI/CD Reference for a Multi-Product Studio: How I Ship Sites, Apps, and Internal Tools Without Chaos \u2014 Back Office Blog` (119 chars).",
-      "impact": "Overlong titles are more likely to be rewritten or truncated in SERPs, weakening keyword focus and reducing click-through clarity on article pages.",
-      "fix_suggestion": "Shorten the template, for example by dropping the blog suffix for posts or using a shorter brand suffix such as `| Cody Jo Method` only when needed.",
-      "effort": "tiny",
-      "fixable_by_agent": true
-    },
-    {
-      "id": "SEO-008",
-      "severity": "medium",
-      "category": "content-seo",
-      "title": "Product blog hub metadata is consistently out of range",
-      "description": "The product blog index template creates short titles and very long descriptions across all six product hubs. Generated descriptions land between 227 and 279 characters, and some titles fall well below the 50-60 character target.",
-      "file": "/home/merm/projects/codyjo.com/src/pages/blog/product/[product].astro",
-      "line": 22,
-      "evidence": "title={`${product.blogName} | ${product.name} Articles`}\ndescription={`${product.blogName} covering ${product.description.toLowerCase()} Built for ${product.audience}, with a privacy-first product posture.`}\nGenerated examples: `Selah Blog | Selah Articles` (27 chars) with a 238-char description, and `SEO Privacy Tracker Blog | SEO Privacy Tracker Articles` with a 279-char description.",
-      "impact": "SERP snippets for these hub pages are likely to truncate, and the short or generic titles under-describe high-value category pages that should rank for product-blog and topical queries.",
-      "fix_suggestion": "Rewrite the template to produce focused 50-60 character titles and 120-160 character descriptions per product hub, keeping the core keyword and audience but removing the extra explanatory sentence fragments.",
-      "effort": "small",
       "fixable_by_agent": true
     }
   ]
