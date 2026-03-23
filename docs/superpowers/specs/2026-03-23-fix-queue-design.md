@@ -171,7 +171,7 @@ queue-clear: ## Clear the fix queue
 | File | Change |
 |---|---|
 | `backoffice/backlog.py` | Add `STICKY_STATUSES` set; update `merge_backlog()` status logic to preserve sticky statuses |
-| `backoffice/server.py` | Add `POST /api/queue/{hash}`, `DELETE /api/queue/{hash}`, `GET /api/queue` endpoints |
+| `backoffice/server.py` | Add `POST /api/queue/{hash}`, `POST /api/queue/{hash}/remove`, `GET /api/queue` endpoints |
 | `backoffice/__main__.py` | Register `queue` subcommand group |
 | `agents/fix-bugs.sh` | Accept optional `--findings <filename>` flag |
 | `dashboard/index.html` | Add queue button to finding detail; add queued/fix_failed badges to finding list; add queue count to Needs Attention feed |
