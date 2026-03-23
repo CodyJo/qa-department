@@ -1,6 +1,7 @@
 [project]
 name = "backoffice"
 version = "1.0.0"
+dependencies = ["PyYAML>=6.0"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
