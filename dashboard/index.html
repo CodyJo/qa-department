@@ -406,6 +406,101 @@
   /* Support content containers */
   .support-content-wrap { min-height: 200px; }
   .support-loading { padding: 2rem; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
+
+  /* ── Operations Panel ── */
+  .ops-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .ops-tab { padding: 0.7rem 1.25rem; font-size: 0.82rem; color: var(--text-dim); cursor: pointer; border-bottom: 2px solid transparent; background: none; border-top: none; border-left: none; border-right: none; font-family: var(--sans); }
+  .ops-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .ops-tab:hover { color: var(--text); }
+
+  .ops-section { display: none; }
+  .ops-section.active { display: block; }
+
+  .ops-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
+  .ops-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+  .ops-card-title { font-size: 0.82rem; font-weight: 600; }
+  .ops-card-subtitle { font-size: 0.72rem; color: var(--text-dim); }
+
+  .ops-badge { font-size: 0.65rem; font-weight: 600; padding: 0.2rem 0.55rem; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .ops-badge-running { background: rgba(108,92,231,0.15); color: #6c5ce7; }
+  .ops-badge-complete, .ops-badge-done { background: rgba(46,213,115,0.15); color: var(--success); }
+  .ops-badge-failed { background: rgba(255,71,87,0.15); color: var(--critical); }
+  .ops-badge-idle, .ops-badge-queued { background: rgba(136,136,160,0.1); color: var(--text-dim); }
+  .ops-badge-healthy { background: rgba(46,213,115,0.15); color: var(--success); }
+  .ops-badge-unavailable { background: rgba(255,71,87,0.15); color: var(--critical); }
+
+  .ops-btn { padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.78rem; font-family: var(--sans); cursor: pointer; border: 1px solid var(--border); transition: all 0.15s; }
+  .ops-btn-primary { background: var(--accent); color: #0a0a0f; border-color: var(--accent); font-weight: 600; }
+  .ops-btn-primary:hover { opacity: 0.9; }
+  .ops-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .ops-btn-danger { background: rgba(255,71,87,0.1); color: var(--critical); border-color: rgba(255,71,87,0.3); }
+  .ops-btn-danger:hover { background: rgba(255,71,87,0.2); }
+  .ops-btn-ghost { background: transparent; color: var(--text-dim); }
+  .ops-btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+  .ops-btn-sm { padding: 0.35rem 0.7rem; font-size: 0.72rem; }
+
+  .ops-form-group { margin-bottom: 1rem; }
+  .ops-form-label { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); margin-bottom: 0.4rem; }
+  .ops-form-select, .ops-form-input { width: 100%; background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 0.55rem 0.75rem; font-family: var(--sans); font-size: 0.85rem; outline: none; }
+  .ops-form-select:focus, .ops-form-input:focus { border-color: var(--accent); }
+  .ops-form-input::placeholder { color: #5a5a70; }
+  .ops-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .ops-form-check { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; cursor: pointer; }
+  .ops-form-check input { accent-color: var(--accent); }
+
+  .ops-job-row { display: grid; grid-template-columns: 100px 1fr 80px 100px 60px; align-items: center; gap: 0.75rem; padding: 0.65rem 0.85rem; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+  .ops-job-row:last-child { border-bottom: none; }
+  .ops-job-dept { font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); }
+  .ops-job-target { font-weight: 500; }
+  .ops-job-time { font-size: 0.72rem; color: var(--text-dim); font-family: var(--mono); }
+  .ops-progress-bar { height: 4px; background: var(--surface-3); border-radius: 2px; overflow: hidden; }
+  .ops-progress-fill { height: 100%; background: #6c5ce7; border-radius: 2px; transition: width 0.3s; }
+
+  .ops-overnight-status { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.25rem; }
+  .ops-overnight-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem; text-align: center; }
+  .ops-overnight-stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); margin-bottom: 0.35rem; }
+  .ops-overnight-stat-value { font-size: 1.2rem; font-weight: 700; }
+
+  .ops-cycle-row { display: grid; grid-template-columns: 180px 1fr 60px 60px 60px 80px; align-items: center; gap: 0.75rem; padding: 0.6rem 0.85rem; border-bottom: 1px solid var(--border); font-size: 0.78rem; }
+  .ops-cycle-id { font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); }
+
+  .ops-backend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .ops-backend-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
+  .ops-backend-name { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+  .ops-backend-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.75rem; }
+  .ops-backend-stat { font-size: 0.75rem; color: var(--text-dim); }
+  .ops-backend-stat strong { color: var(--text); }
+
+  .ops-source-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.25rem; }
+  .ops-source-card { background: var(--surface); border: 2px solid var(--border); border-radius: var(--radius); padding: 1.25rem; text-align: center; cursor: pointer; transition: all 0.15s; }
+  .ops-source-card:hover { border-color: var(--accent); }
+  .ops-source-card.selected { border-color: var(--accent); background: rgba(196,148,74,0.05); }
+  .ops-source-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .ops-source-label { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .ops-source-desc { font-size: 0.72rem; color: var(--text-dim); }
+
+  .ops-cmd-box { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; font-family: var(--mono); font-size: 0.78rem; color: var(--medium); display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; word-break: break-all; }
+  .ops-cmd-copy { font-size: 0.65rem; color: var(--accent); cursor: pointer; border: 1px solid var(--accent); padding: 0.2rem 0.5rem; border-radius: 4px; background: none; font-family: var(--sans); flex-shrink: 0; margin-left: 0.75rem; }
+  .ops-cmd-copy:hover { background: rgba(196,148,74,0.1); }
+
+  .ops-feedback { font-size: 0.78rem; padding: 0.6rem 0.85rem; border-radius: 8px; margin-top: 0.75rem; display: none; }
+  .ops-feedback.success { display: block; background: rgba(46,213,115,0.08); border: 1px solid rgba(46,213,115,0.2); color: var(--success); }
+  .ops-feedback.error { display: block; background: rgba(255,71,87,0.08); border: 1px solid rgba(255,71,87,0.2); color: var(--critical); }
+
+  .ops-routing-table { font-size: 0.78rem; }
+  .ops-routing-row { display: grid; grid-template-columns: 200px 1fr; gap: 0.35rem 1rem; padding: 0.2rem 0; }
+  .ops-routing-task { color: var(--text-dim); }
+
+  @media (max-width: 700px) {
+    .ops-overnight-status { grid-template-columns: repeat(2, 1fr); }
+    .ops-backend-grid { grid-template-columns: 1fr; }
+    .ops-source-cards { grid-template-columns: 1fr; }
+    .ops-form-row { grid-template-columns: 1fr; }
+    .ops-job-row { grid-template-columns: 80px 1fr 70px 80px; }
+    .ops-job-row > :last-child { display: none; }
+    .ops-cycle-row { grid-template-columns: 120px 1fr 50px 50px 70px; }
+    .ops-cycle-row > :nth-child(5) { display: none; }
+  }
 </style>
 </head>
 <body>
@@ -418,6 +513,7 @@
     </select>
   </div>
   <div class="topbar-right">
+    <button class="topbar-btn" id="opsBtn" style="border-color:var(--accent);color:var(--accent);">Ops</button>
     <button class="topbar-btn" id="jobsBtn">Jobs</button>
     <button class="topbar-btn" id="docsBtn">Docs</button>
     <button class="topbar-btn" id="faqBtn">FAQ</button>
@@ -2054,9 +2150,1017 @@
   var _origCloseDeptPanel = closeDeptPanel;
   closeDeptPanel = function() {
     supportPanelMode = null;
+    opsStopPolling();
     setFilterBarVisible(true);
     _origCloseDeptPanel();
   };
+
+  /* ─────────────────────────────────────────────────────────
+     OPERATIONS PANEL
+     ───────────────────────────────────────────────────────── */
+
+  var opsActiveTab = 'jobs';
+  var opsPollingTimer = null;
+  var opsStatusCache = null;
+
+  /* ── Helpers ── */
+
+  function opsCopyToClipboard(text, btnEl) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(function() {
+        var orig = btnEl.textContent;
+        btnEl.textContent = 'Copied!';
+        setTimeout(function() { btnEl.textContent = orig; }, 1500);
+      });
+    }
+  }
+
+  function opsBadgeClass(status) {
+    var s = (status || '').toLowerCase();
+    if (s === 'running') return 'ops-badge ops-badge-running';
+    if (s === 'complete' || s === 'done') return 'ops-badge ops-badge-complete';
+    if (s === 'failed') return 'ops-badge ops-badge-failed';
+    if (s === 'healthy') return 'ops-badge ops-badge-healthy';
+    if (s === 'unavailable' || s === 'not configured') return 'ops-badge ops-badge-unavailable';
+    return 'ops-badge ops-badge-idle';
+  }
+
+  function opsFeedback(container, msg, isError) {
+    var fb = container.querySelector('.ops-feedback');
+    if (!fb) {
+      fb = el('div', {className: 'ops-feedback'});
+      container.appendChild(fb);
+    }
+    fb.className = 'ops-feedback ' + (isError ? 'error' : 'success');
+    fb.textContent = msg;
+    fb.style.display = 'block';
+    setTimeout(function() { fb.style.display = 'none'; }, 5000);
+  }
+
+  function opsFormatElapsed(seconds) {
+    if (!seconds && seconds !== 0) return '\u2014';
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    if (m === 0) return s + 's';
+    return m + 'm ' + (s < 10 ? '0' : '') + s + 's';
+  }
+
+  /* ── Stop polling ── */
+  function opsStopPolling() {
+    if (opsPollingTimer) {
+      clearInterval(opsPollingTimer);
+      opsPollingTimer = null;
+    }
+  }
+
+  /* ── Tab switching ── */
+  function opsShowTab(name) {
+    opsActiveTab = name;
+    var wrap = document.getElementById('opsTabsWrap');
+    if (!wrap) return;
+    wrap.querySelectorAll('.ops-tab').forEach(function(t) {
+      t.classList.toggle('active', t.getAttribute('data-tab') === name);
+    });
+    wrap.parentElement.querySelectorAll('.ops-section').forEach(function(s) {
+      s.classList.toggle('active', s.id === 'ops-sec-' + name);
+    });
+
+    // Start/stop polling based on tab
+    opsStopPolling();
+    if (name === 'jobs') {
+      opsRefreshLiveJobs();
+      opsPollingTimer = setInterval(opsRefreshLiveJobs, 5000);
+    }
+  }
+
+  /* ── Build command string ── */
+  function opsBuildAuditCmd(target, depts, mode) {
+    var base = 'cd /home/merm/projects/back-office && ';
+    if (mode === 'full') return base + 'make full-scan TARGET=' + target;
+    if (mode === 'sequential') return base + 'make audit-all TARGET=' + target;
+    return base + 'make audit-all-parallel TARGET=' + target;
+  }
+
+  /* ════════════════════════════════════════════════
+     TAB 1: LIVE JOBS
+  ════════════════════════════════════════════════ */
+
+  function opsRefreshLiveJobs() {
+    fetch('/api/ops/status?t=' + Date.now())
+      .then(function(r) { return r.ok ? r.json() : Promise.reject('HTTP ' + r.status); })
+      .then(function(data) {
+        opsStatusCache = data;
+        opsRenderLiveJobs(data);
+      })
+      .catch(function() {
+        // Silently fail — keep previous data
+      });
+  }
+
+  function opsRenderLiveJobs(data) {
+    var container = document.getElementById('ops-live-jobs');
+    if (!container) return;
+    clearChildren(container);
+
+    // Transform API shape: data.jobs is a single run with .jobs dict, data.jobs_history is list of completed runs
+    var currentRun = data.jobs || null;
+    var history = data.jobs_history || [];
+
+    // Build active jobs list from current run
+    var active = [];
+    if (currentRun && currentRun.jobs && (currentRun.status || '').toLowerCase() !== 'complete') {
+      var repoName = currentRun.repo_name || currentRun.target || 'unknown';
+      Object.keys(currentRun.jobs).forEach(function(deptKey) {
+        var j = currentRun.jobs[deptKey];
+        var elapsed = j.elapsed_seconds;
+        if (!elapsed && j.started_at && !j.finished_at) {
+          elapsed = Math.round((Date.now() - new Date(j.started_at).getTime()) / 1000);
+        }
+        active.push({
+          department: DEPT_LABELS[deptKey] || deptKey,
+          target: repoName,
+          status: j.status || 'unknown',
+          elapsed: elapsed || null,
+          findings_count: j.findings_count,
+          score: j.score
+        });
+      });
+    }
+
+    // Active jobs card
+    var activeCard = el('div', {className: 'ops-card'});
+    var runningCount = active.filter(function(j) { return (j.status || '').toLowerCase() === 'running'; }).length;
+    var queuedCount = active.filter(function(j) { return (j.status || '').toLowerCase() === 'queued'; }).length;
+
+    var headerDiv = el('div', {className: 'ops-card-header'}, [
+      el('div', null, [
+        el('div', {className: 'ops-card-title', textContent: 'Active Jobs'}),
+        el('div', {className: 'ops-card-subtitle', textContent: runningCount + ' running, ' + queuedCount + ' queued'})
+      ])
+    ]);
+    var refreshBtn = el('button', {className: 'ops-btn ops-btn-ghost ops-btn-sm', textContent: 'Refresh'});
+    refreshBtn.addEventListener('click', opsRefreshLiveJobs);
+    headerDiv.appendChild(refreshBtn);
+    activeCard.appendChild(headerDiv);
+
+    if (active.length === 0) {
+      activeCard.appendChild(el('div', {style: 'padding:1rem;text-align:center;color:var(--text-dim);font-size:0.82rem;', textContent: 'No active jobs'}));
+    } else {
+      // Header row
+      var headerRow = el('div', {className: 'ops-job-row', style: 'font-weight:600;color:var(--text-dim);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.06em;'}, [
+        el('span', {textContent: 'Department'}),
+        el('span', {textContent: 'Target'}),
+        el('span', {textContent: 'Status'}),
+        el('span', {textContent: 'Elapsed'}),
+        el('span')
+      ]);
+      activeCard.appendChild(headerRow);
+
+      active.forEach(function(job) {
+        var statusBadge = el('span', {className: opsBadgeClass(job.status), textContent: job.status || 'Unknown'});
+        var progressEl = el('span');
+        if ((job.status || '').toLowerCase() === 'running') {
+          var bar = el('div', {className: 'ops-progress-bar'});
+          // Estimate progress from elapsed time (rough: assume 5 min per dept audit)
+          var pct = job.elapsed ? Math.min(95, Math.round((job.elapsed / 300) * 100)) : 10;
+          var fill = el('div', {className: 'ops-progress-fill', style: 'width:' + pct + '%'});
+          bar.appendChild(fill);
+          progressEl.appendChild(bar);
+        }
+
+        var row = el('div', {className: 'ops-job-row'}, [
+          el('span', {className: 'ops-job-dept', textContent: job.department || 'Unknown'}),
+          el('span', {className: 'ops-job-target', textContent: job.target || 'Unknown'}),
+          el('span', null, [statusBadge]),
+          el('span', {className: 'ops-job-time', textContent: job.elapsed ? opsFormatElapsed(job.elapsed) : '\u2014'}),
+          progressEl
+        ]);
+        activeCard.appendChild(row);
+      });
+    }
+    container.appendChild(activeCard);
+
+    // Recent completions from history
+    var completedRuns = history.filter(function(r) {
+      return (r.status || '').toLowerCase() === 'complete' || (r.status || '').toLowerCase() === 'failed';
+    }).slice(0, 5);
+
+    if (completedRuns.length > 0) {
+      var recentCard = el('div', {className: 'ops-card'});
+      recentCard.appendChild(el('div', {className: 'ops-card-header'}, [
+        el('div', {className: 'ops-card-title', textContent: 'Recent Completions'})
+      ]));
+
+      completedRuns.forEach(function(run) {
+        var repoName = run.repo_name || run.target || 'unknown';
+        var statusBadge = el('span', {className: opsBadgeClass(run.status), textContent: run.status || 'Done'});
+
+        // Compute total findings and elapsed
+        var totalFindings = 0;
+        var totalElapsed = 0;
+        if (run.jobs) {
+          Object.keys(run.jobs).forEach(function(dk) {
+            var j = run.jobs[dk];
+            if (j.findings_count) totalFindings += j.findings_count;
+            if (j.elapsed_seconds) totalElapsed += j.elapsed_seconds;
+          });
+        }
+        if (!totalElapsed && run.started_at && run.finished_at) {
+          totalElapsed = Math.round((new Date(run.finished_at) - new Date(run.started_at)) / 1000);
+        }
+
+        var resultSpan = el('span', {style: 'font-size:0.72rem;color:' + ((run.status || '').toLowerCase() === 'failed' ? 'var(--critical)' : 'var(--success)') + ';'});
+        resultSpan.textContent = totalFindings + ' findings';
+
+        var deptCount = run.jobs ? Object.keys(run.jobs).length : 0;
+
+        var row = el('div', {className: 'ops-job-row'}, [
+          el('span', {className: 'ops-job-dept', textContent: deptCount + ' depts'}),
+          el('span', {className: 'ops-job-target', textContent: repoName}),
+          el('span', null, [statusBadge]),
+          el('span', {className: 'ops-job-time', textContent: totalElapsed ? opsFormatElapsed(totalElapsed) : '\u2014'}),
+          resultSpan
+        ]);
+        recentCard.appendChild(row);
+      });
+      container.appendChild(recentCard);
+    }
+  }
+
+  /* ════════════════════════════════════════════════
+     TAB 2: RUN AUDIT
+  ════════════════════════════════════════════════ */
+
+  function opsRenderAuditTab() {
+    var container = document.getElementById('ops-run-audit');
+    if (!container) return;
+    clearChildren(container);
+
+    var card = el('div', {className: 'ops-card'});
+    card.appendChild(el('div', {className: 'ops-card-title', style: 'margin-bottom:1rem;', textContent: 'Run Audit'}));
+
+    // Target selector
+    var targetGroup = el('div', {className: 'ops-form-group'});
+    targetGroup.appendChild(el('label', {className: 'ops-form-label', textContent: 'Target'}));
+    var targetSelect = el('select', {className: 'ops-form-select', id: 'opsAuditTarget'});
+    targetSelect.appendChild(el('option', {value: 'all', textContent: 'All targets'}));
+
+    // Populate from cached status if available
+    var targets = (opsStatusCache && opsStatusCache.targets) || [];
+    if (targets.length === 0 && orgData && orgData.products) {
+      orgData.products.forEach(function(p) {
+        if (p.repos) p.repos.forEach(function(r) { if (targets.indexOf(r) === -1) targets.push(r); });
+      });
+    }
+    targets.forEach(function(t) {
+      var name = typeof t === 'string' ? t : (t.name || t.key || '');
+      var path = typeof t === 'string' ? '/home/merm/projects/' + t : (t.path || '/home/merm/projects/' + name);
+      if (name) {
+        targetSelect.appendChild(el('option', {value: path, textContent: name}));
+      }
+    });
+    targetGroup.appendChild(targetSelect);
+    card.appendChild(targetGroup);
+
+    // Department checkboxes
+    var deptGroup = el('div', {className: 'ops-form-group'});
+    deptGroup.appendChild(el('label', {className: 'ops-form-label', textContent: 'Departments'}));
+    var deptWrap = el('div', {style: 'display:flex;gap:1rem;flex-wrap:wrap;'});
+    var deptNames = ['QA', 'SEO', 'ADA', 'Compliance', 'Monetization', 'Product'];
+    var deptKeysAudit = ['qa', 'seo', 'ada', 'compliance', 'monetization', 'product'];
+    deptKeysAudit.forEach(function(dk, i) {
+      var cb = el('input', {type: 'checkbox', 'data-dept': dk});
+      cb.checked = true;
+      var lbl = el('label', {className: 'ops-form-check'});
+      lbl.appendChild(cb);
+      lbl.appendChild(document.createTextNode(' ' + deptNames[i]));
+      deptWrap.appendChild(lbl);
+    });
+    deptGroup.appendChild(deptWrap);
+    card.appendChild(deptGroup);
+
+    // Mode radio buttons
+    var modeGroup = el('div', {className: 'ops-form-group'});
+    modeGroup.appendChild(el('label', {className: 'ops-form-label', textContent: 'Mode'}));
+    var modeWrap = el('div', {style: 'display:flex;gap:0.75rem;'});
+    var modes = [
+      {value: 'parallel', label: 'Parallel (2 waves)', checked: true},
+      {value: 'sequential', label: 'Sequential'},
+      {value: 'full', label: 'Full scan + fix'}
+    ];
+    modes.forEach(function(m) {
+      var radio = el('input', {type: 'radio', name: 'opsAuditMode', value: m.value});
+      if (m.checked) radio.checked = true;
+      var lbl = el('label', {className: 'ops-form-check'});
+      lbl.appendChild(radio);
+      lbl.appendChild(document.createTextNode(' ' + m.label));
+      modeWrap.appendChild(lbl);
+    });
+    modeGroup.appendChild(modeWrap);
+    card.appendChild(modeGroup);
+
+    // Start button + hint
+    var actionRow = el('div', {style: 'display:flex;gap:0.75rem;align-items:center;margin-top:1.25rem;'});
+    var startBtn = el('button', {className: 'ops-btn ops-btn-primary', textContent: 'Start Audit'});
+    actionRow.appendChild(startBtn);
+    actionRow.appendChild(el('span', {style: 'font-size:0.72rem;color:var(--text-dim);', textContent: 'or paste in terminal:'}));
+    card.appendChild(actionRow);
+
+    // Command box
+    var cmdBox = el('div', {className: 'ops-cmd-box', id: 'opsAuditCmd'});
+    var cmdText = el('span', {id: 'opsAuditCmdText', textContent: 'make audit-all-parallel TARGET=/home/merm/projects/...'});
+    var copyBtn = el('button', {className: 'ops-cmd-copy', textContent: 'Copy'});
+    cmdBox.appendChild(cmdText);
+    cmdBox.appendChild(copyBtn);
+    card.appendChild(cmdBox);
+
+    container.appendChild(card);
+
+    // Update command on form change
+    function updateCmd() {
+      var target = targetSelect.value;
+      if (target === 'all') target = '/home/merm/projects';
+      var modeRadio = card.querySelector('input[name="opsAuditMode"]:checked');
+      var mode = modeRadio ? modeRadio.value : 'parallel';
+      var cmd = opsBuildAuditCmd(target, [], mode);
+      cmdText.textContent = cmd;
+    }
+
+    targetSelect.addEventListener('change', updateCmd);
+    card.querySelectorAll('input[name="opsAuditMode"]').forEach(function(r) {
+      r.addEventListener('change', updateCmd);
+    });
+    updateCmd();
+
+    copyBtn.addEventListener('click', function() {
+      opsCopyToClipboard(cmdText.textContent, copyBtn);
+    });
+
+    // Start audit handler
+    startBtn.addEventListener('click', function() {
+      startBtn.disabled = true;
+      startBtn.textContent = 'Starting\u2026';
+
+      var target = targetSelect.value;
+      if (target === 'all') target = null;
+      var checkedDepts = [];
+      card.querySelectorAll('input[data-dept]:checked').forEach(function(cb) {
+        checkedDepts.push(cb.getAttribute('data-dept'));
+      });
+      var modeRadio = card.querySelector('input[name="opsAuditMode"]:checked');
+      var mode = modeRadio ? modeRadio.value : 'parallel';
+
+      var payload = {departments: checkedDepts, mode: mode};
+      if (target) payload.target = target;
+
+      fetch('/api/ops/audit', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      })
+      .then(function(r) { return r.json().then(function(d) { return {ok: r.ok, data: d}; }); })
+      .then(function(res) {
+        startBtn.disabled = false;
+        startBtn.textContent = 'Start Audit';
+        if (res.ok) {
+          opsFeedback(container, 'Audit started successfully. Switch to Live Jobs to monitor.', false);
+        } else {
+          opsFeedback(container, 'Error: ' + (res.data.error || 'Unknown error'), true);
+        }
+      })
+      .catch(function(err) {
+        startBtn.disabled = false;
+        startBtn.textContent = 'Start Audit';
+        opsFeedback(container, 'Network error: ' + err, true);
+      });
+    });
+  }
+
+  /* ════════════════════════════════════════════════
+     TAB 3: OVERNIGHT LOOP
+  ════════════════════════════════════════════════ */
+
+  function opsRenderOvernightTab() {
+    var container = document.getElementById('ops-overnight');
+    if (!container) return;
+    clearChildren(container);
+
+    var oData = (opsStatusCache && opsStatusCache.overnight) || {};
+
+    // Status cards — adapt from API shape: oData.running (bool), oData.plan, oData.history
+    var statusGrid = el('div', {className: 'ops-overnight-status'});
+    var isRunning = oData.running || false;
+    var statusVal = isRunning ? 'Running' : 'Idle';
+    var statusColor = isRunning ? 'var(--success)' : 'var(--text-dim)';
+    var histLen = (oData.history || []).length;
+
+    statusGrid.appendChild(el('div', {className: 'ops-overnight-stat'}, [
+      el('div', {className: 'ops-overnight-stat-label', textContent: 'Status'}),
+      el('div', {className: 'ops-overnight-stat-value', style: 'color:' + statusColor, textContent: statusVal})
+    ]));
+    statusGrid.appendChild(el('div', {className: 'ops-overnight-stat'}, [
+      el('div', {className: 'ops-overnight-stat-label', textContent: 'Current Phase'}),
+      el('div', {className: 'ops-overnight-stat-value', style: 'font-size:0.9rem;', textContent: oData.phase || (isRunning ? 'Active' : '\u2014')})
+    ]));
+    statusGrid.appendChild(el('div', {className: 'ops-overnight-stat'}, [
+      el('div', {className: 'ops-overnight-stat-label', textContent: 'Cycles Run'}),
+      el('div', {className: 'ops-overnight-stat-value', textContent: String(histLen)})
+    ]));
+    statusGrid.appendChild(el('div', {className: 'ops-overnight-stat'}, [
+      el('div', {className: 'ops-overnight-stat-label', textContent: 'Stop File'}),
+      el('div', {className: 'ops-overnight-stat-value', style: 'font-size:0.9rem;color:' + (oData.stop_file_exists ? 'var(--critical)' : 'var(--text-dim)'), textContent: oData.stop_file_exists ? 'Present' : 'None'})
+    ]));
+    container.appendChild(statusGrid);
+
+    // Buttons
+    var btnRow = el('div', {style: 'display:flex;gap:0.75rem;margin-bottom:1.25rem;'});
+    var startLoopBtn = el('button', {className: 'ops-btn ops-btn-primary', textContent: 'Start Loop'});
+    var stopLoopBtn = el('button', {className: 'ops-btn ops-btn-danger', textContent: 'Stop Gracefully'});
+    btnRow.appendChild(startLoopBtn);
+    btnRow.appendChild(stopLoopBtn);
+    container.appendChild(btnRow);
+
+    // Settings card
+    var settingsCard = el('div', {className: 'ops-card'});
+    settingsCard.appendChild(el('div', {className: 'ops-card-title', style: 'margin-bottom:0.5rem;', textContent: 'Loop Settings'}));
+    var settingsRow = el('div', {className: 'ops-form-row', style: 'margin-bottom:0.75rem;'});
+
+    var intervalGroup = el('div', {className: 'ops-form-group', style: 'margin:0;'});
+    intervalGroup.appendChild(el('label', {className: 'ops-form-label', textContent: 'Interval (minutes)'}));
+    var intervalInput = el('input', {className: 'ops-form-input', type: 'number', value: '120', style: 'width:100px;', id: 'opsOvernightInterval'});
+    intervalGroup.appendChild(intervalInput);
+    settingsRow.appendChild(intervalGroup);
+
+    var targetGroup = el('div', {className: 'ops-form-group', style: 'margin:0;'});
+    targetGroup.appendChild(el('label', {className: 'ops-form-label', textContent: 'Targets'}));
+    var targetSelect = el('select', {className: 'ops-form-select', id: 'opsOvernightTarget'});
+    targetSelect.appendChild(el('option', {value: 'all', textContent: 'All targets'}));
+    var oTargets = (opsStatusCache && opsStatusCache.targets) || [];
+    oTargets.forEach(function(t) {
+      var name = typeof t === 'string' ? t : (t.name || t.key || '');
+      if (name) targetSelect.appendChild(el('option', {value: name, textContent: name}));
+    });
+    targetGroup.appendChild(targetSelect);
+    settingsRow.appendChild(targetGroup);
+
+    settingsCard.appendChild(settingsRow);
+
+    // tmux command
+    var tmuxCmd = "tmux new-session -d -s overnight 'cd /home/merm/projects/back-office && make overnight INTERVAL=120'";
+    var tmuxBox = el('div', {className: 'ops-cmd-box'});
+    var tmuxText = el('span', {textContent: tmuxCmd});
+    var tmuxCopy = el('button', {className: 'ops-cmd-copy', textContent: 'Copy'});
+    tmuxCopy.addEventListener('click', function() { opsCopyToClipboard(tmuxText.textContent, tmuxCopy); });
+    tmuxBox.appendChild(tmuxText);
+    tmuxBox.appendChild(tmuxCopy);
+    settingsCard.appendChild(tmuxBox);
+
+    // Update tmux command when interval changes
+    intervalInput.addEventListener('input', function() {
+      tmuxText.textContent = "tmux new-session -d -s overnight 'cd /home/merm/projects/back-office && make overnight INTERVAL=" + (intervalInput.value || '120') + "'";
+    });
+
+    container.appendChild(settingsCard);
+
+    // Latest plan card — API shape: plan.rationale, plan.fixes[], plan.features[], plan.decided_at
+    var plan = oData.plan || null;
+    if (plan) {
+      var planCard = el('div', {className: 'ops-card'});
+      planCard.appendChild(el('div', {className: 'ops-card-header'}, [
+        el('div', {className: 'ops-card-title', textContent: 'Latest Plan (Product Owner)'}),
+        el('div', {className: 'ops-card-subtitle', textContent: plan.decided_at ? timeAgo(plan.decided_at) : ''})
+      ]));
+      if (plan.rationale) {
+        planCard.appendChild(el('div', {style: 'font-size:0.82rem;color:var(--text-dim);margin-bottom:0.75rem;font-style:italic;', textContent: '\u201C' + plan.rationale + '\u201D'}));
+      }
+
+      // Render fixes
+      var planFixes = plan.fixes || [];
+      var planFeatures = plan.features || [];
+      if (planFixes.length > 0 || planFeatures.length > 0) {
+        var itemsWrap = el('div', {style: 'font-size:0.78rem;'});
+        planFixes.forEach(function(item) {
+          var row = el('div', {style: 'margin-bottom:0.35rem;'}, [
+            el('span', {className: 'ops-badge ops-badge-running', style: 'margin-right:0.5rem;', textContent: 'FIX'}),
+            document.createTextNode((item.repo || '') + ' \u2014 ' + (item.title || '')),
+            el('span', {style: 'color:var(--text-dim);', textContent: ' (' + (item.severity || '') + ', ' + (item.department || '') + ')'})
+          ]);
+          itemsWrap.appendChild(row);
+        });
+        planFeatures.forEach(function(item) {
+          var row = el('div', {style: 'margin-bottom:0.35rem;'}, [
+            el('span', {className: 'ops-badge ops-badge-idle', style: 'margin-right:0.5rem;', textContent: 'FEAT'}),
+            document.createTextNode((item.repo || '') + ' \u2014 ' + (item.title || '')),
+            el('span', {style: 'color:var(--text-dim);', textContent: ' (' + (item.effort || '') + ', ' + (item.department || '') + ')'})
+          ]);
+          itemsWrap.appendChild(row);
+        });
+        planCard.appendChild(itemsWrap);
+      }
+      container.appendChild(planCard);
+    }
+
+    // Cycle history — API shape: oData.history[]
+    var cycles = oData.history || [];
+    if (cycles.length > 0) {
+      var histCard = el('div', {className: 'ops-card'});
+      histCard.appendChild(el('div', {className: 'ops-card-title', style: 'margin-bottom:0.75rem;', textContent: 'Cycle History'}));
+
+      // Header
+      histCard.appendChild(el('div', {className: 'ops-cycle-row', style: 'font-weight:600;color:var(--text-dim);font-size:0.65rem;text-transform:uppercase;'}, [
+        el('span', {textContent: 'Cycle'}),
+        el('span', {textContent: 'Rationale'}),
+        el('span', {textContent: 'Fixes'}),
+        el('span', {textContent: 'Features'}),
+        el('span', {textContent: 'Deploys'}),
+        el('span', {textContent: 'Status'})
+      ]));
+
+      cycles.slice(0, 5).forEach(function(c) {
+        histCard.appendChild(el('div', {className: 'ops-cycle-row'}, [
+          el('span', {className: 'ops-cycle-id', textContent: c.timestamp || c.id || '\u2014'}),
+          el('span', {style: 'font-size:0.75rem;', textContent: c.rationale || '\u2014'}),
+          el('span', {style: 'color:var(--success);', textContent: c.fixes || '\u2014'}),
+          el('span', {style: 'color:var(--success);', textContent: c.features || '\u2014'}),
+          el('span', {textContent: c.deploys != null ? String(c.deploys) : '\u2014'}),
+          el('span', null, [el('span', {className: opsBadgeClass(c.status), textContent: c.status || 'Done'})])
+        ]));
+      });
+      container.appendChild(histCard);
+    }
+
+    // Wire buttons
+    startLoopBtn.addEventListener('click', function() {
+      startLoopBtn.disabled = true;
+      startLoopBtn.textContent = 'Starting\u2026';
+      var payload = {interval: parseInt(intervalInput.value, 10) || 120};
+      var target = targetSelect.value;
+      if (target !== 'all') payload.target = target;
+
+      fetch('/api/ops/overnight/start', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      })
+      .then(function(r) { return r.json().then(function(d) { return {ok: r.ok, data: d}; }); })
+      .then(function(res) {
+        startLoopBtn.disabled = false;
+        startLoopBtn.textContent = 'Start Loop';
+        if (res.ok) {
+          opsFeedback(container, 'Overnight loop started.', false);
+          setTimeout(function() { opsRefreshLiveJobs(); opsRenderOvernightTab(); }, 2000);
+        } else {
+          opsFeedback(container, 'Error: ' + (res.data.error || 'Unknown error'), true);
+        }
+      })
+      .catch(function(err) {
+        startLoopBtn.disabled = false;
+        startLoopBtn.textContent = 'Start Loop';
+        opsFeedback(container, 'Network error: ' + err, true);
+      });
+    });
+
+    stopLoopBtn.addEventListener('click', function() {
+      stopLoopBtn.disabled = true;
+      stopLoopBtn.textContent = 'Stopping\u2026';
+
+      fetch('/api/ops/overnight/stop', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({})
+      })
+      .then(function(r) { return r.json().then(function(d) { return {ok: r.ok, data: d}; }); })
+      .then(function(res) {
+        stopLoopBtn.disabled = false;
+        stopLoopBtn.textContent = 'Stop Gracefully';
+        if (res.ok) {
+          opsFeedback(container, 'Stop signal sent. Loop will stop after current phase.', false);
+        } else {
+          opsFeedback(container, 'Error: ' + (res.data.error || 'Unknown error'), true);
+        }
+      })
+      .catch(function(err) {
+        stopLoopBtn.disabled = false;
+        stopLoopBtn.textContent = 'Stop Gracefully';
+        opsFeedback(container, 'Network error: ' + err, true);
+      });
+    });
+  }
+
+  /* ════════════════════════════════════════════════
+     TAB 4: BACKENDS
+  ════════════════════════════════════════════════ */
+
+  function opsRenderBackendsTab() {
+    var container = document.getElementById('ops-backends');
+    if (!container) return;
+    clearChildren(container);
+
+    var loading = el('div', {style: 'padding:2rem;text-align:center;color:var(--text-dim);font-size:0.85rem;', textContent: 'Loading backends\u2026'});
+    container.appendChild(loading);
+
+    fetch('/api/ops/backends?t=' + Date.now())
+      .then(function(r) { return r.ok ? r.json() : Promise.reject('HTTP ' + r.status); })
+      .then(function(data) {
+        clearChildren(container);
+
+        // API shape: data.backends is dict keyed by name (e.g. "claude"), data.routing_policy is dict
+        var backendsDict = data.backends || {};
+        var backendNames = Object.keys(backendsDict);
+        var routingDict = data.routing_policy || {};
+        var routingKeys = Object.keys(routingDict);
+
+        // Backend cards
+        var grid = el('div', {className: 'ops-backend-grid'});
+        backendNames.forEach(function(name) {
+          var b = backendsDict[name];
+          var card = el('div', {className: 'ops-backend-card'});
+          var bStatus = b.healthy ? 'Healthy' : (b.status || 'Unavailable');
+          if (!b.healthy) card.style.opacity = '0.6';
+
+          var nameDiv = el('div', {className: 'ops-backend-name'}, [
+            document.createTextNode(name.charAt(0).toUpperCase() + name.slice(1)),
+            el('span', {className: opsBadgeClass(bStatus), textContent: bStatus})
+          ]);
+          card.appendChild(nameDiv);
+
+          // Description from limits or capabilities
+          var lim = b.limits || {};
+          var caps = b.capabilities || {};
+          var descParts = [];
+          if (lim.backend) descParts.push(lim.backend + ' backend');
+          if (lim.supports_structured_output) descParts.push('structured output');
+          if (descParts.length > 0) {
+            card.appendChild(el('div', {style: 'font-size:0.78rem;color:var(--text-dim);', textContent: descParts.join(' \u00B7 ')}));
+          }
+
+          var stats = el('div', {className: 'ops-backend-stats'});
+          var ctxTokens = lim.context_window_tokens;
+          var ctxStr = ctxTokens ? (Math.round(ctxTokens / 1000) + 'K tokens') : '\u2014';
+          stats.appendChild(el('div', {className: 'ops-backend-stat'}, [
+            document.createTextNode('Context: '),
+            el('strong', {textContent: ctxStr})
+          ]));
+          stats.appendChild(el('div', {className: 'ops-backend-stat'}, [
+            document.createTextNode('Parallelism: '),
+            el('strong', {textContent: lim.recommended_parallelism != null ? String(lim.recommended_parallelism) : '\u2014'})
+          ]));
+          stats.appendChild(el('div', {className: 'ops-backend-stat'}, [
+            document.createTextNode('Rate limit: '),
+            el('strong', {textContent: lim.rate_limit_state || '\u2014'})
+          ]));
+          stats.appendChild(el('div', {className: 'ops-backend-stat'}, [
+            document.createTextNode('Structured output: '),
+            el('strong', {textContent: lim.supports_structured_output ? 'Yes' : 'No'})
+          ]));
+          card.appendChild(stats);
+
+          // Show capabilities summary
+          var capNames = Object.keys(caps).filter(function(k) { return caps[k]; });
+          if (capNames.length > 0) {
+            card.appendChild(el('div', {style: 'margin-top:0.75rem;font-size:0.72rem;color:var(--text-dim);', textContent: 'Capabilities: ' + capNames.join(', ').replace(/_/g, ' ')}));
+          }
+
+          grid.appendChild(card);
+        });
+
+        if (backendNames.length === 0) {
+          grid.appendChild(el('div', {style: 'padding:1rem;text-align:center;color:var(--text-dim);grid-column:1/-1;', textContent: 'No backends configured'}));
+        }
+        container.appendChild(grid);
+
+        // Routing policy
+        if (routingKeys.length > 0) {
+          var routeCard = el('div', {className: 'ops-card'});
+          routeCard.appendChild(el('div', {className: 'ops-card-title', style: 'margin-bottom:0.75rem;', textContent: 'Routing Policy'}));
+
+          var routeTable = el('div', {className: 'ops-routing-table'});
+          routingKeys.forEach(function(task) {
+            var order = routingDict[task];
+            var orderStr = Array.isArray(order) ? order.join(' \u2192 ') : String(order);
+            routeTable.appendChild(el('div', {className: 'ops-routing-row'}, [
+              el('span', {className: 'ops-routing-task', textContent: task}),
+              el('span', {textContent: orderStr})
+            ]));
+          });
+          routeCard.appendChild(routeTable);
+          container.appendChild(routeCard);
+        }
+      })
+      .catch(function(err) {
+        clearChildren(container);
+        container.appendChild(el('div', {className: 'empty-state', textContent: 'Could not load backend data: ' + err}));
+      });
+  }
+
+  /* ════════════════════════════════════════════════
+     TAB 5: ADD PRODUCT
+  ════════════════════════════════════════════════ */
+
+  var opsSelectedSource = 'github';
+
+  function opsRenderAddProductTab() {
+    var container = document.getElementById('ops-products');
+    if (!container) return;
+    clearChildren(container);
+
+    var card = el('div', {className: 'ops-card'});
+    card.appendChild(el('div', {className: 'ops-card-title', style: 'margin-bottom:1rem;', textContent: 'Add a New Product'}));
+
+    // Source cards
+    card.appendChild(el('label', {className: 'ops-form-label', textContent: 'Source'}));
+    var sourcesWrap = el('div', {className: 'ops-source-cards'});
+    var sourceDefs = [
+      {key: 'local', icon: '\uD83D\uDCC1', label: 'Local Only', desc: 'Already on disk. Just add to Back Office config.'},
+      {key: 'github', icon: '\uD83D\uDC19', label: 'GitHub', desc: 'Clone from GitHub and add to config.'},
+      {key: 'both', icon: '\uD83D\uDD03', label: 'GitHub + Local', desc: 'Link existing local repo to GitHub remote and add to config.'}
+    ];
+    sourceDefs.forEach(function(src) {
+      var srcCard = el('div', {className: 'ops-source-card' + (opsSelectedSource === src.key ? ' selected' : '')}, [
+        el('div', {className: 'ops-source-icon', textContent: src.icon}),
+        el('div', {className: 'ops-source-label', textContent: src.label}),
+        el('div', {className: 'ops-source-desc', textContent: src.desc})
+      ]);
+      srcCard.addEventListener('click', function() {
+        opsSelectedSource = src.key;
+        sourcesWrap.querySelectorAll('.ops-source-card').forEach(function(c) { c.classList.remove('selected'); });
+        srcCard.classList.add('selected');
+        updateProductPreview();
+      });
+      sourcesWrap.appendChild(srcCard);
+    });
+    card.appendChild(sourcesWrap);
+
+    // Form fields
+    var row1 = el('div', {className: 'ops-form-row'});
+    var nameGroup = el('div', {className: 'ops-form-group'});
+    nameGroup.appendChild(el('label', {className: 'ops-form-label', textContent: 'Product Name'}));
+    var nameInput = el('input', {className: 'ops-form-input', placeholder: 'my-app', id: 'opsProductName'});
+    nameGroup.appendChild(nameInput);
+    row1.appendChild(nameGroup);
+
+    var repoGroup = el('div', {className: 'ops-form-group'});
+    repoGroup.appendChild(el('label', {className: 'ops-form-label', textContent: 'GitHub Repo (owner/name)'}));
+    var repoInput = el('input', {className: 'ops-form-input', placeholder: 'CodyJo/my-app', id: 'opsProductRepo'});
+    repoGroup.appendChild(repoInput);
+    row1.appendChild(repoGroup);
+    card.appendChild(row1);
+
+    var row2 = el('div', {className: 'ops-form-row'});
+    var langGroup = el('div', {className: 'ops-form-group'});
+    langGroup.appendChild(el('label', {className: 'ops-form-label', textContent: 'Language'}));
+    var langSelect = el('select', {className: 'ops-form-select', id: 'opsProductLang'});
+    ['typescript', 'python', 'astro', 'terraform'].forEach(function(lang) {
+      langSelect.appendChild(el('option', {value: lang, textContent: lang}));
+    });
+    langGroup.appendChild(langSelect);
+    row2.appendChild(langGroup);
+
+    var pathGroup = el('div', {className: 'ops-form-group'});
+    pathGroup.appendChild(el('label', {className: 'ops-form-label', textContent: 'Local Path'}));
+    var pathInput = el('input', {className: 'ops-form-input', placeholder: '/home/merm/projects/...', id: 'opsProductPath'});
+    pathGroup.appendChild(pathInput);
+    row2.appendChild(pathGroup);
+    card.appendChild(row2);
+
+    // Department checkboxes
+    var deptGroup = el('div', {className: 'ops-form-group'});
+    deptGroup.appendChild(el('label', {className: 'ops-form-label', textContent: 'Departments'}));
+    var deptWrap = el('div', {style: 'display:flex;gap:1rem;flex-wrap:wrap;'});
+    var deptNamesP = ['QA', 'SEO', 'ADA', 'Compliance', 'Monetization', 'Product'];
+    var deptKeysP = ['qa', 'seo', 'ada', 'compliance', 'monetization', 'product'];
+    deptKeysP.forEach(function(dk, i) {
+      var cb = el('input', {type: 'checkbox', 'data-product-dept': dk});
+      cb.checked = true;
+      var lbl = el('label', {className: 'ops-form-check'});
+      lbl.appendChild(cb);
+      lbl.appendChild(document.createTextNode(' ' + deptNamesP[i]));
+      deptWrap.appendChild(lbl);
+    });
+    deptGroup.appendChild(deptWrap);
+    card.appendChild(deptGroup);
+
+    // Autonomy checkboxes
+    var autoGroup = el('div', {className: 'ops-form-group'});
+    autoGroup.appendChild(el('label', {className: 'ops-form-label', textContent: 'Autonomy Policy'}));
+    var autoWrap = el('div', {style: 'display:flex;gap:1rem;flex-wrap:wrap;'});
+    var autoOpts = [
+      {key: 'allow_fixes', label: 'Allow fixes', checked: true},
+      {key: 'allow_features', label: 'Allow feature dev', checked: false},
+      {key: 'allow_merge', label: 'Allow auto-merge', checked: false},
+      {key: 'allow_deploy', label: 'Allow auto-deploy', checked: false}
+    ];
+    autoOpts.forEach(function(opt) {
+      var cb = el('input', {type: 'checkbox', 'data-autonomy': opt.key});
+      cb.checked = opt.checked;
+      var lbl = el('label', {className: 'ops-form-check'});
+      lbl.appendChild(cb);
+      lbl.appendChild(document.createTextNode(' ' + opt.label));
+      autoWrap.appendChild(lbl);
+    });
+    autoGroup.appendChild(autoWrap);
+    card.appendChild(autoGroup);
+
+    // Add button
+    var actionRow = el('div', {style: 'display:flex;gap:0.75rem;align-items:center;margin-top:1.25rem;'});
+    var addBtn = el('button', {className: 'ops-btn ops-btn-primary', textContent: 'Add Product'});
+    actionRow.appendChild(addBtn);
+    actionRow.appendChild(el('span', {style: 'font-size:0.72rem;color:var(--text-dim);', textContent: 'This will:'}));
+    card.appendChild(actionRow);
+
+    // Steps preview
+    var stepsDiv = el('div', {style: 'font-size:0.78rem;color:var(--text-dim);margin-top:0.5rem;padding-left:1rem;', id: 'opsProductSteps'});
+    card.appendChild(stepsDiv);
+
+    // Command box
+    var cmdBox = el('div', {className: 'ops-cmd-box', style: 'margin-top:0.75rem;'});
+    var cmdText = el('span', {id: 'opsProductCmdText', textContent: ''});
+    var cmdCopy = el('button', {className: 'ops-cmd-copy', textContent: 'Copy'});
+    cmdCopy.addEventListener('click', function() { opsCopyToClipboard(cmdText.textContent, cmdCopy); });
+    cmdBox.appendChild(cmdText);
+    cmdBox.appendChild(cmdCopy);
+    card.appendChild(cmdBox);
+
+    container.appendChild(card);
+
+    // Update preview on input changes
+    function updateProductPreview() {
+      var name = nameInput.value.trim() || 'my-app';
+      var repo = repoInput.value.trim() || 'CodyJo/' + name;
+      var localPath = pathInput.value.trim() || '/home/merm/projects/' + name;
+
+      var steps = [];
+      if (opsSelectedSource === 'github' || opsSelectedSource === 'both') {
+        steps.push('1. Clone ' + repo + ' to ' + localPath);
+        steps.push('2. Add target entry to config/targets.yaml');
+        steps.push('3. Run initial QA audit to verify setup');
+        steps.push('4. Refresh dashboard data');
+      } else {
+        steps.push('1. Add target entry to config/targets.yaml');
+        steps.push('2. Run initial QA audit to verify setup');
+        steps.push('3. Refresh dashboard data');
+      }
+
+      clearChildren(stepsDiv);
+      steps.forEach(function(s) {
+        stepsDiv.appendChild(document.createTextNode(s));
+        stepsDiv.appendChild(document.createElement('br'));
+      });
+
+      if (opsSelectedSource === 'github' || opsSelectedSource === 'both') {
+        cmdText.textContent = 'gh repo clone ' + repo + ' ' + localPath;
+      } else {
+        cmdText.textContent = 'python -m backoffice add-target ' + name + ' --path ' + localPath;
+      }
+    }
+
+    nameInput.addEventListener('input', updateProductPreview);
+    repoInput.addEventListener('input', updateProductPreview);
+    pathInput.addEventListener('input', updateProductPreview);
+    updateProductPreview();
+
+    // Add product handler
+    addBtn.addEventListener('click', function() {
+      var name = nameInput.value.trim();
+      if (!name) {
+        opsFeedback(container, 'Product name is required.', true);
+        return;
+      }
+
+      addBtn.disabled = true;
+      addBtn.textContent = 'Adding\u2026';
+
+      var depts = [];
+      card.querySelectorAll('input[data-product-dept]:checked').forEach(function(cb) {
+        depts.push(cb.getAttribute('data-product-dept'));
+      });
+      var autonomy = {};
+      card.querySelectorAll('input[data-autonomy]').forEach(function(cb) {
+        autonomy[cb.getAttribute('data-autonomy')] = cb.checked;
+      });
+
+      var payload = {
+        name: name,
+        source: opsSelectedSource,
+        language: langSelect.value,
+        departments: depts,
+        autonomy: autonomy
+      };
+      if (repoInput.value.trim()) payload.github_repo = repoInput.value.trim();
+      if (pathInput.value.trim()) payload.local_path = pathInput.value.trim();
+
+      fetch('/api/ops/product/add', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      })
+      .then(function(r) { return r.json().then(function(d) { return {ok: r.ok, data: d}; }); })
+      .then(function(res) {
+        addBtn.disabled = false;
+        addBtn.textContent = 'Add Product';
+        if (res.ok) {
+          opsFeedback(container, 'Product "' + name + '" added successfully!', false);
+          nameInput.value = '';
+          repoInput.value = '';
+          pathInput.value = '';
+          updateProductPreview();
+        } else {
+          opsFeedback(container, 'Error: ' + (res.data.error || 'Unknown error'), true);
+        }
+      })
+      .catch(function(err) {
+        addBtn.disabled = false;
+        addBtn.textContent = 'Add Product';
+        opsFeedback(container, 'Network error: ' + err, true);
+      });
+    });
+  }
+
+  /* ════════════════════════════════════════════════
+     OPS PANEL MAIN RENDERER
+  ════════════════════════════════════════════════ */
+
+  function renderOpsPanel() {
+    var body = document.getElementById('slideoverBody');
+    clearChildren(body);
+
+    var wrap = el('div', {style: 'padding:1.25rem 1.5rem;'});
+
+    // Title + subtitle
+    wrap.appendChild(el('h2', {style: 'font-size:1.2rem;margin-bottom:0.25rem;', textContent: 'Operations'}));
+    wrap.appendChild(el('p', {style: 'color:var(--text-dim);font-size:0.85rem;margin-bottom:1.5rem;', textContent: 'Control plane for Back Office \u2014 manage audits, overnight loop, backends, and products'}));
+
+    // Tabs
+    var tabBar = el('div', {className: 'ops-tabs', id: 'opsTabsWrap'});
+    var tabDefs = [
+      {key: 'jobs', label: 'Live Jobs'},
+      {key: 'audit', label: 'Run Audit'},
+      {key: 'overnight', label: 'Overnight Loop'},
+      {key: 'backends', label: 'Backends'},
+      {key: 'products', label: 'Add Product'}
+    ];
+    tabDefs.forEach(function(t) {
+      var btn = el('button', {className: 'ops-tab' + (t.key === opsActiveTab ? ' active' : ''), 'data-tab': t.key, textContent: t.label});
+      btn.addEventListener('click', function() { opsShowTab(t.key); });
+      tabBar.appendChild(btn);
+    });
+    wrap.appendChild(tabBar);
+
+    // Section containers — Live Jobs uses a separate id so polling can target it
+    wrap.appendChild(el('div', {className: 'ops-section' + (opsActiveTab === 'jobs' ? ' active' : ''), id: 'ops-sec-jobs'}, [
+      el('div', {id: 'ops-live-jobs'})
+    ]));
+    wrap.appendChild(el('div', {className: 'ops-section' + (opsActiveTab === 'audit' ? ' active' : ''), id: 'ops-sec-audit'}, [
+      el('div', {id: 'ops-run-audit'})
+    ]));
+    wrap.appendChild(el('div', {className: 'ops-section' + (opsActiveTab === 'overnight' ? ' active' : ''), id: 'ops-sec-overnight'}, [
+      el('div', {id: 'ops-overnight'})
+    ]));
+    wrap.appendChild(el('div', {className: 'ops-section' + (opsActiveTab === 'backends' ? ' active' : ''), id: 'ops-sec-backends'}, [
+      el('div', {id: 'ops-backends'})
+    ]));
+    wrap.appendChild(el('div', {className: 'ops-section' + (opsActiveTab === 'products' ? ' active' : ''), id: 'ops-sec-products'}, [
+      el('div', {id: 'ops-products'})
+    ]));
+
+    body.appendChild(wrap);
+
+    // Fetch initial status then render all tabs
+    fetch('/api/ops/status?t=' + Date.now())
+      .then(function(r) { return r.ok ? r.json() : {}; })
+      .catch(function() { return {}; })
+      .then(function(data) {
+        opsStatusCache = data;
+        opsRenderLiveJobs(data);
+        opsRenderAuditTab();
+        opsRenderOvernightTab();
+        opsRenderBackendsTab();
+        opsRenderAddProductTab();
+
+        // Start polling if on live jobs tab
+        if (opsActiveTab === 'jobs') {
+          opsStopPolling();
+          opsPollingTimer = setInterval(opsRefreshLiveJobs, 5000);
+        }
+      });
+  }
+
+  function openOpsPanel() {
+    supportPanelMode = 'ops';
+
+    document.getElementById('slideoverTitle').textContent = 'Operations';
+    document.getElementById('slideoverSubtitle').textContent = 'Control plane';
+
+    setFilterBarVisible(false);
+    renderOpsPanel();
+
+    document.getElementById('overlay').classList.add('open');
+    document.getElementById('slideover').classList.add('open');
+    closeFindingDetail();
+  }
+
+  /* ── Wire Ops button ── */
+  document.getElementById('opsBtn').addEventListener('click', openOpsPanel);
 
 })();
 </script>
