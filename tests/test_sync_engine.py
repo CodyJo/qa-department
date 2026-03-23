@@ -1,6 +1,4 @@
 """Tests for backoffice.sync.engine."""
-import json
-from pathlib import Path
 
 import pytest
 

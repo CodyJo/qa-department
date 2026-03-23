@@ -2,10 +2,10 @@
 import pytest
 
 from backoffice.backends import get_backend, get_all_backends
-from backoffice.backends.base import HealthStatus, Capabilities, LimitState
+from backoffice.backends.base import LimitState
 from backoffice.backends.claude import ClaudeBackend
 from backoffice.backends.codex import CodexBackend
-from backoffice.router import Router, Assignment, TASK_TYPES
+from backoffice.router import Router, TASK_TYPES
 
 
 class TestClaudeBackend:

@@ -3,11 +3,9 @@ import json
 import logging
 import os
 
-import pytest
 
 from backoffice.aggregate import (
     PRIVACY_KEYWORDS,
-    PRIVACY_REPO_META,
     aggregate,
     aggregate_department,
     aggregate_privacy,
@@ -353,7 +351,6 @@ class TestAggregateDepartment:
         assert result["repos"] == []
 
     def test_single_repo_included(self, tmp_path):
-        findings = _findings("medium", "low")
         data = {
             "scanned_at": "2026-01-01T00:00:00Z",
             "summary": {"total": 2, "medium": 1, "low": 1},

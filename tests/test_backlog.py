@@ -1,7 +1,6 @@
 """Tests for backoffice.backlog."""
 import json
 
-import pytest
 
 from backoffice.backlog import (
     finding_hash,
@@ -345,8 +344,7 @@ class TestMergeBacklog:
     def test_existing_updates_last_seen(self, tmp_path):
         backlog_path = str(tmp_path / "backlog.json")
         finding = self._make_finding()
-        r1 = merge_backlog([finding], backlog_path)
-        first_seen = next(iter(r1["findings"].values()))["last_seen"]
+        merge_backlog([finding], backlog_path)
         r2 = merge_backlog([finding], backlog_path)
         second_seen = next(iter(r2["findings"].values()))["last_seen"]
         # last_seen should be a string (ISO timestamp)

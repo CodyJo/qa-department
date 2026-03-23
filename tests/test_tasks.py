@@ -7,13 +7,9 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
-import yaml
 
 from backoffice.tasks import (
     STATUS_ORDER,
-    FINDINGS_FILE_BY_DEPARTMENT,
-    BLOCKING_DEPARTMENTS,
-    TaskContext,
     append_history,
     build_dashboard_payload,
     build_parser,
@@ -21,7 +17,6 @@ from backoffice.tasks import (
     find_task,
     generate_task_id,
     infer_product_key,
-    iso_now,
     load_context,
     load_targets,
     load_yaml,

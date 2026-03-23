@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import json
-import os
 import subprocess
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -18,11 +17,7 @@ from backoffice.regression import (
     parse_vitest_coverage_summary,
     run_cmd,
     run_regression,
-    safe_mkdir,
-    try_read_json,
     utc_now_iso,
-    write_json,
-    write_text,
 )
 
 

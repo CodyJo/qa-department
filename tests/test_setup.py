@@ -5,7 +5,6 @@ import argparse
 import shutil
 import textwrap
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 import pytest
 import yaml
@@ -15,7 +14,6 @@ from backoffice.setup import (
     AGENT_USAGE,
     KNOWN_RUNNERS,
     detect_runner_status,
-    ensure_executable,
     load_runner_config_file,
     load_yaml,
     main,

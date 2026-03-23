@@ -3,8 +3,6 @@ from backoffice.sync.manifest import (
     DASHBOARD_FILES,
     DEPT_DATA_MAP,
     AGG_DATA_MAP,
-    JOB_STATUS_FILES,
-    SHARED_META_FILES,
     content_type_for,
 )
 

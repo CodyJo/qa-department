@@ -1,7 +1,6 @@
 """Tests for backoffice.server — local dashboard dev server."""
 from __future__ import annotations
 
-import io
 import json
 import threading
 from http.client import HTTPConnection
@@ -45,7 +44,7 @@ def live_server(tmp_root: Path):
     handler_cls = create_handler(
         root=tmp_root,
         target_repo=str(tmp_root / "fake-repo"),
-        allowed_origins={f"http://localhost:0"},  # will be replaced below
+        allowed_origins={"http://localhost:0"},  # will be replaced below
     )
 
     # Bind to port 0 so the OS picks a free port
@@ -474,7 +473,6 @@ class TestRunRegressionEndpoint:
 
     def test_blocked_origin_returns_403(self, live_server) -> None:
         host, port = live_server
-        body = b""
         headers = {
             "Content-Length": "0",
             "Origin": "http://evil.example.com",
@@ -512,7 +510,6 @@ from backoffice.api_server import (  # noqa: E402
     APIHandler,
     create_api_handler,
     resolve_target,
-    run_agent as api_run_agent,
     running_jobs as api_running_jobs,
     running_lock as api_running_lock,
 )
@@ -718,7 +715,6 @@ class TestAPIAuthEnforcement:
 
     def test_timing_safe_comparison_used(self) -> None:
         """_check_auth uses hmac.compare_digest (timing-safe)."""
-        import hmac as _hmac
         import inspect
         src = inspect.getsource(APIHandler._check_auth)
         assert "compare_digest" in src

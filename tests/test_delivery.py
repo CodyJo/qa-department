@@ -3,18 +3,14 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 from pathlib import Path
 
-import pytest
 import yaml
 
 from backoffice.delivery import (
-    DEPARTMENT_FILES,
     RISKY_KEYWORDS,
     SAFE_EFFORTS,
     SAFE_SEVERITIES,
-    SEVERITY_ORDER,
     contains_pull_request,
     contains_push_main,
     contains_schedule,
@@ -779,7 +775,7 @@ class TestSummarizeCandidates:
         findings = {"product": [product_finding]}
         result = summarize_candidates("my-repo", findings)
         assert len(result["sprint_lanes"]) >= 1
-        sprint_now = next(l for l in result["sprint_lanes"] if l["lane"] == "Sprint Now")
+        sprint_now = next(lane for lane in result["sprint_lanes"] if lane["lane"] == "Sprint Now")
         assert len(sprint_now["items"]) == 1
 
     def test_sprint_lane_items_capped_at_6(self):
@@ -795,13 +791,13 @@ class TestSummarizeCandidates:
         ]
         findings = {"product": product_findings}
         result = summarize_candidates("my-repo", findings)
-        sprint_now = next(l for l in result["sprint_lanes"] if l["lane"] == "Sprint Now")
+        sprint_now = next(lane for lane in result["sprint_lanes"] if lane["lane"] == "Sprint Now")
         assert len(sprint_now["items"]) <= 6
 
     def test_empty_sprint_lanes_omitted(self):
         findings = {"product": [_make_finding(severity="low", fixable=False)]}
         result = summarize_candidates("my-repo", findings)
-        lanes = {l["lane"] for l in result["sprint_lanes"]}
+        lanes = {lane["lane"] for lane in result["sprint_lanes"]}
         assert "Sprint Now" not in lanes
 
     def test_overnight_bucket_assigned_to_candidate(self):
