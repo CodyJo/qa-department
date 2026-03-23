@@ -1,0 +1,333 @@
+<style>
+  .faq-toc {
+    background: var(--surface, #12121a); border: 1px solid var(--border, #2a2a3a);
+    border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 2rem;
+  }
+  .faq-toc-title {
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-muted, #5a5a70); font-weight: 500; margin-bottom: 0.75rem;
+  }
+  .faq-toc-links {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.4rem;
+  }
+  .faq-toc-link {
+    font-size: 0.82rem; color: var(--accent, #c4944a); text-decoration: none;
+    padding: 0.3rem 0; display: flex; align-items: center; gap: 0.4rem;
+  }
+  .faq-toc-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  .faq-dept-section {
+    background: var(--surface, #12121a); border: 1px solid var(--border, #2a2a3a);
+    border-radius: 12px; margin-bottom: 1.25rem; overflow: hidden;
+  }
+  .faq-dept-header {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 1rem 1.25rem; border-bottom: 1px solid var(--border, #2a2a3a);
+    background: var(--surface-2, #1a1a26);
+  }
+  .faq-dept-icon { font-size: 1.1rem; }
+  .faq-dept-name { font-size: 0.95rem; font-weight: 600; }
+  .faq-dept-body { padding: 1.25rem 1.5rem; }
+
+  .faq-item { margin-bottom: 1.5rem; }
+  .faq-item:last-child { margin-bottom: 0; }
+  .faq-q {
+    font-size: 0.85rem; font-weight: 600; color: var(--text, #e4e4ef);
+    margin-bottom: 0.45rem; display: flex; align-items: center; gap: 0.5rem;
+  }
+  .faq-q::before {
+    content: 'Q'; font-family: var(--mono, monospace); font-size: 0.58rem; font-weight: 700;
+    width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;
+    background: rgba(196,148,74,0.15); color: var(--accent, #c4944a);
+    border-radius: 4px; flex-shrink: 0;
+  }
+  .faq-a { font-size: 0.8rem; color: var(--text-dim, #8888a0); line-height: 1.7; padding-left: 1.75rem; }
+  .faq-a p { margin-bottom: 0.5rem; }
+  .faq-a p:last-child { margin-bottom: 0; }
+  .faq-formula {
+    font-family: var(--mono, monospace); font-size: 0.75rem;
+    background: var(--surface-2, #1a1a26); border: 1px solid var(--border, #2a2a3a);
+    border-radius: 8px; padding: 0.65rem 0.9rem; margin: 0.5rem 0;
+    color: var(--text, #e4e4ef); overflow-x: auto; white-space: pre;
+  }
+  .faq-formula .op { color: var(--accent, #c4944a); }
+  .faq-formula .num { color: var(--medium, #ffd166); }
+  .faq-formula .kw { color: var(--info, #74b9ff); }
+  .faq-sev-table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; font-size: 0.76rem; }
+  .faq-sev-table th {
+    text-align: left; font-size: 0.6rem; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--text-muted, #5a5a70); font-weight: 500;
+    padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--border, #2a2a3a);
+  }
+  .faq-sev-table td {
+    padding: 0.3rem 0.5rem; border-bottom: 1px solid rgba(42,42,58,0.4);
+    color: var(--text-dim, #8888a0);
+  }
+  .faq-sev-table td:first-child { font-weight: 500; }
+  .sev-critical { color: var(--critical, #ff4757) !important; }
+  .sev-high { color: var(--high, #ff8c42) !important; }
+  .sev-medium { color: var(--medium, #ffd166) !important; }
+  .sev-low { color: var(--low, #4ecdc4) !important; }
+  .sev-info { color: var(--info, #74b9ff) !important; }
+  .faq-threshold-list { list-style: none; margin: 0.4rem 0; }
+  .faq-threshold-list li { padding: 0.25rem 0; display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-dim, #8888a0); }
+  .faq-threshold-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .faq-a code {
+    font-family: var(--mono, monospace); font-size: 0.76rem;
+    background: var(--surface-2, #1a1a26); padding: 0.1rem 0.35rem;
+    border-radius: 4px; color: var(--accent, #c4944a);
+  }
+</style>
+
+<!-- Table of Contents -->
+<div class="faq-toc">
+  <div class="faq-toc-title">Departments</div>
+  <div class="faq-toc-links">
+    <a href="#faq-qa" class="faq-toc-link">&#128270; QA Department</a>
+    <a href="#faq-seo" class="faq-toc-link">&#128200; SEO &amp; AI</a>
+    <a href="#faq-ada" class="faq-toc-link">&#9855; ADA Compliance</a>
+    <a href="#faq-compliance" class="faq-toc-link">&#128737;&#65039; Regulatory</a>
+    <a href="#faq-monetization" class="faq-toc-link">&#128176; Monetization</a>
+    <a href="#faq-product" class="faq-toc-link">&#128506;&#65039; Product Roadmap</a>
+    <a href="#faq-general" class="faq-toc-link">&#9881;&#65039; General</a>
+  </div>
+</div>
+
+<!-- QA -->
+<div class="faq-dept-section" id="faq-qa">
+  <div class="faq-dept-header">
+    <span class="faq-dept-icon">&#128270;</span>
+    <span class="faq-dept-name">QA Department</span>
+  </div>
+  <div class="faq-dept-body">
+    <div class="faq-item">
+      <div class="faq-q">How is the Health Score calculated?</div>
+      <div class="faq-a">
+        <p>The Health Score starts at <code>100</code> and deducts points for each open finding based on severity:</p>
+        <div class="faq-formula"><span class="kw">score</span> <span class="op">=</span> <span class="num">100</span> <span class="op">-</span> (critical <span class="op">&times;</span> <span class="num">15</span>) <span class="op">-</span> (high <span class="op">&times;</span> <span class="num">8</span>) <span class="op">-</span> (medium <span class="op">&times;</span> <span class="num">3</span>) <span class="op">-</span> (low <span class="op">&times;</span> <span class="num">1</span>)
+<span class="kw">floor</span> <span class="op">=</span> <span class="num">0</span>   (score never goes below zero)</div>
+        <p>Info-level findings don't affect the score. Only open findings count — fixed items are excluded.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What do the severity levels mean?</div>
+      <div class="faq-a">
+        <table class="faq-sev-table">
+          <tr><th>Severity</th><th>Penalty</th><th>Definition</th></tr>
+          <tr><td class="sev-critical">Critical</td><td>-15</td><td>Security vulnerabilities or complete functional failures that block users</td></tr>
+          <tr><td class="sev-high">High</td><td>-8</td><td>Significant bugs or security issues that degrade the experience</td></tr>
+          <tr><td class="sev-medium">Medium</td><td>-3</td><td>Moderate issues affecting performance, reliability, or code quality</td></tr>
+          <tr><td class="sev-low">Low</td><td>-1</td><td>Minor issues, code style, or improvement opportunities</td></tr>
+          <tr><td class="sev-info">Info</td><td>0</td><td>Documentation and best practice recommendations</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What categories does QA scan?</div>
+      <div class="faq-a">
+        <p>The QA agent scans for: <code>security</code> vulnerabilities, <code>performance</code> bottlenecks, <code>reliability</code> bugs, <code>code-quality</code> issues, and <code>testing</code> gaps. It also runs the project's linter, test suite, and type checker when available.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEO -->
+<div class="faq-dept-section" id="faq-seo">
+  <div class="faq-dept-header">
+    <span class="faq-dept-icon">&#128200;</span>
+    <span class="faq-dept-name">SEO &amp; AI Optimization</span>
+  </div>
+  <div class="faq-dept-body">
+    <div class="faq-item">
+      <div class="faq-q">How is the SEO Score calculated?</div>
+      <div class="faq-a">
+        <p>The SEO Score is a <strong>weighted average</strong> of 5 category scores:</p>
+        <div class="faq-formula"><span class="kw">score</span> <span class="op">=</span> (technical <span class="op">&times;</span> <span class="num">0.30</span>) <span class="op">+</span> (ai <span class="op">&times;</span> <span class="num">0.20</span>) <span class="op">+</span> (content <span class="op">&times;</span> <span class="num">0.20</span>)
+      <span class="op">+</span> (performance <span class="op">&times;</span> <span class="num">0.20</span>) <span class="op">+</span> (social <span class="op">&times;</span> <span class="num">0.10</span>)</div>
+        <p>Each category starts at 100 and deducts: critical &times; 15, high &times; 8, medium &times; 4, low &times; 2. Info findings are free.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What are the 5 SEO categories?</div>
+      <div class="faq-a">
+        <table class="faq-sev-table">
+          <tr><th>Category</th><th>Weight</th><th>Covers</th></tr>
+          <tr><td>Technical SEO</td><td>30%</td><td>Crawlability, indexing, sitemaps, robots.txt, canonical URLs, structured data</td></tr>
+          <tr><td>AI Optimization</td><td>20%</td><td>LLM discoverability, llms.txt, schema markup for AI, content structure for AI citation</td></tr>
+          <tr><td>Content SEO</td><td>20%</td><td>Meta titles/descriptions, heading hierarchy, alt text, internal linking, keyword usage</td></tr>
+          <tr><td>Performance SEO</td><td>20%</td><td>Core Web Vitals signals, image optimization, lazy loading, render-blocking resources</td></tr>
+          <tr><td>Social Meta</td><td>10%</td><td>Open Graph tags, Twitter cards, preview images, social sharing readiness</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADA -->
+<div class="faq-dept-section" id="faq-ada">
+  <div class="faq-dept-header">
+    <span class="faq-dept-icon">&#9855;</span>
+    <span class="faq-dept-name">ADA Compliance</span>
+  </div>
+  <div class="faq-dept-body">
+    <div class="faq-item">
+      <div class="faq-q">How is the Compliance Score calculated?</div>
+      <div class="faq-a">
+        <p>Same deduction formula as QA:</p>
+        <div class="faq-formula"><span class="kw">score</span> <span class="op">=</span> <span class="num">100</span> <span class="op">-</span> (critical <span class="op">&times;</span> <span class="num">15</span>) <span class="op">-</span> (high <span class="op">&times;</span> <span class="num">8</span>) <span class="op">-</span> (medium <span class="op">&times;</span> <span class="num">3</span>) <span class="op">-</span> (low <span class="op">&times;</span> <span class="num">1</span>)</div>
+        <p>Only open findings count. Info-level (AAA aspirational) items have zero penalty.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How is the WCAG Level determined?</div>
+      <div class="faq-a">
+        <ul class="faq-threshold-list">
+          <li><span class="faq-threshold-dot" style="background:var(--success,#2ed573)"></span> <strong>AAA</strong> — Score &ge; 95 and zero critical, high, or medium findings</li>
+          <li><span class="faq-threshold-dot" style="background:var(--accent,#c4944a)"></span> <strong>AA</strong> — Score &ge; 70 and zero critical findings</li>
+          <li><span class="faq-threshold-dot" style="background:var(--medium,#ffd166)"></span> <strong>A</strong> — Score &ge; 40 and zero critical findings blocking Level A criteria</li>
+          <li><span class="faq-threshold-dot" style="background:var(--critical,#ff4757)"></span> <strong>Non-Compliant</strong> — Score &lt; 40 or critical findings on Level A criteria</li>
+        </ul>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What are the POUR categories?</div>
+      <div class="faq-a">
+        <table class="faq-sev-table">
+          <tr><th>Principle</th><th>Covers</th></tr>
+          <tr><td><strong>Perceivable</strong></td><td>Alt text, captions, contrast, text resizing, non-text contrast</td></tr>
+          <tr><td><strong>Operable</strong></td><td>Keyboard access, no traps, timing, skip navigation, focus visible</td></tr>
+          <tr><td><strong>Understandable</strong></td><td>Language tags, predictable behavior, form labels, error handling</td></tr>
+          <tr><td><strong>Robust</strong></td><td>Valid HTML, ARIA roles/states, screen reader compatibility</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Regulatory Compliance -->
+<div class="faq-dept-section" id="faq-compliance">
+  <div class="faq-dept-header">
+    <span class="faq-dept-icon">&#128737;&#65039;</span>
+    <span class="faq-dept-name">Regulatory Compliance</span>
+  </div>
+  <div class="faq-dept-body">
+    <div class="faq-item">
+      <div class="faq-q">How is the overall Compliance Score calculated?</div>
+      <div class="faq-a">
+        <p>The overall score is the <strong>average of three framework scores</strong>:</p>
+        <div class="faq-formula"><span class="kw">score</span> <span class="op">=</span> (<span class="kw">GDPR</span> <span class="op">+</span> <span class="kw">ISO27001</span> <span class="op">+</span> <span class="kw">AgeVerification</span>) <span class="op">/</span> <span class="num">3</span></div>
+        <p>Each framework is scored independently:</p>
+        <div class="faq-formula"><span class="kw">framework</span> <span class="op">=</span> <span class="num">100</span> <span class="op">-</span> (critical <span class="op">&times;</span> <span class="num">25</span>) <span class="op">-</span> (high <span class="op">&times;</span> <span class="num">15</span>) <span class="op">-</span> (medium <span class="op">&times;</span> <span class="num">8</span>) <span class="op">-</span> (low <span class="op">&times;</span> <span class="num">3</span>) <span class="op">-</span> (info <span class="op">&times;</span> <span class="num">1</span>)</div>
+        <p>Note: Regulatory compliance uses heavier penalties because violations carry legal risk.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What do the framework status levels mean?</div>
+      <div class="faq-a">
+        <ul class="faq-threshold-list">
+          <li><span class="faq-threshold-dot" style="background:var(--success,#2ed573)"></span> <strong>Compliant</strong> — Score &ge; 90</li>
+          <li><span class="faq-threshold-dot" style="background:var(--medium,#ffd166)"></span> <strong>Partial</strong> — Score 60&ndash;89</li>
+          <li><span class="faq-threshold-dot" style="background:var(--critical,#ff4757)"></span> <strong>Non-Compliant</strong> — Score &lt; 60</li>
+        </ul>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What frameworks are audited?</div>
+      <div class="faq-a">
+        <table class="faq-sev-table">
+          <tr><th>Framework</th><th>Covers</th></tr>
+          <tr><td><strong>GDPR</strong></td><td>Cookie consent, privacy policy, data subject rights, data processing agreements, breach notification</td></tr>
+          <tr><td><strong>ISO 27001</strong></td><td>Information security policies, access control, encryption, logging, incident response, secure development</td></tr>
+          <tr><td><strong>Age Verification</strong></td><td>US state laws (COPPA, Utah, Texas, etc.) and UK Online Safety Act age verification requirements</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Monetization -->
+<div class="faq-dept-section" id="faq-monetization">
+  <div class="faq-dept-header">
+    <span class="faq-dept-icon">&#128176;</span>
+    <span class="faq-dept-name">Monetization Strategy</span>
+  </div>
+  <div class="faq-dept-body">
+    <div class="faq-item">
+      <div class="faq-q">How is the Monetization Readiness Score calculated?</div>
+      <div class="faq-a">
+        <p>The Readiness Score is a <strong>weighted average of 4 dimensions</strong>, each scored 0&ndash;100:</p>
+        <div class="faq-formula"><span class="kw">score</span> <span class="op">=</span> (infrastructure <span class="op">&times;</span> <span class="num">0.25</span>) <span class="op">+</span> (audience <span class="op">&times;</span> <span class="num">0.25</span>)
+      <span class="op">+</span> (features <span class="op">&times;</span> <span class="num">0.25</span>) <span class="op">+</span> (market_fit <span class="op">&times;</span> <span class="num">0.25</span>)</div>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What do the opportunity value levels mean?</div>
+      <div class="faq-a">
+        <ul class="faq-threshold-list">
+          <li><span class="faq-threshold-dot" style="background:var(--success,#2ed573)"></span> <strong>High Value</strong> — $500+/month potential with strong product-market fit</li>
+          <li><span class="faq-threshold-dot" style="background:var(--medium,#ffd166)"></span> <strong>Medium Value</strong> — $100&ndash;500/month potential or high potential with significant implementation cost</li>
+          <li><span class="faq-threshold-dot" style="background:var(--low,#4ecdc4)"></span> <strong>Low Value</strong> — $10&ndash;100/month or speculative/experimental opportunity</li>
+        </ul>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What revenue categories are evaluated?</div>
+      <div class="faq-a">
+        <p>Seven categories: <code>Display Advertising</code>, <code>Affiliate Marketing</code>, <code>Premium Features</code>, <code>Print Fulfillment</code>, <code>Digital Products</code>, <code>Client Services</code>, and <code>Sponsorships</code>. Each is evaluated for feasibility, effort, and revenue potential specific to the target site.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Product Roadmap -->
+<div class="faq-dept-section" id="faq-product">
+  <div class="faq-dept-header">
+    <span class="faq-dept-icon">&#128506;&#65039;</span>
+    <span class="faq-dept-name">Product Roadmap</span>
+  </div>
+  <div class="faq-dept-body">
+    <div class="faq-item">
+      <div class="faq-q">How is the Product Readiness Score calculated?</div>
+      <div class="faq-a">
+        <p>The Readiness Score is a <strong>weighted average of 4 dimensions</strong>:</p>
+        <div class="faq-formula"><span class="kw">score</span> <span class="op">=</span> (features <span class="op">&times;</span> <span class="num">0.30</span>) <span class="op">+</span> (ux <span class="op">&times;</span> <span class="num">0.25</span>)
+      <span class="op">+</span> (technical <span class="op">&times;</span> <span class="num">0.25</span>) <span class="op">+</span> (growth <span class="op">&times;</span> <span class="num">0.20</span>)</div>
+        <p>Note: Growth Potential starts at 50 and <em>increases</em> as more opportunities are identified (capped at 100).</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How are items prioritized?</div>
+      <div class="faq-a">
+        <ul class="faq-threshold-list">
+          <li><span class="faq-threshold-dot" style="background:var(--critical,#ff4757)"></span> <strong>Must-Have</strong> — Blocking user value or causing churn</li>
+          <li><span class="faq-threshold-dot" style="background:var(--high,#ff8c42)"></span> <strong>Should-Have</strong> — Noticeably improves the product</li>
+          <li><span class="faq-threshold-dot" style="background:var(--medium,#ffd166)"></span> <strong>Nice-to-Have</strong> — Polishes the experience</li>
+          <li><span class="faq-threshold-dot" style="background:var(--low,#4ecdc4)"></span> <strong>Future</strong> — Long-term roadmap items</li>
+          <li><span class="faq-threshold-dot" style="background:var(--info,#74b9ff)"></span> <strong>Idea</strong> — Exploration and brainstorm</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- General -->
+<div class="faq-dept-section" id="faq-general">
+  <div class="faq-dept-header">
+    <span class="faq-dept-icon">&#9881;&#65039;</span>
+    <span class="faq-dept-name">General</span>
+  </div>
+  <div class="faq-dept-body">
+    <div class="faq-item">
+      <div class="faq-q">How is the "Last Scanned" time determined?</div>
+      <div class="faq-a">
+        <p>The timestamp is stamped by the system when the agent finishes writing its findings file — not by the agent itself. This ensures the time is always accurate UTC regardless of what the AI model reports.</p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How often do dashboards refresh?</div>
+      <div class="faq-a">
+        <p>Department dashboards auto-refresh data every <code>60 seconds</code>. The Jobs dashboard refreshes every <code>3 seconds</code> while scans are running, slowing to <code>60 seconds</code> when idle.</p>
+      </div>
+    </div>
+  </div>
+</div>

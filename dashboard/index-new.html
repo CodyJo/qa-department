@@ -360,6 +360,52 @@
   .ai-fix-cmd { font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); background: var(--surface-2); padding: 0.3rem 0.6rem; border-radius: 4px; margin-left: 0.5rem; cursor: pointer; border: 1px solid var(--border); display: inline-block; }
   .ai-fix-cmd:hover { border-color: #6c5ce7; color: #6c5ce7; }
   .backlog-info { font-size: 0.78rem; color: var(--text-dim); padding: 0.6rem 0.85rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-top: 0.4rem; }
+
+  /* Support Panels (Jobs / FAQ / Docs) */
+  .support-panel-body { padding: 1.25rem 1.5rem; overflow-y: auto; flex: 1; }
+
+  /* Jobs panel */
+  .jobs-run {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    margin-bottom: 0.85rem; overflow: hidden;
+  }
+  .jobs-run-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.75rem 1rem; border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+  .jobs-run-title { font-size: 0.85rem; font-weight: 600; }
+  .jobs-run-meta { font-size: 0.72rem; color: var(--text-dim); margin-top: 0.15rem; }
+  .jobs-run-status {
+    font-size: 0.68rem; font-weight: 600; padding: 0.2rem 0.55rem;
+    border-radius: 4px; text-transform: uppercase; letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .jobs-run-status.complete { background: rgba(46,213,115,0.12); color: var(--success); }
+  .jobs-run-status.running { background: rgba(116,185,255,0.12); color: var(--info); }
+  .jobs-run-status.failed { background: rgba(255,71,87,0.12); color: var(--critical); }
+  .jobs-run-status.queued { background: rgba(255,209,102,0.12); color: var(--medium); }
+
+  .jobs-dept-list { padding: 0.5rem 0; }
+  .jobs-dept-row {
+    display: grid; grid-template-columns: 100px 70px 60px 70px 1fr;
+    align-items: center; gap: 0.5rem; padding: 0.4rem 1rem;
+    font-size: 0.78rem;
+  }
+  .jobs-dept-row:hover { background: rgba(255,255,255,0.02); }
+  .jobs-dept-name { font-weight: 500; text-transform: capitalize; }
+  .jobs-dept-status { font-size: 0.65rem; font-weight: 600; }
+  .jobs-dept-status.complete { color: var(--success); }
+  .jobs-dept-status.running { color: var(--info); }
+  .jobs-dept-status.failed { color: var(--critical); }
+  .jobs-dept-status.queued { color: var(--medium); }
+  .jobs-dept-score { font-family: var(--mono); font-size: 0.75rem; text-align: right; }
+  .jobs-dept-findings { font-size: 0.72rem; color: var(--text-dim); text-align: right; }
+  .jobs-dept-elapsed { font-size: 0.68rem; color: var(--text-dim); }
+
+  /* Support content containers */
+  .support-content-wrap { min-height: 200px; }
+  .support-loading { padding: 2rem; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
 </style>
 </head>
 <body>
@@ -372,9 +418,9 @@
     </select>
   </div>
   <div class="topbar-right">
-    <a class="topbar-btn" href="jobs.html">Jobs</a>
-    <a class="topbar-btn" href="documentation.html">Docs</a>
-    <a class="topbar-btn" href="faq.html">FAQ</a>
+    <button class="topbar-btn" id="jobsBtn">Jobs</button>
+    <button class="topbar-btn" id="docsBtn">Docs</button>
+    <button class="topbar-btn" id="faqBtn">FAQ</button>
     <span class="timestamp" id="lastScan">Last scan: --</span>
     <span class="stale-warning" id="staleWarning" hidden>Data may be stale</span>
   </div>
@@ -1665,6 +1711,352 @@
   fetchJson('privacy-data.json')
     .then(function(d) { deptData['privacy'] = d; })
     .catch(function() { deptData['privacy'] = null; });
+
+  /* ─────────────────────────────────────────────────────────
+     SUPPORT PANELS — Jobs, FAQ, Docs  (Task 10)
+     ───────────────────────────────────────────────────────── */
+
+  /* ── Support panel mode tracking ── */
+  var supportPanelMode = null; // 'jobs' | 'faq' | 'docs'
+
+  /* ── Show/hide the filters bar and swap body padding ── */
+  function setFilterBarVisible(visible) {
+    var fb = document.querySelector('.filters-bar');
+    if (fb) fb.style.display = visible ? '' : 'none';
+    var body = document.getElementById('slideoverBody');
+    if (body) {
+      if (!visible) {
+        body.style.padding = '0';
+        body.classList.add('support-panel-body');
+      } else {
+        body.style.padding = '';
+        body.classList.remove('support-panel-body');
+      }
+    }
+  }
+
+  /* ── Close helper that also resets support mode ── */
+  function closePanel() {
+    supportPanelMode = null;
+    setFilterBarVisible(true);
+    closeDeptPanel();
+  }
+
+  /* ────────────────────────────────────────────────
+     JOBS PANEL
+  ──────────────────────────────────────────────── */
+
+  function formatElapsed(sec) {
+    if (!sec) return '--';
+    if (sec < 60) return sec + 's';
+    return Math.floor(sec / 60) + 'm ' + (sec % 60) + 's';
+  }
+
+  function buildJobsRunEl(run) {
+    var status = (run.status || 'unknown').toLowerCase();
+    var repoName = run.repo_name || run.target || 'unknown';
+
+    var startedAt = run.started_at ? new Date(run.started_at) : null;
+    var finishedAt = run.finished_at ? new Date(run.finished_at) : null;
+    var dateStr = startedAt ? startedAt.toLocaleString() : '--';
+    var elapsed = '';
+    if (startedAt && finishedAt) {
+      var diffSec = Math.round((finishedAt - startedAt) / 1000);
+      elapsed = ' \u00B7 ' + formatElapsed(diffSec);
+    }
+
+    var wrap = document.createElement('div');
+    wrap.className = 'jobs-run';
+
+    // Header
+    var header = document.createElement('div');
+    header.className = 'jobs-run-header';
+
+    var left = document.createElement('div');
+    var title = document.createElement('div');
+    title.className = 'jobs-run-title';
+    title.textContent = repoName;
+    var meta = document.createElement('div');
+    meta.className = 'jobs-run-meta';
+    meta.textContent = dateStr + elapsed;
+    left.appendChild(title);
+    left.appendChild(meta);
+
+    var badge = document.createElement('span');
+    badge.className = 'jobs-run-status ' + status;
+    badge.textContent = status;
+
+    header.appendChild(left);
+    header.appendChild(badge);
+    wrap.appendChild(header);
+
+    // Department rows
+    if (run.jobs && typeof run.jobs === 'object') {
+      var deptList = document.createElement('div');
+      deptList.className = 'jobs-dept-list';
+
+      Object.keys(run.jobs).forEach(function(deptKey) {
+        var job = run.jobs[deptKey];
+        var row = document.createElement('div');
+        row.className = 'jobs-dept-row';
+
+        var dname = document.createElement('span');
+        dname.className = 'jobs-dept-name';
+        dname.textContent = DEPT_LABELS[deptKey] || deptKey;
+
+        var dstatus = document.createElement('span');
+        dstatus.className = 'jobs-dept-status ' + (job.status || 'unknown').toLowerCase();
+        dstatus.textContent = job.status || 'unknown';
+
+        var dscore = document.createElement('span');
+        dscore.className = 'jobs-dept-score';
+        dscore.style.color = job.score != null ? scoreColorVar(job.score) : 'var(--text-dim)';
+        dscore.textContent = job.score != null ? String(job.score) : '--';
+
+        var dfindings = document.createElement('span');
+        dfindings.className = 'jobs-dept-findings';
+        dfindings.textContent = job.findings_count != null ? job.findings_count + ' findings' : '';
+
+        var delapsed = document.createElement('span');
+        delapsed.className = 'jobs-dept-elapsed';
+        delapsed.textContent = job.elapsed_seconds != null ? formatElapsed(job.elapsed_seconds) : '';
+
+        row.appendChild(dname);
+        row.appendChild(dstatus);
+        row.appendChild(dscore);
+        row.appendChild(dfindings);
+        row.appendChild(delapsed);
+        deptList.appendChild(row);
+      });
+
+      wrap.appendChild(deptList);
+    }
+
+    return wrap;
+  }
+
+  function renderJobsPanel() {
+    var body = document.getElementById('slideoverBody');
+    clearChildren(body);
+
+    var wrap = document.createElement('div');
+    wrap.className = 'support-content-wrap';
+    wrap.style.padding = '1.25rem 1.5rem';
+
+    // Load current job + history
+    var currentP = fetch('.jobs.json?t=' + Date.now())
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .catch(function() { return null; });
+
+    var historyP = fetch('.jobs-history.json?t=' + Date.now())
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .catch(function() { return null; });
+
+    var loading = document.createElement('div');
+    loading.className = 'support-loading';
+    loading.textContent = 'Loading jobs\u2026';
+    wrap.appendChild(loading);
+    body.appendChild(wrap);
+
+    Promise.all([currentP, historyP]).then(function(results) {
+      var current = results[0];
+      var history = results[1] || [];
+
+      clearChildren(wrap);
+
+      // Combine: current run at top, then history (deduplicated by run_id)
+      var runs = [];
+      var seenIds = {};
+
+      if (current && current.run_id) {
+        runs.push(current);
+        seenIds[current.run_id] = true;
+      }
+
+      if (Array.isArray(history)) {
+        history.slice().reverse().forEach(function(r) {
+          if (!seenIds[r.run_id]) {
+            runs.push(r);
+            seenIds[r.run_id] = true;
+          }
+        });
+      }
+
+      if (runs.length === 0) {
+        var empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.textContent = 'No jobs found. Run an audit to see job history here.';
+        wrap.appendChild(empty);
+        return;
+      }
+
+      // Section label
+      var label = document.createElement('div');
+      label.className = 'section-label';
+      label.style.marginBottom = '0.75rem';
+      label.textContent = runs.length + ' run' + (runs.length !== 1 ? 's' : '');
+      wrap.appendChild(label);
+
+      runs.forEach(function(run) {
+        wrap.appendChild(buildJobsRunEl(run));
+      });
+    });
+  }
+
+  function openJobsPanel() {
+    supportPanelMode = 'jobs';
+
+    document.getElementById('slideoverTitle').textContent = 'Jobs';
+    document.getElementById('slideoverSubtitle').textContent = 'Recent audit runs';
+
+    setFilterBarVisible(false);
+    renderJobsPanel();
+
+    document.getElementById('overlay').classList.add('open');
+    document.getElementById('slideover').classList.add('open');
+    closeFindingDetail();
+  }
+
+  /* ────────────────────────────────────────────────
+     FAQ PANEL
+  ──────────────────────────────────────────────── */
+
+  var _faqHtml = null;
+
+  function renderFaqPanel() {
+    var body = document.getElementById('slideoverBody');
+    clearChildren(body);
+
+    var wrap = document.createElement('div');
+    wrap.className = 'support-content-wrap';
+    wrap.style.padding = '1.25rem 1.5rem';
+
+    if (_faqHtml) {
+      wrap.innerHTML = _faqHtml;
+      body.appendChild(wrap);
+      return;
+    }
+
+    var loading = document.createElement('div');
+    loading.className = 'support-loading';
+    loading.textContent = 'Loading FAQ\u2026';
+    wrap.appendChild(loading);
+    body.appendChild(wrap);
+
+    fetch('faq-content.html?t=' + Date.now())
+      .then(function(r) { return r.ok ? r.text() : Promise.reject('HTTP ' + r.status); })
+      .then(function(html) {
+        _faqHtml = html;
+        clearChildren(wrap);
+        wrap.innerHTML = html;
+      })
+      .catch(function(err) {
+        clearChildren(wrap);
+        var errEl = document.createElement('div');
+        errEl.className = 'empty-state';
+        errEl.textContent = 'Could not load FAQ content: ' + err;
+        wrap.appendChild(errEl);
+      });
+  }
+
+  function openFaqPanel() {
+    supportPanelMode = 'faq';
+
+    document.getElementById('slideoverTitle').textContent = 'FAQ';
+    document.getElementById('slideoverSubtitle').textContent = 'How scores are calculated';
+
+    setFilterBarVisible(false);
+    renderFaqPanel();
+
+    document.getElementById('overlay').classList.add('open');
+    document.getElementById('slideover').classList.add('open');
+    closeFindingDetail();
+  }
+
+  /* ────────────────────────────────────────────────
+     DOCS PANEL
+  ──────────────────────────────────────────────── */
+
+  var _docsHtml = null;
+
+  function renderDocsPanel() {
+    var body = document.getElementById('slideoverBody');
+    clearChildren(body);
+
+    var wrap = document.createElement('div');
+    wrap.className = 'support-content-wrap';
+    wrap.style.padding = '1.25rem 1.5rem';
+
+    if (_docsHtml) {
+      wrap.innerHTML = _docsHtml;
+      body.appendChild(wrap);
+      // Re-run the docs tab script if needed
+      var scripts = wrap.querySelectorAll('script');
+      scripts.forEach(function(s) {
+        var ns = document.createElement('script');
+        ns.textContent = s.textContent;
+        document.body.appendChild(ns);
+        document.body.removeChild(ns);
+      });
+      return;
+    }
+
+    var loading = document.createElement('div');
+    loading.className = 'support-loading';
+    loading.textContent = 'Loading documentation\u2026';
+    wrap.appendChild(loading);
+    body.appendChild(wrap);
+
+    fetch('docs-content.html?t=' + Date.now())
+      .then(function(r) { return r.ok ? r.text() : Promise.reject('HTTP ' + r.status); })
+      .then(function(html) {
+        _docsHtml = html;
+        clearChildren(wrap);
+        wrap.innerHTML = html;
+        // Execute inline scripts
+        var scripts = wrap.querySelectorAll('script');
+        scripts.forEach(function(s) {
+          var ns = document.createElement('script');
+          ns.textContent = s.textContent;
+          document.body.appendChild(ns);
+          document.body.removeChild(ns);
+        });
+      })
+      .catch(function(err) {
+        clearChildren(wrap);
+        var errEl = document.createElement('div');
+        errEl.className = 'empty-state';
+        errEl.textContent = 'Could not load documentation: ' + err;
+        wrap.appendChild(errEl);
+      });
+  }
+
+  function openDocsPanel() {
+    supportPanelMode = 'docs';
+
+    document.getElementById('slideoverTitle').textContent = 'Documentation';
+    document.getElementById('slideoverSubtitle').textContent = 'CLI, CI/CD, GitHub reference';
+
+    setFilterBarVisible(false);
+    renderDocsPanel();
+
+    document.getElementById('overlay').classList.add('open');
+    document.getElementById('slideover').classList.add('open');
+    closeFindingDetail();
+  }
+
+  /* ── Wire top-bar support buttons ── */
+  document.getElementById('jobsBtn').addEventListener('click', openJobsPanel);
+  document.getElementById('faqBtn').addEventListener('click', openFaqPanel);
+  document.getElementById('docsBtn').addEventListener('click', openDocsPanel);
+
+  /* ── Override closeDeptPanel to restore filter bar when closing support panels ── */
+  var _origCloseDeptPanel = closeDeptPanel;
+  closeDeptPanel = function() {
+    supportPanelMode = null;
+    setFilterBarVisible(true);
+    _origCloseDeptPanel();
+  };
 
 })();
 </script>
