@@ -107,7 +107,7 @@
   /* Score Cards */
   .score-row {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 0.75rem;
     margin-bottom: 1.25rem;
   }
@@ -293,7 +293,7 @@
 
   /* Responsive */
   @media (max-width: 1100px) {
-    .score-row { grid-template-columns: repeat(3, 1fr); }
+    .score-row { grid-template-columns: repeat(4, 1fr); }
   }
   @media (max-width: 700px) {
     .score-row { grid-template-columns: repeat(2, 1fr); }
@@ -606,10 +606,11 @@
   'use strict';
 
   /* ── Constants ── */
-  var DEPT_KEYS = ['qa', 'seo', 'ada', 'compliance', 'monetization', 'product'];
+  var DEPT_KEYS = ['qa', 'seo', 'ada', 'compliance', 'monetization', 'product', 'cloud-ops'];
   var DEPT_LABELS = {
     qa: 'QA', seo: 'SEO', ada: 'ADA',
-    compliance: 'Compliance', monetization: 'Monetization', product: 'Product'
+    compliance: 'Compliance', monetization: 'Monetization', product: 'Product',
+    'cloud-ops': 'Cloud Ops'
   };
   var DEPT_SOURCES = {
     qa:           {url: 'qa-data.json',           scoreField: null},
@@ -617,7 +618,8 @@
     ada:          {url: 'ada-data.json',           scoreField: 'compliance_score'},
     compliance:   {url: 'compliance-data.json',    scoreField: 'compliance_score'},
     monetization: {url: 'monetization-data.json',  scoreField: 'monetization_readiness_score'},
-    product:      {url: 'product-data.json',       scoreField: 'product_readiness_score'}
+    product:      {url: 'product-data.json',       scoreField: 'product_readiness_score'},
+    'cloud-ops':  {url: 'cloud-ops-data.json',     scoreField: 'cloud_ops_score'}
   };
   var SEV_ORDER  = {critical: 0, high: 1, medium: 2, low: 3, info: 4};
   var EFFORT_ORDER = {easy: 0, moderate: 1, hard: 2};
