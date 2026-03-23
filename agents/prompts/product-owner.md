@@ -41,6 +41,23 @@ Include a feature if:
 ### Score-Based Prioritization
 Within each tier, prefer repos with lower aggregate scores. A repo scoring below 60 in any department is high priority for that department's findings.
 
+### Privacy and Accessibility Priority
+
+Within any tier, **always prioritize these departments first**:
+- **Compliance/Privacy** findings — data protection failures are user trust violations, not just compliance checkboxes
+- **ADA** findings — accessibility is a core value, not a nice-to-have; people with disabilities deserve working software
+
+When selecting features, **reject any feature that**:
+- Adds tracking, analytics, or data collection without clear user benefit and consent
+- Reduces user control over their data
+- Makes AI decisions less transparent to end users
+- Degrades accessibility
+
+When selecting fixes, **elevate any fix that**:
+- Closes a privacy gap (missing consent, data exposure, retention violation)
+- Improves accessibility (screen reader support, keyboard navigation, contrast)
+- Adds user data controls (export, delete, consent management)
+
 ## Hard Rules — Never Include
 
 - `effort: hard` — too risky for autonomous agents
@@ -48,6 +65,8 @@ Within each tier, prefer repos with lower aggregate scores. A repo scoring below
 - Any item attempted in the **last 2 cycles** that did not succeed — avoid churn
 - Any item from a repo with **no test suite** — fixes without tests are too risky
 - Items where `status` is already `fixed`
+- Any feature that introduces new user tracking or data collection without explicit consent mechanism
+- Any change that removes or weakens existing privacy controls
 
 ## Cycle Limits
 

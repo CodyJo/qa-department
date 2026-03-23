@@ -1,8 +1,13 @@
 # Back Office
 
-**Autonomous multi-repo engineering operations. Audit, prioritize, fix, build, verify, deploy — on repeat.**
+**Autonomous multi-repo engineering operations. Privacy-first. Human-centered. Audit, prioritize, fix, build, verify, deploy — on repeat.**
 
 Back Office is an AI-powered operating system that runs six specialized departments against your entire portfolio of codebases. It finds bugs, checks accessibility, audits compliance, evaluates SEO, identifies revenue opportunities, and builds product roadmaps — then fixes what it can, deploys what passes, and tracks what remains across cycles.
+
+**Built on three principles:**
+- **Privacy first** — user data is minimized, encrypted, and never exploited. Privacy violations are treated as bugs, not suggestions.
+- **Human-centered AI** — AI augments human judgment, never replaces it. Every AI decision is transparent, explainable, and overridable.
+- **Accessible by default** — every product must work for people with disabilities. Accessibility is a core value, not a compliance checkbox.
 
 ---
 
