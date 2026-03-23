@@ -302,7 +302,64 @@
     .matrix { font-size: 0.75rem; }
     .topbar { padding: 0.5rem 1rem; }
     .container { padding: 1rem; }
+    .slideover { width: 100%; right: -100%; }
+    .detail-panel { width: 100%; right: -100%; }
   }
+
+  /* Overlay + Slide-Over */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+  .overlay.open { opacity: 1; pointer-events: auto; }
+
+  .slideover { position: fixed; top: 0; right: -65%; width: 65%; height: 100vh; background: var(--bg); border-left: 1px solid var(--border); z-index: 101; transition: right 0.3s ease; overflow-y: auto; display: flex; flex-direction: column; }
+  .slideover.open { right: 0; }
+  .slideover-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); background: var(--surface); flex-shrink: 0; }
+  .slideover-title { font-size: 1.1rem; font-weight: 600; }
+  .slideover-subtitle { font-size: 0.78rem; color: var(--text-dim); }
+  .slideover-close { background: none; border: 1px solid var(--border); color: var(--text-dim); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; }
+  .slideover-close:hover { border-color: var(--accent); color: var(--text); }
+
+  /* Filters bar */
+  .filters-bar { display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1.5rem; border-bottom: 1px solid var(--border); background: var(--surface); flex-shrink: 0; flex-wrap: wrap; }
+  .filter-select { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 0.35rem 0.6rem; font-size: 0.72rem; font-family: var(--sans); outline: none; }
+  .filter-select:focus { border-color: var(--accent); }
+  .filter-search { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 0.35rem 0.6rem; font-size: 0.72rem; font-family: var(--sans); flex: 1; min-width: 140px; outline: none; }
+  .filter-search::placeholder { color: var(--text-dim); }
+  .filter-search:focus { border-color: var(--accent); }
+  .filter-toggle { display: flex; align-items: center; gap: 0.35rem; font-size: 0.72rem; color: var(--text-dim); cursor: pointer; padding: 0.35rem 0.6rem; border: 1px solid var(--border); border-radius: 6px; background: var(--surface-2); }
+  .filter-toggle.active { border-color: #6c5ce7; color: #6c5ce7; background: rgba(108,92,231,0.08); }
+  .filter-toggle .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+  .slideover-body { padding: 1.5rem; flex: 1; overflow-y: auto; }
+  .slideover-score-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.25rem; }
+  .slideover-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 0.85rem; text-align: center; }
+  .slideover-stat-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-dim); margin-bottom: 0.35rem; }
+  .slideover-stat-value { font-size: 1.3rem; font-weight: 700; }
+
+  /* Finding Detail Panel (nested slide-over) */
+  .detail-panel { position: fixed; top: 0; right: -45%; width: 45%; height: 100vh; background: var(--bg); border-left: 1px solid var(--border); z-index: 102; transition: right 0.3s ease; overflow-y: auto; }
+  .detail-panel.open { right: 0; }
+  .detail-header { display: flex; align-items: flex-start; justify-content: space-between; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); background: var(--surface); }
+  .detail-header-left { flex: 1; }
+  .detail-id { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-bottom: 0.35rem; }
+  .detail-title { font-size: 1rem; font-weight: 600; line-height: 1.4; margin-bottom: 0.5rem; }
+  .detail-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .detail-tag { font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 4px; background: var(--surface-2); color: var(--text-dim); border: 1px solid var(--border); }
+  .detail-body { padding: 1.5rem; }
+  .detail-section { margin-bottom: 1.25rem; }
+  .detail-section-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 0.5rem; }
+  .detail-text { font-size: 0.88rem; line-height: 1.65; color: var(--text); }
+  .detail-code { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; font-family: var(--mono); font-size: 0.78rem; color: var(--medium); line-height: 1.5; overflow-x: auto; margin-top: 0.4rem; white-space: pre-wrap; word-break: break-word; }
+  .detail-fix { background: rgba(46,213,115,0.06); border: 1px solid rgba(46,213,115,0.15); border-radius: 8px; padding: 0.85rem 1rem; font-size: 0.85rem; line-height: 1.6; color: var(--text); }
+  .detail-fix-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--success); margin-bottom: 0.4rem; }
+  .detail-file { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 0.85rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-family: var(--mono); font-size: 0.78rem; color: var(--text-dim); margin-top: 0.4rem; }
+  .detail-file-icon { color: var(--accent); }
+  .ai-fix-banner { display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1rem; background: rgba(108,92,231,0.08); border: 1px solid rgba(108,92,231,0.2); border-radius: 8px; margin-bottom: 1.25rem; }
+  .ai-fix-banner-icon { font-size: 1rem; }
+  .ai-fix-banner-text { font-size: 0.82rem; color: #b8a9f0; }
+  .ai-fix-banner-text strong { color: #6c5ce7; }
+  .ai-fix-cmd { font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); background: var(--surface-2); padding: 0.3rem 0.6rem; border-radius: 4px; margin-left: 0.5rem; cursor: pointer; border: 1px solid var(--border); display: inline-block; }
+  .ai-fix-cmd:hover { border-color: #6c5ce7; color: #6c5ce7; }
+  .backlog-info { font-size: 0.78rem; color: var(--text-dim); padding: 0.6rem 0.85rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-top: 0.4rem; }
 </style>
 </head>
 <body>
@@ -347,6 +404,59 @@
   <!-- Needs Attention -->
   <div class="section-label">Needs Attention</div>
   <div id="needsAttention"></div>
+</div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay"></div>
+
+<!-- Department Slide-Over -->
+<div class="slideover" id="slideover">
+  <div class="slideover-header">
+    <div>
+      <div class="slideover-title" id="slideoverTitle"></div>
+      <div class="slideover-subtitle" id="slideoverSubtitle"></div>
+    </div>
+    <button class="slideover-close" id="slideoverCloseBtn">&times;</button>
+  </div>
+
+  <div class="filters-bar">
+    <select class="filter-select" id="filterSeverity" aria-label="Filter by severity">
+      <option value="all">All Severities</option>
+      <option value="critical">Critical</option>
+      <option value="high">High</option>
+      <option value="medium">Medium</option>
+      <option value="low">Low</option>
+      <option value="info">Info</option>
+    </select>
+    <select class="filter-select" id="filterStatus" aria-label="Filter by status">
+      <option value="all">All Status</option>
+      <option value="open">Open</option>
+      <option value="fixed">Fixed</option>
+      <option value="presumed_fixed">Presumed Fixed</option>
+    </select>
+    <select class="filter-select" id="filterEffort" aria-label="Filter by effort">
+      <option value="all">All Effort</option>
+      <option value="easy">Easy</option>
+      <option value="moderate">Moderate</option>
+      <option value="hard">Hard</option>
+      <option value="unknown">Unknown</option>
+    </select>
+    <div class="filter-toggle" id="filterAiFixable">
+      <span class="dot"></span> AI Fixable
+    </div>
+    <input class="filter-search" id="filterSearch" placeholder="Search findings..." type="text" aria-label="Search findings">
+  </div>
+
+  <div class="slideover-body" id="slideoverBody"></div>
+</div>
+
+<!-- Finding Detail Panel (nested) -->
+<div class="detail-panel" id="detailPanel">
+  <div class="detail-header">
+    <div class="detail-header-left" id="detailHeaderLeft"></div>
+    <button class="slideover-close" id="detailCloseBtn">&times;</button>
+  </div>
+  <div class="detail-body" id="detailBody"></div>
 </div>
 
 <script>
@@ -881,6 +991,681 @@
 
   /* ── Init ── */
   loadAll();
+
+  /* ─────────────────────────────────────────────────────────
+     SLIDE-OVER PANEL SYSTEM (Tasks 7-9)
+     ───────────────────────────────────────────────────────── */
+
+  /* ── Panel State ── */
+  var panelDept = null;        // currently open department
+  var panelRepoFilter = null;  // null = all repos for product
+  var panelFindings = [];      // filtered findings for current panel
+  var panelAllFindings = [];   // unfiltered findings for current panel
+  var currentFinding = null;   // finding shown in detail panel
+
+  var filterSeverity = 'all';
+  var filterStatus   = 'all';
+  var filterEffort   = 'all';
+  var filterAiFixable = false;
+  var filterSearch   = '';
+
+  /* ── SHA-256 hash (matches Python: sha256 of dept:repo:title:file lowercase trimmed, first 16 hex) ── */
+  function findingHash(dept, repo, title, filePath) {
+    var key = [dept, repo, title, filePath].map(function(s) { return (s || '').trim().toLowerCase(); }).join(':');
+    // Use SubtleCrypto if available, else fallback to simple hash
+    // For sync use, implement a simple sha256
+    return simplesha256(key).substring(0, 16);
+  }
+
+  // Minimal synchronous SHA-256 (matches Python hashlib.sha256)
+  function simplesha256(msg) {
+    function rotr(x, n) { return (x >>> n) | (x << (32 - n)); }
+    function ch(x, y, z) { return (x & y) ^ (~x & z); }
+    function maj(x, y, z) { return (x & y) ^ (x & z) ^ (y & z); }
+    function sigma0(x) { return rotr(x, 2) ^ rotr(x, 13) ^ rotr(x, 22); }
+    function sigma1(x) { return rotr(x, 6) ^ rotr(x, 11) ^ rotr(x, 25); }
+    function gamma0(x) { return rotr(x, 7) ^ rotr(x, 18) ^ (x >>> 3); }
+    function gamma1(x) { return rotr(x, 17) ^ rotr(x, 19) ^ (x >>> 10); }
+    var K = [
+      0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+      0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+      0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+      0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+      0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+      0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+      0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+      0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
+    ];
+    var bytes = [];
+    for (var i = 0; i < msg.length; i++) {
+      var c = msg.charCodeAt(i);
+      if (c < 0x80) bytes.push(c);
+      else if (c < 0x800) { bytes.push(0xc0 | (c >> 6)); bytes.push(0x80 | (c & 0x3f)); }
+      else { bytes.push(0xe0 | (c >> 12)); bytes.push(0x80 | ((c >> 6) & 0x3f)); bytes.push(0x80 | (c & 0x3f)); }
+    }
+    var bitLen = bytes.length * 8;
+    bytes.push(0x80);
+    while (bytes.length % 64 !== 56) bytes.push(0);
+    bytes.push(0, 0, 0, 0);
+    bytes.push((bitLen >>> 24) & 0xff, (bitLen >>> 16) & 0xff, (bitLen >>> 8) & 0xff, bitLen & 0xff);
+    var H0=0x6a09e667,H1=0xbb67ae85,H2=0x3c6ef372,H3=0xa54ff53a,H4=0x510e527f,H5=0x9b05688c,H6=0x1f83d9ab,H7=0x5be0cd19;
+    for (var off = 0; off < bytes.length; off += 64) {
+      var W = new Array(64);
+      for (var t = 0; t < 16; t++) W[t] = (bytes[off+t*4]<<24)|(bytes[off+t*4+1]<<16)|(bytes[off+t*4+2]<<8)|bytes[off+t*4+3];
+      for (var t = 16; t < 64; t++) W[t] = (gamma1(W[t-2]) + W[t-7] + gamma0(W[t-15]) + W[t-16]) | 0;
+      var a=H0,b=H1,c=H2,d=H3,e=H4,f=H5,g=H6,h=H7;
+      for (var t = 0; t < 64; t++) {
+        var T1 = (h + sigma1(e) + ch(e,f,g) + K[t] + W[t]) | 0;
+        var T2 = (sigma0(a) + maj(a,b,c)) | 0;
+        h=g; g=f; f=e; e=(d+T1)|0; d=c; c=b; b=a; a=(T1+T2)|0;
+      }
+      H0=(H0+a)|0; H1=(H1+b)|0; H2=(H2+c)|0; H3=(H3+d)|0; H4=(H4+e)|0; H5=(H5+f)|0; H6=(H6+g)|0; H7=(H7+h)|0;
+    }
+    function hex32(v) { return ('00000000' + (v >>> 0).toString(16)).slice(-8); }
+    return hex32(H0)+hex32(H1)+hex32(H2)+hex32(H3)+hex32(H4)+hex32(H5)+hex32(H6)+hex32(H7);
+  }
+
+  /* ── Dept-specific 4th stat ── */
+  function getDeptSpecificStat(dept, repos) {
+    var label, value, color;
+    switch (dept) {
+      case 'qa':
+        // Fixed count
+        var fixedCount = 0;
+        repos.forEach(function(r) {
+          if (r.findings) r.findings.forEach(function(f) {
+            if ((f.status || '').toLowerCase() === 'fixed') fixedCount++;
+          });
+        });
+        label = 'Fixed'; value = String(fixedCount); color = 'var(--success)';
+        break;
+      case 'seo':
+        // Overall seo_score (avg)
+        var seoScores = [];
+        repos.forEach(function(r) {
+          if (r.summary && r.summary.seo_score != null) seoScores.push(r.summary.seo_score);
+        });
+        var avgSeo = seoScores.length > 0 ? Math.round(seoScores.reduce(function(a,b){return a+b;},0)/seoScores.length) : null;
+        label = 'SEO Score'; value = avgSeo != null ? String(avgSeo) : '--'; color = avgSeo != null ? scoreColorVar(avgSeo) : 'var(--text-dim)';
+        break;
+      case 'ada':
+        // WCAG level
+        var adaScores = [];
+        var hasCritHigh = false, hasMed = false;
+        repos.forEach(function(r) {
+          var s = getRepoScore('ada', r);
+          if (s != null) adaScores.push(s);
+          if (r.findings) r.findings.forEach(function(f) {
+            var sev = (f.severity || '').toLowerCase();
+            if (sev === 'critical' || sev === 'high') hasCritHigh = true;
+            if (sev === 'medium') hasMed = true;
+          });
+        });
+        var avgAda = adaScores.length > 0 ? Math.round(adaScores.reduce(function(a,b){return a+b;},0)/adaScores.length) : null;
+        var wcagLevel = '--';
+        if (avgAda != null) {
+          if (avgAda >= 95 && !hasCritHigh && !hasMed) wcagLevel = 'AAA';
+          else if (avgAda >= 70 && !hasCritHigh) wcagLevel = 'AA';
+          else if (avgAda >= 40) wcagLevel = 'A';
+          else wcagLevel = 'Below A';
+        }
+        label = 'WCAG Level'; value = wcagLevel; color = wcagLevel === 'AAA' ? 'var(--success)' : wcagLevel === 'AA' ? 'var(--medium)' : 'var(--high)';
+        break;
+      case 'compliance':
+      case 'privacy':
+        // Framework count
+        var frameworks = {};
+        repos.forEach(function(r) {
+          if (r.findings) r.findings.forEach(function(f) {
+            if (f.category) frameworks[f.category] = true;
+            if (f.framework) frameworks[f.framework] = true;
+          });
+        });
+        var fwCount = Object.keys(frameworks).length;
+        label = 'Frameworks'; value = String(fwCount); color = 'var(--text)';
+        break;
+      case 'monetization':
+        // Revenue estimate sum
+        var revSum = 0;
+        repos.forEach(function(r) {
+          if (r.findings) r.findings.forEach(function(f) {
+            if (f.revenue_estimate) {
+              var num = parseFloat(String(f.revenue_estimate).replace(/[^0-9.]/g, ''));
+              if (!isNaN(num)) revSum += num;
+            }
+          });
+        });
+        label = 'Revenue Est.'; value = revSum > 0 ? '$' + revSum.toLocaleString() : '$0'; color = 'var(--success)';
+        break;
+      case 'product':
+        // Backlog items count
+        var backlogCount = 0;
+        repos.forEach(function(r) {
+          if (r.findings) backlogCount += r.findings.length;
+        });
+        label = 'Backlog Items'; value = String(backlogCount); color = 'var(--text)';
+        break;
+      default:
+        label = 'Items'; value = '--'; color = 'var(--text-dim)';
+    }
+    return {label: label, value: value, color: color};
+  }
+
+  /* ── Gather findings for a department ── */
+  function gatherDeptFindings(dept, repoFilter) {
+    var source = dept === 'privacy' ? deptData['privacy'] : deptData[dept];
+    if (!source || !source.repos) return [];
+    var productRepos = getProductRepos(selectedProduct);
+    var findings = [];
+    source.repos.forEach(function(repo) {
+      if (repoFilter && repo.name !== repoFilter) return;
+      if (!repoFilter && selectedProduct !== 'all' && productRepos.indexOf(repo.name) === -1) return;
+      if (!repo.findings) return;
+      repo.findings.forEach(function(f) {
+        findings.push({
+          department: f.department || dept,
+          severity: (f.severity || 'info').toLowerCase(),
+          title: f.title || '',
+          repo: f.repo || repo.name,
+          effort: (f.effort || 'unknown').toLowerCase(),
+          fixable_by_agent: f.fixable_by_agent || false,
+          id: f.id || '',
+          file: f.file || '',
+          line: f.line || null,
+          description: f.description || '',
+          evidence: f.evidence || '',
+          impact: f.impact || '',
+          fix_suggestion: f.fix_suggestion || '',
+          category: f.category || '',
+          status: (f.status || 'open').toLowerCase(),
+          revenue_estimate: f.revenue_estimate || null,
+          framework: f.framework || ''
+        });
+      });
+    });
+    // Sort by severity desc
+    findings.sort(function(a, b) {
+      var sa = SEV_ORDER[a.severity] != null ? SEV_ORDER[a.severity] : 99;
+      var sb = SEV_ORDER[b.severity] != null ? SEV_ORDER[b.severity] : 99;
+      return sa - sb;
+    });
+    return findings;
+  }
+
+  /* ── Apply client-side filters ── */
+  function applyFilters() {
+    var q = filterSearch.toLowerCase();
+    panelFindings = panelAllFindings.filter(function(f) {
+      if (filterSeverity !== 'all' && f.severity !== filterSeverity) return false;
+      if (filterStatus !== 'all' && f.status !== filterStatus.toLowerCase().replace(/ /g, '_')) return false;
+      if (filterEffort !== 'all' && f.effort !== filterEffort.toLowerCase()) return false;
+      if (filterAiFixable && !f.fixable_by_agent) return false;
+      if (q) {
+        var haystack = [f.title, f.description, f.file, f.id, f.repo].join(' ').toLowerCase();
+        if (haystack.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+    renderFindingsList();
+  }
+
+  /* ── Render the findings list inside slideover body ── */
+  function renderFindingsList() {
+    var listContainer = document.getElementById('slideoverFindings');
+    if (!listContainer) return;
+    clearChildren(listContainer);
+
+    if (panelFindings.length === 0) {
+      listContainer.appendChild(el('div', {className: 'empty-state', textContent: 'No findings match current filters'}));
+      return;
+    }
+
+    panelFindings.forEach(function(f) {
+      var titleSpan = el('span', {className: 'finding-title'});
+      titleSpan.appendChild(document.createTextNode(f.title));
+      if (f.fixable_by_agent) {
+        titleSpan.appendChild(el('span', {className: 'ai-badge', textContent: 'AI fixable'}));
+      }
+
+      var row = el('div', {className: 'finding-row'}, [
+        el('span', {className: 'sev ' + f.severity, textContent: f.severity}),
+        titleSpan,
+        el('span', {className: 'finding-effort', textContent: f.effort})
+      ]);
+
+      row.addEventListener('click', function() { openFindingDetail(f); });
+      listContainer.appendChild(row);
+    });
+  }
+
+  /* ── Render Department Panel (Task 8) ── */
+  function renderDeptPanel(dept, repoFilter) {
+    var body = document.getElementById('slideoverBody');
+    clearChildren(body);
+
+    // Get filtered repos
+    var source = dept === 'privacy' ? deptData['privacy'] : deptData[dept];
+    var repos = [];
+    if (source && source.repos) {
+      var productRepos = getProductRepos(selectedProduct);
+      source.repos.forEach(function(r) {
+        if (repoFilter && r.name !== repoFilter) return;
+        if (!repoFilter && selectedProduct !== 'all' && productRepos.indexOf(r.name) === -1) return;
+        repos.push(r);
+      });
+    }
+
+    // Compute stats
+    var scores = [];
+    repos.forEach(function(r) {
+      var s = getRepoScore(dept === 'privacy' ? 'compliance' : dept, r);
+      if (s != null) scores.push(s);
+    });
+    var avgScore = scores.length > 0 ? Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length) : null;
+
+    var totalFindings = 0;
+    var aiFixableCount = 0;
+    repos.forEach(function(r) {
+      if (r.findings) {
+        totalFindings += r.findings.length;
+        r.findings.forEach(function(f) {
+          if (f.fixable_by_agent) aiFixableCount++;
+        });
+      }
+    });
+
+    var deptStat = getDeptSpecificStat(dept, repos);
+
+    // Stats row
+    var statsRow = el('div', {className: 'slideover-score-row'}, [
+      el('div', {className: 'slideover-stat'}, [
+        el('div', {className: 'slideover-stat-label', textContent: 'Score'}),
+        el('div', {className: 'slideover-stat-value', style: 'color:' + (avgScore != null ? scoreColorVar(avgScore) : 'var(--text-dim)'), textContent: avgScore != null ? String(avgScore) : '--'})
+      ]),
+      el('div', {className: 'slideover-stat'}, [
+        el('div', {className: 'slideover-stat-label', textContent: 'Findings'}),
+        el('div', {className: 'slideover-stat-value', textContent: String(totalFindings)})
+      ]),
+      el('div', {className: 'slideover-stat'}, [
+        el('div', {className: 'slideover-stat-label', textContent: 'AI Fixable'}),
+        el('div', {className: 'slideover-stat-value', style: 'color:#6c5ce7', textContent: String(aiFixableCount)})
+      ]),
+      el('div', {className: 'slideover-stat'}, [
+        el('div', {className: 'slideover-stat-label', textContent: deptStat.label}),
+        el('div', {className: 'slideover-stat-value', style: 'color:' + deptStat.color, textContent: deptStat.value})
+      ])
+    ]);
+    body.appendChild(statsRow);
+
+    // Findings list container
+    var listContainer = el('div', {id: 'slideoverFindings'});
+    body.appendChild(listContainer);
+
+    // Gather + apply
+    panelAllFindings = gatherDeptFindings(dept, repoFilter);
+    applyFilters();
+  }
+
+  /* ── Render Finding Detail (Task 9) ── */
+  function renderFindingDetail(finding) {
+    var body = document.getElementById('detailBody');
+    clearChildren(body);
+
+    // AI Fix Banner
+    if (finding.fixable_by_agent) {
+      var cmdText = 'make fix TARGET=' + (finding.repo || 'repo');
+      var cmdSpan = el('span', {className: 'ai-fix-cmd', title: 'Click to copy', textContent: cmdText});
+      cmdSpan.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(cmdText);
+          cmdSpan.textContent = 'Copied!';
+          setTimeout(function() { cmdSpan.textContent = cmdText; }, 1500);
+        }
+      });
+
+      var bannerTextDiv = el('div', {className: 'ai-fix-banner-text'});
+      var strong = el('strong', {textContent: 'AI can fix this.'});
+      bannerTextDiv.appendChild(strong);
+      bannerTextDiv.appendChild(document.createTextNode(' The Back Office fix agent can resolve this automatically. '));
+      bannerTextDiv.appendChild(cmdSpan);
+
+      body.appendChild(el('div', {className: 'ai-fix-banner'}, [
+        el('span', {className: 'ai-fix-banner-icon', textContent: '\u26A1'}),
+        bannerTextDiv
+      ]));
+    }
+
+    // Description
+    if (finding.description) {
+      body.appendChild(el('div', {className: 'detail-section'}, [
+        el('div', {className: 'detail-section-title', textContent: 'Description'}),
+        el('div', {className: 'detail-text', textContent: finding.description})
+      ]));
+    }
+
+    // Evidence
+    if (finding.evidence) {
+      body.appendChild(el('div', {className: 'detail-section'}, [
+        el('div', {className: 'detail-section-title', textContent: 'Evidence'}),
+        el('div', {className: 'detail-code', textContent: finding.evidence})
+      ]));
+    }
+
+    // Impact
+    if (finding.impact) {
+      body.appendChild(el('div', {className: 'detail-section'}, [
+        el('div', {className: 'detail-section-title', textContent: 'Impact'}),
+        el('div', {className: 'detail-text', textContent: finding.impact})
+      ]));
+    }
+
+    // File
+    if (finding.file) {
+      var fileText = finding.file;
+      if (finding.line) fileText += ':' + finding.line;
+      body.appendChild(el('div', {className: 'detail-section'}, [
+        el('div', {className: 'detail-section-title', textContent: 'File'}),
+        el('div', {className: 'detail-file'}, [
+          el('span', {className: 'detail-file-icon', textContent: '\uD83D\uDCC4'}),
+          document.createTextNode(fileText)
+        ])
+      ]));
+    }
+
+    // Recommended Fix
+    if (finding.fix_suggestion) {
+      body.appendChild(el('div', {className: 'detail-section'}, [
+        el('div', {className: 'detail-fix-title', textContent: 'Recommended Fix'}),
+        el('div', {className: 'detail-fix', textContent: finding.fix_suggestion})
+      ]));
+    }
+
+    // Backlog Info
+    if (backlogData && backlogData.findings) {
+      var hash = findingHash(finding.department, finding.repo, finding.title, finding.file);
+      var entry = backlogData.findings[hash];
+      if (entry) {
+        var firstSeen = entry.first_seen ? new Date(entry.first_seen).toLocaleDateString() : 'Unknown';
+        var lastSeen = entry.last_seen ? new Date(entry.last_seen).toLocaleDateString() : 'Unknown';
+        var auditCount = entry.audit_count || 1;
+        var infoText = 'First seen: ' + firstSeen + '  \u00B7  Seen in ' + auditCount + ' audit' + (auditCount !== 1 ? 's' : '') + '  \u00B7  Last seen: ' + lastSeen;
+        body.appendChild(el('div', {className: 'detail-section'}, [
+          el('div', {className: 'detail-section-title', textContent: 'Backlog'}),
+          el('div', {className: 'backlog-info', textContent: infoText})
+        ]));
+      }
+    }
+  }
+
+  /* ── Panel open/close functions ── */
+  function openDeptPanel(department, repo) {
+    panelDept = department;
+    panelRepoFilter = repo || null;
+
+    // Reset filters
+    filterSeverity = 'all';
+    filterStatus   = 'all';
+    filterEffort   = 'all';
+    filterAiFixable = false;
+    filterSearch   = '';
+
+    // Reset filter UI
+    var sevSel = document.getElementById('filterSeverity');
+    var statusSel = document.getElementById('filterStatus');
+    var effortSel = document.getElementById('filterEffort');
+    var aiToggle = document.getElementById('filterAiFixable');
+    var searchInput = document.getElementById('filterSearch');
+    if (sevSel) sevSel.value = 'all';
+    if (statusSel) statusSel.value = 'all';
+    if (effortSel) effortSel.value = 'all';
+    if (aiToggle) aiToggle.classList.remove('active');
+    if (searchInput) searchInput.value = '';
+
+    // Header
+    var deptLabel = DEPT_LABELS[department] || department;
+    document.getElementById('slideoverTitle').textContent = deptLabel;
+
+    // Subtitle
+    var source = department === 'privacy' ? deptData['privacy'] : deptData[department];
+    if (repo) {
+      var repoObj = source && source.repos ? source.repos.find(function(r) { return r.name === repo; }) : null;
+      var fCount = repoObj && repoObj.findings ? repoObj.findings.length : 0;
+      document.getElementById('slideoverSubtitle').textContent = repo + ' \u2014 ' + fCount + ' finding' + (fCount !== 1 ? 's' : '');
+    } else {
+      var productRepos = getProductRepos(selectedProduct);
+      var repoCount = 0, findingCount = 0;
+      if (source && source.repos) {
+        source.repos.forEach(function(r) {
+          if (selectedProduct !== 'all' && productRepos.indexOf(r.name) === -1) return;
+          repoCount++;
+          findingCount += (r.findings ? r.findings.length : 0);
+        });
+      }
+      document.getElementById('slideoverSubtitle').textContent = repoCount + ' repo' + (repoCount !== 1 ? 's' : '') + ' \u00B7 ' + findingCount + ' finding' + (findingCount !== 1 ? 's' : '');
+    }
+
+    // Render content
+    renderDeptPanel(department, repo);
+
+    // Open panels
+    document.getElementById('overlay').classList.add('open');
+    document.getElementById('slideover').classList.add('open');
+    closeFindingDetail();
+
+    // Update URL
+    var params = new URLSearchParams(window.location.search);
+    if (selectedProduct !== 'all') params.set('product', selectedProduct);
+    params.set('dept', department);
+    if (repo) params.set('repo', repo);
+    var qs = params.toString();
+    history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : ''));
+  }
+
+  function closeDeptPanel() {
+    document.getElementById('overlay').classList.remove('open');
+    document.getElementById('slideover').classList.remove('open');
+    document.getElementById('detailPanel').classList.remove('open');
+    panelDept = null;
+    panelRepoFilter = null;
+    currentFinding = null;
+
+    // Remove dept/repo from URL, keep product
+    var params = new URLSearchParams(window.location.search);
+    params.delete('dept');
+    params.delete('repo');
+    if (selectedProduct === 'all') params.delete('product');
+    else params.set('product', selectedProduct);
+    var qs = params.toString();
+    history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : ''));
+  }
+
+  function openFindingDetail(finding) {
+    currentFinding = finding;
+
+    // Populate header
+    var headerLeft = document.getElementById('detailHeaderLeft');
+    clearChildren(headerLeft);
+
+    // ID
+    headerLeft.appendChild(el('div', {className: 'detail-id', textContent: finding.id || findingHash(finding.department, finding.repo, finding.title, finding.file)}));
+
+    // Title
+    headerLeft.appendChild(el('div', {className: 'detail-title', textContent: finding.title}));
+
+    // Meta tags
+    var meta = el('div', {className: 'detail-meta'});
+    meta.appendChild(el('span', {className: 'sev ' + finding.severity, textContent: finding.severity}));
+    if (finding.category) meta.appendChild(el('span', {className: 'detail-tag', textContent: finding.category}));
+    if (finding.effort) meta.appendChild(el('span', {className: 'detail-tag', textContent: finding.effort}));
+    if (finding.fixable_by_agent) {
+      meta.appendChild(el('span', {className: 'detail-tag', style: 'background:rgba(108,92,231,0.1);color:#6c5ce7;border-color:rgba(108,92,231,0.2);', textContent: 'AI Fixable'}));
+    }
+    headerLeft.appendChild(meta);
+
+    // Render body
+    renderFindingDetail(finding);
+
+    // Open
+    document.getElementById('detailPanel').classList.add('open');
+  }
+
+  function closeFindingDetail() {
+    document.getElementById('detailPanel').classList.remove('open');
+    currentFinding = null;
+  }
+
+  /* ── Keyboard & overlay handlers ── */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      if (document.getElementById('detailPanel').classList.contains('open')) {
+        closeFindingDetail();
+      } else if (document.getElementById('slideover').classList.contains('open')) {
+        closeDeptPanel();
+      }
+    }
+  });
+
+  document.getElementById('overlay').addEventListener('click', function() {
+    closeDeptPanel();
+  });
+
+  document.getElementById('slideoverCloseBtn').addEventListener('click', function() {
+    closeDeptPanel();
+  });
+
+  document.getElementById('detailCloseBtn').addEventListener('click', function() {
+    closeFindingDetail();
+  });
+
+  /* ── Wire score card clicks ── */
+  document.getElementById('scoreRow').addEventListener('click', function(e) {
+    var card = e.target.closest('.score-card');
+    if (!card) return;
+    var dept = card.getAttribute('data-dept');
+    if (dept) openDeptPanel(dept, null);
+  });
+
+  /* ── Wire matrix cell clicks ── */
+  document.getElementById('matrixTable').addEventListener('click', function(e) {
+    var cell = e.target.closest('.cell');
+    if (!cell || cell.classList.contains('gray')) return;
+    var dept = cell.getAttribute('data-dept');
+    var repo = cell.getAttribute('data-repo');
+    if (dept) openDeptPanel(dept, repo);
+  });
+
+  /* ── Wire needs attention finding clicks ── */
+  document.getElementById('needsAttention').addEventListener('click', function(e) {
+    var row = e.target.closest('.finding-row');
+    if (!row) return;
+    var dept = row.getAttribute('data-dept');
+    var repo = row.getAttribute('data-repo');
+    var findingId = row.getAttribute('data-finding');
+
+    // Try to find the actual finding object
+    if (dept && deptData[dept] && deptData[dept].repos) {
+      var found = null;
+      deptData[dept].repos.forEach(function(r) {
+        if (found) return;
+        if (r.findings) r.findings.forEach(function(f) {
+          if (found) return;
+          if (findingId && (f.id === findingId)) { found = f; found.repo = found.repo || r.name; found.department = found.department || dept; }
+        });
+      });
+
+      // If not found by id, try by title from the row
+      if (!found) {
+        var titleEl = row.querySelector('.finding-title');
+        var titleText = titleEl ? titleEl.textContent.replace('AI fixable', '').trim() : '';
+        deptData[dept].repos.forEach(function(r) {
+          if (found) return;
+          if (r.findings) r.findings.forEach(function(f) {
+            if (found) return;
+            if (f.title === titleText) {
+              found = {
+                department: f.department || dept,
+                severity: (f.severity || 'info').toLowerCase(),
+                title: f.title || '',
+                repo: f.repo || r.name,
+                effort: (f.effort || 'unknown').toLowerCase(),
+                fixable_by_agent: f.fixable_by_agent || false,
+                id: f.id || '',
+                file: f.file || '',
+                line: f.line || null,
+                description: f.description || '',
+                evidence: f.evidence || '',
+                impact: f.impact || '',
+                fix_suggestion: f.fix_suggestion || '',
+                category: f.category || '',
+                status: (f.status || 'open').toLowerCase()
+              };
+            }
+          });
+        });
+      }
+
+      if (found) {
+        // Open the dept panel first, then detail
+        openDeptPanel(dept, repo || found.repo);
+        openFindingDetail(found);
+        return;
+      }
+    }
+
+    // Fallback: just open dept panel
+    if (dept) openDeptPanel(dept, repo);
+  });
+
+  /* ── Wire filter controls ── */
+  document.getElementById('filterSeverity').addEventListener('change', function() {
+    filterSeverity = this.value;
+    applyFilters();
+  });
+  document.getElementById('filterStatus').addEventListener('change', function() {
+    filterStatus = this.value;
+    applyFilters();
+  });
+  document.getElementById('filterEffort').addEventListener('change', function() {
+    filterEffort = this.value;
+    applyFilters();
+  });
+  document.getElementById('filterAiFixable').addEventListener('click', function() {
+    this.classList.toggle('active');
+    filterAiFixable = this.classList.contains('active');
+    applyFilters();
+  });
+  document.getElementById('filterSearch').addEventListener('input', function() {
+    filterSearch = this.value;
+    applyFilters();
+  });
+
+  /* ── Deep link: open panel from URL on load ── */
+  function checkDeepLink() {
+    var params = new URLSearchParams(window.location.search);
+    var dept = params.get('dept');
+    var repo = params.get('repo');
+    if (dept && DEPT_KEYS.indexOf(dept) !== -1) {
+      openDeptPanel(dept, repo || null);
+    }
+  }
+
+  // Hook into renderAll to check deep links after first data load
+  var _origRenderAll = renderAll;
+  var _deepLinkChecked = false;
+  renderAll = function() {
+    _origRenderAll();
+    if (!_deepLinkChecked) {
+      _deepLinkChecked = true;
+      checkDeepLink();
+    }
+  };
+
+  /* ── Load privacy data source ── */
+  fetchJson('privacy-data.json')
+    .then(function(d) { deptData['privacy'] = d; })
+    .catch(function() { deptData['privacy'] = null; });
+
 })();
 </script>
 </body>
