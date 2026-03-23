@@ -1070,8 +1070,6 @@ PYEOF
 
   check_stop "REPORT"
 
-  log "Next cycle in $INTERVAL minutes. Stop with: touch $STOP_FILE"
+  log "Starting next cycle immediately. Stop with: touch $STOP_FILE"
   log ""
-
-  sleep "${INTERVAL}m"
 done
