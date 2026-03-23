@@ -1,5 +1,7 @@
 # Back Office — Agent Instructions
 
+> **Governing prompt:** See `MASTER-PROMPT.md` for the autonomy safety, engineering standards, and operating priorities that govern all Back Office development.
+
 This is the Cody Jo Method Back Office: a multi-department operating system of AI agents that audit, scan, and fix codebases. Each department has specialized agents and its own dashboard surface.
 
 ## Company Structure
@@ -30,16 +32,12 @@ backoffice/       — Primary Python package (CLI, API, workflow, sync, config)
 agents/           — Shell scripts that launch department agents
 agents/prompts/   — System prompts for each agent type
 config/           — Target repo configuration (gitignored)
-dashboard/        — Static HTML dashboards (one per department + HQ)
-  index.html      — Company HQ landing page
-  qa.html         — QA Department dashboard
-  backoffice.html — Public bug report form (legacy)
-  seo.html        — SEO Department dashboard
-  ada.html        — ADA Compliance dashboard
-  compliance.html — Regulatory Compliance dashboard
-  monetization.html — Monetization Strategy dashboard
-  product.html    — Product Roadmap dashboard
-  jobs.html       — Real-time job progress dashboard
+dashboard/        — Consolidated HQ dashboard with slide-over panels
+  index.html      — Single HQ page (matrix view + slide-over panels for all departments)
+  faq-content.html — FAQ content fragment (loaded into panel)
+  docs-content.html — Combined documentation fragment (loaded into panel)
+  backlog.json    — Persistent finding registry (content-hash deduplication)
+  score-history.json — Per-department score snapshots for sparklines
 results/          — Findings and fix status (gitignored, synced to S3)
 scripts/          — Shell scripts (setup, deploy, cron) and parse-config.py wrapper
 terraform/        — AWS infrastructure (S3 + CloudFront)
@@ -75,6 +73,13 @@ The `backoffice` package is the primary interface:
 ### Dashboard
 - `make dashboard` — Deploy all dashboards to S3
 - `make jobs` — Open job progress dashboard (local server on port 8070)
+
+### Overnight Autonomous Loop
+- `make overnight` — Start overnight loop (audit → decide → fix → build → verify → deploy → repeat)
+- `make overnight-dry` — Dry-run mode (audit + decide only, no changes)
+- `make overnight-stop` — Graceful stop (finishes current phase)
+- `make overnight-status` — Show latest plan and cycle history
+- `make overnight-rollback` — Roll back all repos to last overnight snapshot
 
 ## Data Flow
 

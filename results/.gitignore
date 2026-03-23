@@ -1,0 +1,6 @@
+# Overnight loop artifacts
+overnight.log
+overnight-plan.json
+overnight-history.json
+overnight-summary.json
+.overnight-stop

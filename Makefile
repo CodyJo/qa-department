@@ -2,6 +2,7 @@
 .PHONY: seo ada compliance monetization product audit-all audit-all-parallel audit-live full-scan quick-sync
 .PHONY: grafana grafana-stop grafana-logs
 .PHONY: local-targets local-refresh local-audit local-audit-all self-audit-local
+.PHONY: overnight overnight-dry overnight-stop overnight-status overnight-rollback
 
 TARGET ?=
 
@@ -194,6 +195,36 @@ grafana-stop: ## Stop Grafana
 
 grafana-logs: ## Tail Grafana logs
 	cd monitoring && docker compose logs -f grafana
+
+# ── Overnight Loop ───────────────────────────────────────────────────────────
+
+overnight: ## Start overnight autonomous loop
+	@echo "Starting overnight loop... Stop with: make overnight-stop"
+	bash scripts/overnight.sh $(if $(INTERVAL),--interval "$(INTERVAL)",) $(if $(TARGETS),--targets "$(TARGETS)",) 2>&1 | tee -a results/overnight.log
+
+overnight-dry: ## Dry-run overnight (audit + decide only, no changes)
+	bash scripts/overnight.sh --dry-run $(if $(INTERVAL),--interval "$(INTERVAL)",) $(if $(TARGETS),--targets "$(TARGETS)",) 2>&1 | tee -a results/overnight.log
+
+overnight-stop: ## Stop overnight loop gracefully
+	@touch results/.overnight-stop && echo "Stop signal sent. Loop will exit after current phase."
+
+overnight-status: ## Show overnight status and history
+	@echo "=== Latest Plan ==="
+	@python3 -c "import json,os; p='results/overnight-plan.json'; d=json.load(open(p)) if os.path.exists(p) else {}; print(f'Plan: {len(d.get(\"fixes\",[]))} fixes, {len(d.get(\"features\",[]))} features'); print(d.get('rationale','(no plan)'))" 2>/dev/null || echo "(no plan)"
+	@echo ""
+	@echo "=== Last 5 Cycles ==="
+	@python3 -c "import json,os; p='results/overnight-history.json'; d=json.load(open(p)) if os.path.exists(p) else {'cycles':[]}; [print(f'{c[\"cycle_id\"]}: {c.get(\"fixes_succeeded\",0)} fixes, {c.get(\"features_succeeded\",0)} features, {c.get(\"deploys_succeeded\",0)} deploys') for c in d['cycles'][-5:]]" 2>/dev/null || echo "(no history)"
+
+overnight-rollback: ## Roll back all repos to last overnight snapshot
+	@echo "Rolling back all repos to latest overnight snapshot..."
+	@python3 -c "\
+	import yaml, subprocess, os; \
+	targets = yaml.safe_load(open('config/targets.yaml')).get('targets', []); \
+	[( \
+	    result := subprocess.run(['git', 'tag', '-l', 'overnight-before-*'], capture_output=True, text=True, cwd=t['path']), \
+	    tags := sorted([x for x in result.stdout.strip().split(chr(10)) if x]), \
+	    (subprocess.run(['git', 'reset', '--hard', tags[-1]], cwd=t['path']) or print(f'  {t[\"name\"]}: rolled back to {tags[-1]}')) if tags else print(f'  {t[\"name\"]}: no snapshot tag found') \
+	) for t in targets if os.path.isdir(t.get('path', ''))]" 2>/dev/null || echo "(rollback failed — check targets.yaml)"
 
 clean: ## Remove all results
 	rm -rf results/*/
