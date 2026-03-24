@@ -22,6 +22,8 @@ module "codebuild" {
         Resource = [
           "arn:aws:s3:::admin-thenewbeautifulme-site",
           "arn:aws:s3:::admin-thenewbeautifulme-site/*",
+          "arn:aws:s3:::admin-codyjo-site",
+          "arn:aws:s3:::admin-codyjo-site/*",
         ]
       },
       {
@@ -30,7 +32,10 @@ module "codebuild" {
         Action = [
           "cloudfront:CreateInvalidation",
         ]
-        Resource = "arn:aws:cloudfront::*:distribution/E372ZR95FXKVT5"
+        Resource = [
+          "arn:aws:cloudfront::*:distribution/E372ZR95FXKVT5",
+          "arn:aws:cloudfront::*:distribution/E30Z8D5XMDR1A9",
+        ]
       },
     ]
   })
