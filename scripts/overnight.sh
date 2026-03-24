@@ -511,6 +511,7 @@ print(fixes[idx].get('repo', '') if idx < len(fixes) else '')
     # Launch one background job per repo (sequential within each repo)
     for _group_repo in "${!FIX_REPO_GROUPS[@]}"; do
       (
+        set +e  # Disable errexit in subshell — errors handled per-item
         for fix_idx in ${FIX_REPO_GROUPS[$_group_repo]}; do
 
           # Extract fix details via Python (safe JSON handling)
@@ -723,6 +724,7 @@ print(features[idx].get('repo', '') if idx < len(features) else '')
     # Launch one background job per repo
     for _group_repo in "${!FEAT_REPO_GROUPS[@]}"; do
       (
+        set +e  # Disable errexit in subshell — errors handled per-item
         for feat_idx in ${FEAT_REPO_GROUPS[$_group_repo]}; do
 
           # Extract feature JSON
