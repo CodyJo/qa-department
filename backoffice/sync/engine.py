@@ -179,7 +179,7 @@ class SyncEngine:
 
         # CDN invalidation
         if target.distribution_id:
-            paths = [f"/{m['remote_key']}" for m in file_mappings]
+            paths = self._invalidation_paths(prefix)
             if paths:
                 self.cdn.invalidate(target.distribution_id, paths)
 
@@ -303,3 +303,16 @@ class SyncEngine:
             remote_prefix=remote_prefix,
             delete=True,
         )
+
+    def _invalidation_paths(self, prefix: str) -> list[str]:
+        """Collapse sync invalidations to a bounded wildcard set.
+
+        CloudFront charges per invalidated path. Invalidating every uploaded
+        object scales linearly with dashboard size and quickly becomes
+        expensive under frequent syncs. A single wildcard per target keeps
+        the cost flat while still clearing the dashboard namespace.
+        """
+        normalized = prefix.rstrip("/")
+        if not normalized:
+            return ["/*"]
+        return [f"/{normalized}/*"]

@@ -95,6 +95,7 @@ def test_admin_target_uploads_files(dashboard_dir, results_dir):
     target = DashboardTarget(
         bucket="admin-bucket",
         subdomain="admin.example.com",
+        distribution_id="EADMIN123",
         filter_repo=None,
     )
     storage = MemoryStorage()
@@ -115,6 +116,7 @@ def test_admin_target_uploads_files(dashboard_dir, results_dir):
     assert any("org-data.json" in k for k in keys)
     # Should include job status
     assert any(".jobs.json" in k for k in keys)
+    assert cdn.invalidations == [{"dist": "EADMIN123", "paths": ["/*"]}]
 
 
 def test_per_repo_target_uses_findings(dashboard_dir, results_dir):
@@ -164,6 +166,7 @@ def test_base_path_prefix(dashboard_dir, results_dir):
         bucket="www-bucket",
         subdomain="admin.example.com",
         base_path="back-office/dashboard",
+        distribution_id="EDASH123",
         filter_repo=None,
     )
     storage = MemoryStorage()
@@ -177,3 +180,7 @@ def test_base_path_prefix(dashboard_dir, results_dir):
     keys = [u["remote_key"] for u in storage.uploads if "remote_key" in u]
     # All keys should be prefixed
     assert all(k.startswith("back-office/dashboard/") for k in keys)
+    assert cdn.invalidations == [{
+        "dist": "EDASH123",
+        "paths": ["/back-office/dashboard/*"],
+    }]

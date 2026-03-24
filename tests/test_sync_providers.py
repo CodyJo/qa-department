@@ -1,6 +1,7 @@
 """Tests for backoffice.sync.providers."""
 import pytest
 
+from backoffice.sync.providers.aws import _normalize_invalidation_paths
 from backoffice.sync.providers.base import CDNProvider, StorageProvider
 
 
@@ -48,3 +49,25 @@ def test_fake_cdn_satisfies_interface():
     c = FakeCDN()
     c.invalidate("EXXXXX", ["/index.html"])
     assert len(c.invalidations) == 1
+
+
+def test_normalize_invalidation_paths_keeps_single_path():
+    assert _normalize_invalidation_paths(["/back-office/dashboard/*"]) == [
+        "/back-office/dashboard/*"
+    ]
+
+
+def test_normalize_invalidation_paths_collapses_root_file_batch():
+    assert _normalize_invalidation_paths([
+        "/index.html",
+        "/qa-data.json",
+        "/org-data.json",
+    ]) == ["/*"]
+
+
+def test_normalize_invalidation_paths_collapses_prefixed_file_batch():
+    assert _normalize_invalidation_paths([
+        "/back-office/dashboard/index.html",
+        "/back-office/dashboard/qa-data.json",
+        "/back-office/dashboard/backlog.json",
+    ]) == ["/back-office/dashboard/*"]

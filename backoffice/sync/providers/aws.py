@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import logging
 import time
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from backoffice.sync.providers.base import CDNProvider, StorageProvider
 
@@ -74,17 +74,75 @@ class AWSCloudFront(CDNProvider):
     def invalidate(self, distribution_id: str, paths: list[str]) -> None:
         if not distribution_id or not paths:
             return
+        normalized_paths = _normalize_invalidation_paths(paths)
         import time as _time
         caller_ref = str(int(_time.time() * 1000))
         try:
             self._cf.create_invalidation(
                 DistributionId=distribution_id,
                 InvalidationBatch={
-                    "Paths": {"Quantity": len(paths), "Items": paths},
+                    "Paths": {
+                        "Quantity": len(normalized_paths),
+                        "Items": normalized_paths,
+                    },
                     "CallerReference": caller_ref,
                 },
             )
-            logger.info("Invalidated %d paths on %s", len(paths), distribution_id)
+            logger.info("Invalidated %d paths on %s", len(normalized_paths), distribution_id)
         except Exception as exc:
             logger.warning("CloudFront invalidation failed for %s: %s",
                          distribution_id, exc)
+
+
+def _normalize_invalidation_paths(paths: list[str]) -> list[str]:
+    """Collapse expensive multi-path invalidations to a single wildcard.
+
+    CloudFront charges per invalidated path. Back Office only needs a
+    namespace-level refresh, so any multi-path batch should be reduced to one
+    wildcard before it reaches AWS.
+    """
+    cleaned = []
+    for path in paths:
+        if not path:
+            continue
+        normalized = path if path.startswith("/") else f"/{path}"
+        cleaned.append(normalized)
+
+    if not cleaned:
+        return []
+
+    unique_paths = sorted(set(cleaned))
+    if len(unique_paths) == 1:
+        return unique_paths
+
+    directory_parts = []
+    for path in unique_paths:
+        if path == "/*":
+            continue
+        parts = PurePosixPath(path).parts[1:-1]
+        directory_parts.append(parts)
+
+    if not directory_parts:
+        return ["/*"]
+
+    shared_parts = list(directory_parts[0])
+    for parts in directory_parts[1:]:
+        limit = min(len(shared_parts), len(parts))
+        index = 0
+        while index < limit and shared_parts[index] == parts[index]:
+            index += 1
+        shared_parts = shared_parts[:index]
+        if not shared_parts:
+            break
+
+    if not shared_parts:
+        collapsed = "/*"
+    else:
+        collapsed = f"/{'/'.join(shared_parts)}/*"
+
+    logger.warning(
+        "Collapsing %d CloudFront invalidation paths to %s to avoid per-path charges",
+        len(unique_paths),
+        collapsed,
+    )
+    return [collapsed]
