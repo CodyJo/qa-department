@@ -96,6 +96,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+    effective_argv = list(argv) if argv is not None else sys.argv[1:]
 
     setup_logging(verbose=args.verbose, json_output=args.json_log)
 
@@ -131,7 +132,18 @@ def main(argv: list[str] | None = None) -> int:
     if args.command in ("audit", "audit-all", "list-targets", "refresh"):
         try:
             from backoffice.workflow import main as workflow_main
-            return workflow_main(sys.argv[1:])
+            workflow_argv = effective_argv
+            if args.command == "audit":
+                workflow_argv = ["run-target", "--target", args.target]
+                if args.departments:
+                    workflow_argv += ["--departments", args.departments]
+            elif args.command == "audit-all":
+                workflow_argv = ["run-all"]
+                if args.targets:
+                    workflow_argv += ["--targets", args.targets]
+                if args.departments:
+                    workflow_argv += ["--departments", args.departments]
+            return workflow_main(workflow_argv)
         except ImportError:
             print(f"Workflow module not yet implemented ({args.command})", file=sys.stderr)
             return 1

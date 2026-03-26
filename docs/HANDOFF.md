@@ -8,6 +8,17 @@ Back Office is centered on a human-centered approval model. The immediate produc
 
 ## Completed
 
+- Fixed the top-level CLI bridge so `python3 -m backoffice audit` and `python3 -m backoffice audit-all` correctly translate to the workflow module’s `run-target` and `run-all` commands.
+- Added regression coverage in `tests/test_main.py` for the `audit-all -> run-all` dispatch.
+- Added a one-command safe local runner at `scripts/run-safe-local-backoffice.sh`:
+  - lists configured targets
+  - runs `python3 -m backoffice audit-all` locally against all configured targets or an explicit `--targets` subset
+  - refreshes dashboard artifacts locally
+  - starts `python3 -m backoffice serve`
+  - force-sets `BACK_OFFICE_ENABLE_REMOTE_SYNC=0`, `BACK_OFFICE_ENABLE_AUTOFIX=0`, and `BACK_OFFICE_ENABLE_UNATTENDED=0`
+- Verified the wrapper script syntax with:
+  - `bash -n scripts/run-safe-local-backoffice.sh`
+  - `python3 -m pytest tests/test_main.py tests/test_sync_engine.py tests/test_servers.py tests/test_tasks.py tests/test_backlog.py`
 - Added local safety defaults so Back Office can be used against `~/projects` without accidental CloudFront cost or unattended execution:
   - `backoffice.sync.engine` now blocks remote publish by default unless `BACK_OFFICE_ENABLE_REMOTE_SYNC=1` is set, while still allowing CI/CodeBuild delivery paths
   - `backoffice.server` now blocks overnight start from the local dashboard unless `BACK_OFFICE_ENABLE_UNATTENDED=1` is set
@@ -99,6 +110,7 @@ Back Office is centered on a human-centered approval model. The immediate produc
 
 ## Pending
 
+- Decide whether to commit and push the new helper wrapper `scripts/run-safe-local-backoffice.sh`.
 - Decide whether to commit and push the local safety default changes. At the moment they are implemented and tested locally but not yet committed.
 - Decide whether to bring the code in line with the approval-first docs or soften the docs to match reality. The current gap is specifically around:
   - `Makefile` targets: `watch`, `scan-and-fix`, `full-scan`, and all `overnight*` targets
