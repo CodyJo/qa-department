@@ -1,139 +1,183 @@
 # Back Office CI/CD Reference
 
-This is the current delivery model for Back Office and the workflow standard it scaffolds into product repos.
+Back Office uses CI/CD to validate the control plane and publish dashboard assets, but the human decision model continues through GitHub review and queue approval.
 
-## Back Office Workflow Set
+This document explains how delivery works and how it supports the broader operator story.
 
-Back Office currently ships four workflow classes:
+---
 
-- `ci.yml`
-- `preview.yml`
-- `deploy.yml`
-- `nightly-backoffice.yml`
+## Table of Contents
 
-## Back Office CI/CD Flow
+- [Delivery Principles](#delivery-principles)
+- [Back Office Delivery Flow](#back-office-delivery-flow)
+- [GitHub Review Relationship](#github-review-relationship)
+- [Pipeline Roles](#pipeline-roles)
+  - [CI](#ci)
+  - [CD](#cd)
+- [Dashboard Publish Path](#dashboard-publish-path)
+- [Approval Queue Relationship To CI/CD](#approval-queue-relationship-to-cicd)
+- [Guardrails](#guardrails)
+- [Relevant Files](#relevant-files)
+
+---
+
+## Delivery Principles
+
+Back Office delivery follows four rules:
+
+1. **validate before publish**
+2. **publish bounded assets safely**
+3. **keep GitHub review as a formal boundary**
+4. **avoid hidden operational cost**
+
+CI/CD is therefore not the whole operating model. It is one part of a larger control plane that also includes the dashboard, the approval queue, and GitHub PR review.
+
+---
+
+## Back Office Delivery Flow
+
+```mermaid
+flowchart LR
+    A[Repo Change] --> B[Pull Request]
+    B --> C[CI Validation]
+    C --> D[GitHub Review]
+    D --> E[Merge to main]
+    E --> F[CD Validation]
+    F --> G[Dashboard Publish]
+    G --> H[S3]
+    G --> I[CloudFront]
+```
+
+This gives two distinct protections:
+
+- code must pass validation
+- merged changes still publish through a bounded delivery path
+
+---
+
+## GitHub Review Relationship
+
+Back Office can create draft PRs from approved queue items, but GitHub remains the formal review system.
 
 ```mermaid
 flowchart TD
-    PR[Pull request or non-main push] --> CI[ci.yml]
-    PR --> PREVIEW[preview.yml]
-    MAIN[Push to main] --> VALIDATE[deploy.yml :: validate]
-    VALIDATE --> DEPLOY[deploy.yml :: deploy]
-    SCHEDULE[Cron or manual dispatch] --> NIGHTLY[nightly-backoffice.yml]
-    NIGHTLY --> CI
+    A[Queue Item Approved] --> B[Implementation Branch]
+    B --> C[Draft PR Created]
+    C --> D[GitHub Review]
+    D --> E[Merge]
+    E --> F[CI/CD Continues]
 ```
 
-## What Each Workflow Does
+This is important for the product message:
 
-### `ci.yml`
+- the dashboard provides control and visibility
+- GitHub provides the canonical review and merge workflow
 
-Purpose: validate Back Office changes before they reach production.
+That separation helps the platform present well to technically mature teams because it augments established engineering controls instead of replacing them.
 
-Current gates:
+---
 
-- shell syntax validation
-- Python bytecode validation
-- Ruff lint
-- Back Office regression suite via `make test`
+## Pipeline Roles
 
-### `preview.yml`
+### CI
 
-Purpose: build a review artifact for PRs.
+CI exists to validate changes before they are merged.
 
-Current behavior:
+Expected responsibilities:
 
-- checks out the repo
-- installs Python tooling
-- generates current dashboard artifacts
-- uploads the dashboard directory as a GitHub artifact
+- shell validation
+- Python validation
+- linting
+- pytest regression coverage
+- confidence that control-plane changes did not break queueing, dashboard data, or sync behavior
 
-### `deploy.yml`
+### CD
 
-Purpose: publish dashboard assets to production.
+CD exists to publish dashboard assets after merge.
 
-Current behavior:
+Expected responsibilities:
 
-1. Run the same validation gates as CI.
-2. Configure AWS credentials from GitHub OIDC.
-3. Run `bash scripts/sync-dashboard.sh`.
+- rerun essential validation
+- publish dashboard content
+- invalidate CloudFront safely
+- fail closed if publish behavior becomes unexpectedly broad
 
-That means deploys are gated by:
+---
 
-- shell syntax
-- Python syntax
-- lint
-- Back Office regression tests
-
-And production publishes now include:
-
-- the docs hub and reference pages
-- the metrics dashboard at `metrics.html`
-
-### `nightly-backoffice.yml`
-
-Purpose: refresh delivery metadata and nightly dashboard artifacts.
-
-Current behavior:
-
-1. Reuse the CI workflow.
-2. Run `python3 scripts/generate-delivery-data.py`.
-3. Upload nightly dashboard artifacts.
-
-## Product Repo Standard
-
-Back Office scaffolds four workflow types into product repos:
+## Dashboard Publish Path
 
 ```mermaid
 flowchart TD
-    A[Back Office template] --> B[Product CI]
-    A --> C[Product Preview]
-    A --> D[Product CD]
-    A --> E[Product Nightly]
-    B --> F[Lint/Test/Build]
-    C --> G[Preview artifact or staging validation]
-    D --> H[Protected production deploy]
-    E --> I[Nightly maintenance or release-readiness checks]
+    A[dashboard/index.html] --> P[Publish Set]
+    B[dashboard/*-data.json] --> P
+    C[dashboard/backlog.json] --> P
+    D[dashboard/task-queue.json] --> P
+    E[dashboard/score-history.json] --> P
+    P --> F[backoffice.sync]
+    F --> G[S3 Upload]
+    G --> H[CloudFront Invalidation]
 ```
 
-## Required Guardrails
+Publishing includes:
 
-Every product repo should keep these guardrails:
+- the main dashboard HTML
+- department payloads
+- backlog payload
+- task queue payload
+- trend and support artifacts
 
-- CI on pull requests and non-main pushes
-- preview validation before merge
-- production deploy only from `main`
-- smoke testing after deploy
-- nightly automation for release-readiness or maintenance
-- protected production environments where appropriate
+This matters because the dashboard is not static marketing content. It is a live operating surface whose data must stay coherent with queue and audit state.
 
-## Back Office Reporting Expectations
+---
 
-Back Office should be able to report for each target:
+## Approval Queue Relationship To CI/CD
 
-- whether CI exists
-- whether preview exists
-- whether production deploy exists
-- whether nightly exists
-- whether lint/test/build/coverage are configured in `config/targets.yaml`
-- latest portfolio regression status and best-effort coverage where available
+CI/CD and the approval queue solve different parts of the system.
 
-## Security Notes
+```mermaid
+flowchart LR
+    A[Audit Finding] --> B[Approval Queue]
+    B --> C[Implementation]
+    C --> D[Draft PR]
+    D --> E[GitHub Review]
+    E --> F[Merge]
+    F --> G[CI]
+    G --> H[CD]
+```
 
-Current production posture for Back Office dashboard publishing:
+The queue governs *whether* work is approved to move.
 
-- `admin.*` domains are the intended dashboard surfaces
-- public non-admin targets are skipped unless `allow_public_read: true` is explicitly set
-- `deploy.yml` validates before publish
+CI/CD governs *whether* merged code is valid and publishable.
 
-## Related Files
+That distinction keeps the system easy to reason about:
 
-- `.github/workflows/ci.yml`
-- `.github/workflows/preview.yml`
-- `.github/workflows/deploy.yml`
-- `.github/workflows/nightly-backoffice.yml`
-- `dashboard/metrics.html`
-- `dashboard/regression.html`
-- `templates/github-actions/product-ci.yml`
-- `templates/github-actions/product-preview.yml`
-- `templates/github-actions/product-cd.yml`
-- `templates/github-actions/nightly-backoffice.yml`
+- the dashboard is the control plane for prioritization and approval
+- GitHub is the review plane for code changes
+- CI/CD is the validation and publish plane
+
+---
+
+## Guardrails
+
+Important delivery guardrails:
+
+- dashboard publishing is centralized through sync helpers
+- CloudFront invalidation is bounded, not path-explosive
+- delivery roles are scoped
+- merge to `main` remains the trigger for production-oriented publish behavior
+- draft PR creation does not bypass GitHub approval
+
+Cost and infrastructure guardrails are documented separately in [docs/COST_GUARDRAILS.md](./COST_GUARDRAILS.md).
+
+---
+
+## Relevant Files
+
+- `buildspec-ci.yml`
+- `buildspec-cd.yml`
+- `backoffice/sync/engine.py`
+- `backoffice/sync/providers/aws.py`
+- `dashboard/index.html`
+- `dashboard/task-queue.json`
+- `docs/COST_GUARDRAILS.md`
+
