@@ -8,6 +8,14 @@ Back Office is centered on a human-centered approval model. The immediate produc
 
 ## Completed
 
+- Audited the dirty Back Office worktree and separated it into:
+  - a coherent approval-workflow feature (`backoffice/tasks.py`, `backoffice/server.py`, `dashboard/index.html`, `tests/test_tasks.py`, `tests/test_servers.py`)
+  - a coherent portfolio tooling set (`scripts/sync_shared_packages.py`, `tests/test_sync_shared_packages.py`, `scripts/portfolio_drift_audit.py`, `docs/portfolio-engineering-standard.md`)
+  - generated or scratch artifacts that should not be blindly committed (`coverage.json`, `coverage.xml`, `lint-check.json`, `lint-output.json`, `pytest-output.txt`, `ruff-output.json`, one-off audit plans)
+- Re-verified the approval workflow changes after the doc refresh with:
+  - `python3 -m pytest tests/test_tasks.py tests/test_servers.py tests/test_backlog.py`
+- Verified the shared package sync utility with:
+  - `python3 -m pytest tests/test_sync_shared_packages.py`
 - Refreshed the GitHub-facing documentation to present Back Office as a visibility-first, approval-driven control plane:
   - rewrote `README.md` around dashboard observability, approval queue behavior, GitHub review, and operator control
   - rewrote `docs/WORKFLOW-ARCHITECTURE.md` with deeper architecture detail and multiple diagrams for findings, backlog, queue, and delivery flow
@@ -71,7 +79,14 @@ Back Office is centered on a human-centered approval model. The immediate produc
 
 ## Pending
 
-- Review the existing dirty worktree files before bundling Back Office changes into any future commit. This repo already contains pre-existing modified and untracked files outside this change.
+- Generated and scratch files are still present locally and should stay out of normal pushes unless there is an explicit archival reason:
+  - `coverage.json`, `coverage.xml`, `lint-check.json`, `lint-output.json`, `pytest-output.txt`, `ruff-output.json`
+  - `2026-03-23-compliance-audit-plan.md`
+  - `AUDIT_PLAN-analogify.md`
+  - `docs/superpowers/plans/2026-03-23-fuel-monetization-audit.md`
+  - `docs/superpowers/plans/2026-03-24-monetization-audit-tnbm.md`
+  - `generate-codyjo-monetization.js`
+  - `docs/email/` if you do not want cross-repo implementation notes living in Back Office
 - Decide whether to remove the remaining legacy automation codepaths entirely or keep them as internal-only compatibility surfaces. The primary dashboard UX and GitHub docs now center on approval-driven operation.
 - Browser-verify the new approval queue interactions in `dashboard/index.html`. The Python test suite passed, but the new UI flow was not exercised in a live browser in this pass.
 - If draft PR creation will be used heavily, add a targeted server test for the `gh pr create` success/failure path with subprocess mocking.
