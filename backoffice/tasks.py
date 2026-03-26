@@ -331,7 +331,7 @@ def find_task(tasks: list[dict], task_id: str) -> dict:
     for task in tasks:
         if task.get("id") == task_id:
             return task
-    raise SystemExit(f"Unknown task id: {task_id}")
+    raise ValueError(f"Unknown task id: {task_id}")
 
 
 def append_history(task: dict, status: str, actor: str, note: str) -> None:
@@ -705,7 +705,10 @@ def main(argv: list[str] | None = None) -> int:
         "cancel": command_cancel,
         "seed-etheos": command_seed_etheos,
     }
-    return handlers[args.command](args)
+    try:
+        return handlers[args.command](args)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
 
 
 if __name__ == "__main__":

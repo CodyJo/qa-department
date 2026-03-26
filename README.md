@@ -660,6 +660,7 @@ Core documentation:
 - [Workflow Architecture](docs/WORKFLOW-ARCHITECTURE.md)
 - [CI/CD Reference](docs/CICD-REFERENCE.md)
 - [Cost Guardrails](docs/COST_GUARDRAILS.md)
+- [Compliance Controls](docs/COMPLIANCE-CONTROLS.md)
 - [Live URLs](docs/LIVE-URLS.md)
 
 [Back to top](#table-of-contents)

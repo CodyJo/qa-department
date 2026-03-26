@@ -44,3 +44,21 @@ variable "cloudfront_anomaly_threshold_usd" {
   type        = number
   default     = 20
 }
+
+variable "environment" {
+  description = "Environment tag applied to managed resources"
+  type        = string
+  default     = "production"
+}
+
+variable "owner" {
+  description = "Owner tag applied to managed resources"
+  type        = string
+  default     = "platform"
+}
+
+variable "cost_center" {
+  description = "CostCenter tag applied to managed resources"
+  type        = string
+  default     = "shared-operations"
+}

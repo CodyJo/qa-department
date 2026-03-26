@@ -510,8 +510,8 @@ class TestFindTask:
         result = find_task(tasks, "r:t:2")
         assert result["title"] == "B"
 
-    def test_missing_task_raises_system_exit(self):
-        with pytest.raises(SystemExit, match="Unknown task id"):
+    def test_missing_task_raises_value_error(self):
+        with pytest.raises(ValueError, match="Unknown task id"):
             find_task([], "nonexistent")
 
 

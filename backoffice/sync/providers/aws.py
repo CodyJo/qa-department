@@ -42,6 +42,7 @@ class AWSStorage(StorageProvider):
                 ExtraArgs={
                     "ContentType": content_type,
                     "CacheControl": cache_control,
+                    "ServerSideEncryption": "AES256",
                 },
             )
         _retry(_do_upload)
@@ -61,7 +62,7 @@ class AWSStorage(StorageProvider):
         cmd = ["aws", "s3", "sync", local_dir, s3_uri]
         if delete:
             cmd.append("--delete")
-        cmd.extend(["--cache-control", "no-cache, no-store, must-revalidate"])
+        cmd.extend(["--cache-control", "no-cache, no-store, must-revalidate", "--sse", "AES256"])
         logger.info("Syncing %s -> %s", local_dir, s3_uri)
         subprocess.run(cmd, check=True)
 

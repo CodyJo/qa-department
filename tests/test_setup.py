@@ -56,7 +56,7 @@ def _make_args(**kwargs) -> argparse.Namespace:
 def test_known_runners_contains_expected_values():
     assert "claude" in KNOWN_RUNNERS
     assert "codex" in KNOWN_RUNNERS
-    assert "aider" in KNOWN_RUNNERS
+    assert "aider" not in KNOWN_RUNNERS
 
 
 def test_agent_usage_keys_are_shell_scripts():
@@ -72,6 +72,7 @@ def test_agent_usage_has_expected_entries():
         "compliance-audit.sh",
         "monetization-audit.sh",
         "product-audit.sh",
+        "cloud-ops-audit.sh",
         "fix-bugs.sh",
         "watch.sh",
     }
@@ -161,7 +162,7 @@ def test_detect_runner_status_env_overrides_file(monkeypatch, tmp_path):
     cfg = tmp_path / "backoffice.yaml"
     cfg.write_text(textwrap.dedent("""\
         runner:
-          command: "aider"
+          command: "codex"
           mode: "stdin-text"
     """))
     monkeypatch.setattr(setup_mod, "RUNNER_CONFIG", cfg)
@@ -178,7 +179,7 @@ def test_detect_runner_status_falls_back_to_file(monkeypatch, tmp_path):
     cfg = tmp_path / "backoffice.yaml"
     cfg.write_text(textwrap.dedent("""\
         runner:
-          command: "aider --model gpt4"
+          command: "codex --profile default"
           mode: "stdin-text"
     """))
     monkeypatch.setattr(setup_mod, "RUNNER_CONFIG", cfg)
@@ -186,9 +187,9 @@ def test_detect_runner_status_falls_back_to_file(monkeypatch, tmp_path):
     monkeypatch.delenv("BACK_OFFICE_AGENT_MODE", raising=False)
 
     runner_cmd, runner_mode, _available, file_values = detect_runner_status()
-    assert runner_cmd == "aider --model gpt4"
+    assert runner_cmd == "codex --profile default"
     assert runner_mode == "stdin-text"
-    assert file_values["BACK_OFFICE_AGENT_RUNNER"] == "aider --model gpt4"
+    assert file_values["BACK_OFFICE_AGENT_RUNNER"] == "codex --profile default"
 
 
 def test_detect_runner_status_defaults_when_no_config(monkeypatch):
@@ -429,10 +430,10 @@ def test_persist_runner_config_explicit_mode(monkeypatch, tmp_path):
     monkeypatch.setattr(setup_mod, "ROOT", tmp_path)
     monkeypatch.setattr(shutil, "which", lambda name: f"/usr/bin/{name}")
 
-    persist_runner_config("aider", "aider --model gpt4", "custom-mode")
+    persist_runner_config("codex", "codex --profile default", "custom-mode")
 
     raw = yaml.safe_load(cfg_path.read_text()) or {}
-    assert raw["runner"]["command"] == "aider --model gpt4"
+    assert raw["runner"]["command"] == "codex --profile default"
     assert raw["runner"]["mode"] == "custom-mode"
 
 

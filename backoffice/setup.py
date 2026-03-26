@@ -27,7 +27,7 @@ PROMPTS_DIR = AGENTS_DIR / "prompts"
 SCRIPTS_DIR = ROOT / "scripts"
 RESULTS_DIR = ROOT / "results"
 
-KNOWN_RUNNERS = ("claude", "codex", "aider")
+KNOWN_RUNNERS = ("claude", "codex")
 AGENT_USAGE = {
     "qa-scan.sh": "Quality and regression scanning for one configured target repo.",
     "seo-audit.sh": "Search, metadata, AI discoverability, and content structure review.",
@@ -35,6 +35,7 @@ AGENT_USAGE = {
     "compliance-audit.sh": "Compliance, policy, and operational risk review.",
     "monetization-audit.sh": "Revenue, conversion, pricing, and offer review.",
     "product-audit.sh": "Product gaps, roadmap, UX, and readiness review.",
+    "cloud-ops-audit.sh": "Infrastructure, delivery safety, and cloud cost/risk review.",
     "fix-bugs.sh": "Remediation lane for findings that are safe to patch automatically.",
     "watch.sh": "Watch mode that reruns scans and optional fixes over time.",
 }

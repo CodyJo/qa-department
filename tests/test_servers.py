@@ -519,6 +519,12 @@ class TestApprovalQueueEndpoints:
         assert status == 200
         assert data["task"]["status"] == "ready"
 
+    def test_approve_unknown_task_returns_404(self, live_server) -> None:
+        host, port = live_server
+        status, data = self._post(host, port, "/api/tasks/approve", {"id": "missing-task"})
+        assert status == 404
+        assert "Unknown task id" in data["error"]
+
     def test_product_suggestion_enters_queue(self, live_server) -> None:
         host, port = live_server
         status, data = self._post(host, port, "/api/ops/product/suggest", {
@@ -530,6 +536,57 @@ class TestApprovalQueueEndpoints:
         assert status == 200
         assert data["task"]["task_type"] == "product_suggestion"
         assert data["task"]["status"] == "pending_approval"
+
+
+class TestProductAddValidation:
+    def _post(self, host, port, path, payload):
+        body = json.dumps(payload).encode()
+        headers = {
+            "Content-Type": "application/json",
+            "Content-Length": str(len(body)),
+        }
+        conn = HTTPConnection(host, port, timeout=5)
+        conn.request("POST", path, body=body, headers=headers)
+        resp = conn.getresponse()
+        data = json.loads(resp.read().decode())
+        return resp.status, data
+
+    def test_product_add_rejects_path_outside_projects(self, live_server) -> None:
+        host, port = live_server
+        status, data = self._post(host, port, "/api/ops/product/add", {
+            "name": "bad-product",
+            "source": "local",
+            "local_path": "/etc",
+        })
+        assert status == 400
+        assert "outside approved project roots" in data["error"]
+
+    def test_product_add_rejects_invalid_github_repo(self, live_server) -> None:
+        host, port = live_server
+        status, data = self._post(host, port, "/api/ops/product/add", {
+            "name": "bad-repo",
+            "source": "github",
+            "github_repo": "../evil/repo",
+        })
+        assert status == 400
+        assert "owner/repo" in data["error"] or "invalid" in data["error"]
+
+    def test_product_add_writes_yaml_safely(self, live_server, tmp_root: Path) -> None:
+        host, port = live_server
+        safe_path = str(tmp_root / "projects" / "demo")
+        (tmp_root / "projects" / "demo").mkdir(parents=True)
+        status, data = self._post(host, port, "/api/ops/product/add", {
+            "name": "demo: injected",
+            "source": "local",
+            "local_path": safe_path,
+            "departments": ["qa"],
+            "autonomy": {"allow_fix": True},
+        })
+        assert status == 200
+        config_payload = json.loads(json.dumps(__import__("yaml").safe_load((tmp_root / "config" / "backoffice.yaml").read_text())))
+        assert "targets" in config_payload
+        assert "demo: injected" in config_payload["targets"]
+        assert "autonomy" in config_payload["targets"]["demo: injected"]
 
 
 class TestLocalSafetyGuards:
@@ -553,6 +610,28 @@ class TestLocalSafetyGuards:
         status, data = self._post(host, port, "/api/ops/overnight/start", {"interval": 60})
         assert status == 403
         assert "disabled by default" in data["error"]
+
+    def test_request_pr_rejects_target_path_outside_projects(self, live_server, tmp_root: Path) -> None:
+        queue_file = tmp_root / "config" / "task-queue.yaml"
+        queue_file.write_text(
+            "version: 1\n"
+            "tasks:\n"
+            "  - id: test-task\n"
+            "    repo: fuel\n"
+            "    title: Test task\n"
+            "    status: ready_for_review\n"
+            "    target_path: /etc\n"
+        )
+        host, port = live_server
+        status, data = self._post(host, port, "/api/tasks/request-pr", {"id": "test-task"})
+        assert status == 400
+        assert "outside approved roots" in data["error"]
+
+    def test_request_pr_unknown_task_returns_404(self, live_server) -> None:
+        host, port = live_server
+        status, data = self._post(host, port, "/api/tasks/request-pr", {"id": "missing-task"})
+        assert status == 404
+        assert "Unknown task id" in data["error"]
 
 
 class TestRunRegressionEndpoint:
@@ -991,5 +1070,5 @@ class TestAPIModuleConstants:
         assert set(API_DEPT_SCRIPTS.keys()) == set(API_ALL_DEPTS)
 
     def test_expected_departments_present(self) -> None:
-        for dept in ("qa", "seo", "ada", "compliance", "monetization", "product"):
+        for dept in ("qa", "seo", "ada", "compliance", "monetization", "product", "cloud-ops"):
             assert dept in API_DEPT_SCRIPTS

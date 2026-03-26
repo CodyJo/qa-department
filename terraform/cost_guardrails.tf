@@ -66,7 +66,8 @@ resource "aws_ce_anomaly_monitor" "cloudfront" {
 }
 
 resource "aws_sns_topic" "billing_alerts" {
-  name = "${var.project_name}-billing-alerts"
+  name              = "${var.project_name}-billing-alerts"
+  kms_master_key_id = "alias/aws/sns"
 }
 
 resource "aws_sns_topic_subscription" "billing_email" {

@@ -8,6 +8,55 @@ Back Office is centered on a human-centered approval model. The immediate produc
 
 ## Completed
 
+- Closed the product-audit issues that were directly supported by code:
+  - `backoffice.tasks.find_task()` now raises `ValueError` instead of `SystemExit`, and the local task CLI converts that back into a clean CLI exit message
+  - `backoffice.server` now returns HTTP `404` for unknown task ids on approve, cancel, PR request, and product approval paths instead of letting task lookup abort the handler
+  - `backoffice.api_server` now registers `cloud-ops` alongside the other production API departments
+  - `backoffice.setup` no longer advertises `aider` as a supported runner because there is no implemented aider backend in the codebase today
+  - `backoffice.setup.AGENT_USAGE` now includes `cloud-ops-audit.sh`
+- Declared the missing package metadata surfaced by the product audit:
+  - added runtime dependency `boto3` in `pyproject.toml`
+  - added optional `dev` dependencies for `pytest` and `ruff`
+- Closed the low-effort Cloud Ops items that matched the current Terraform:
+  - `terraform/cost_guardrails.tf` now enables SNS topic encryption with `kms_master_key_id = "alias/aws/sns"`
+  - `terraform/main.tf` and `terraform/variables.tf` now apply explicit `Owner`, `Environment`, and `CostCenter` default tags
+- Verified the March 25 product/cloud-ops fixes with:
+  - `python3 -m pytest tests/test_tasks.py tests/test_servers.py tests/test_setup.py tests/test_sync_providers.py`
+  - `ruff check backoffice/tasks.py backoffice/server.py backoffice/api_server.py backoffice/setup.py backoffice/sync/providers/aws.py tests/test_tasks.py tests/test_servers.py tests/test_setup.py tests/test_sync_providers.py`
+  - `terraform -chdir=terraform validate`
+- Confirmed two cloud audit claims were stale versus the current Terraform:
+  - `terraform/codebuild.tf` already scopes S3 deploy permissions to `PutObject`, `GetObject`, `DeleteObject`, and `ListBucket`
+  - `terraform/codebuild.tf` already scopes CloudFront invalidation permissions to the two explicit dashboard distributions instead of `resources = ["*"]`
+- Flipped the remaining vendored app manifests (`fuel`, `certstudy`, `selah`, `thenewbeautifulme`, `pattern`) to consume `@codyjo/*` from `/home/merm/projects/shared/packages`, and updated the CodeBuild-backed repos to bootstrap `../shared/packages` from their vendored mirrors before `npm ci`.
+- Refreshed vendored mirrors with `scripts/sync_shared_packages.py`, reran `scripts/portfolio_drift_audit.py`, and reduced the shared-package-source backlog to only `continuum`'s repo-local `packages/` copies.
+- Fixed the dashboard’s critical ADA skip-navigation issue in `dashboard/index.html`:
+  - added a visible-on-focus skip link
+  - wrapped primary dashboard content in `<main id="main-content">`
+- Closed the compliance critical about explicit S3 encryption in `backoffice/sync/providers/aws.py`:
+  - direct S3 uploads now set `ServerSideEncryption: AES256`
+  - `aws s3 sync` now passes `--sse AES256`
+- Added regression coverage in `tests/test_sync_providers.py` for both encrypted upload modes.
+- Added `docs/COMPLIANCE-CONTROLS.md` to document:
+  - local retention policy for findings and dashboard artifacts
+  - privacy/transparency expectations for Back Office operators
+  - storage and secret-handling controls
+- Linked the new compliance controls doc from `README.md`.
+- Verified the ADA/compliance changes with:
+  - `python3 -m pytest tests/test_sync_providers.py tests/test_servers.py`
+  - `ruff check backoffice/sync/providers/aws.py tests/test_sync_providers.py backoffice/server.py tests/test_servers.py`
+- Closed the March 25 QA security findings in the product-add / PR-request path of `backoffice/server.py`:
+  - local repo paths are now validated against approved roots instead of trusting arbitrary `local_path` or `target_path`
+  - `github_repo` must now match `owner/repo` format before clone attempts
+  - product config writes now use parsed YAML + `yaml.safe_dump` instead of interpolating user input directly into YAML text
+  - empty `targets:` sections are normalized safely before writes
+- Added regression coverage in `tests/test_servers.py` for:
+  - rejecting product add paths outside approved roots
+  - rejecting malformed `github_repo` values
+  - YAML-safe product config writes
+  - rejecting PR requests whose `target_path` falls outside approved roots
+- Verified the server hardening changes with:
+  - `python3 -m pytest tests/test_servers.py -q`
+  - `ruff check backoffice/server.py tests/test_servers.py`
 - Updated the target registry in both `config/targets.yaml` and `config/backoffice.yaml` so the newer `~/projects` repos are visible to Back Office:
   - added/synced `continuum`, `pattern`, `pe-bootstrap`, and `shared`
   - backfilled `config/backoffice.yaml` with targets that already existed in `config/targets.yaml` but were missing from the unified runtime config (`selah`, `analogify`, `cordivent`, `fuel`, `certstudy`, `auth-service`)
@@ -117,8 +166,6 @@ Back Office is centered on a human-centered approval model. The immediate produc
 
 ## Pending
 
-- Decide whether to commit and push the new helper wrapper `scripts/run-safe-local-backoffice.sh`.
-- Decide whether to commit and push the local safety default changes. At the moment they are implemented and tested locally but not yet committed.
 - Decide whether to bring the code in line with the approval-first docs or soften the docs to match reality. The current gap is specifically around:
   - `Makefile` targets: `watch`, `scan-and-fix`, `full-scan`, and all `overnight*` targets
   - `backoffice/server.py` overnight start/stop/status endpoints
@@ -136,6 +183,10 @@ Back Office is centered on a human-centered approval model. The immediate produc
 - Browser-verify the new approval queue interactions in `dashboard/index.html`. The Python test suite passed, but the new UI flow was not exercised in a live browser in this pass.
 - If draft PR creation will be used heavily, add a targeted server test for the `gh pr create` success/failure path with subprocess mocking.
 - Consider refreshing secondary docs and generated dashboard documentation surfaces if you want the same approval-first story everywhere, not just in the core GitHub docs.
+- Decide whether to address the remaining medium cloud findings if those resources move into this repo:
+  - log retention for future Lambda/API log groups
+  - alarms for future auth/API functions
+  - runtime and memory tuning for future Lambda resources
 
 ## Key Decisions And Constraints
 
@@ -205,6 +256,7 @@ Back Office is centered on a human-centered approval model. The immediate produc
 
 ## 2026-03-25 Portfolio Standards Kickoff
 
+- Migrated `thenewbeautifulme` onto the same `@codyjo/app-config` / `@codyjo/app-shell` consumer pattern as Fuel, CertStudy, and Selah, then verified the app with the Plausible regression test, typecheck, and a full production build.
 - Added `scripts/sync_shared_packages.py` to copy source-of-truth shared packages into app-local vendor directories for repos that still require self-contained builds.
 - Added `/home/merm/projects/shared/packages/app-shell` with first-pass shared shell helpers for skip-link/main-content consistency and versioned onboarding state.
 - Added `docs/portfolio-engineering-standard.md` to define the portfolio baseline for shared packages, accessibility, testing, and shell conventions.

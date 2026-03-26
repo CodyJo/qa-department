@@ -16,6 +16,7 @@ import http.server
 import json
 import logging
 import os
+import re
 import subprocess
 import threading
 import time
@@ -23,6 +24,8 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
+
+import yaml
 
 logger = logging.getLogger(__name__)
 
@@ -117,6 +120,49 @@ def _local_unattended_allowed() -> bool:
     if os.environ.get("CI") or os.environ.get("CODEBUILD_BUILD_ID"):
         return True
     return os.environ.get("BACK_OFFICE_ENABLE_UNATTENDED", "").lower() in {"1", "true", "yes", "on"}
+
+
+def _approved_project_roots(root: Path | None = None) -> list[Path]:
+    repo_root = (root or _root).resolve()
+    return [
+        repo_root,
+        Path.home().joinpath("projects").resolve(),
+    ]
+
+
+def _is_within_root(candidate: Path, allowed_root: Path) -> bool:
+    try:
+        candidate.relative_to(allowed_root)
+        return True
+    except ValueError:
+        return False
+
+
+def _validate_local_repo_path(raw_path: str, *, root: Path | None = None) -> Path:
+    candidate = Path(raw_path).expanduser().resolve(strict=False)
+    for allowed_root in _approved_project_roots(root):
+        if _is_within_root(candidate, allowed_root):
+            return candidate
+    raise ValueError(f"path is outside approved project roots: {raw_path}")
+
+
+def _validate_github_repo(raw_repo: str) -> str:
+    repo = raw_repo.strip()
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repo):
+        raise ValueError("github_repo must be in owner/repo format")
+    if ".." in repo or repo.startswith((".", "/", "-")):
+        raise ValueError("github_repo contains invalid path characters")
+    return repo
+
+
+def _load_yaml_mapping(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    with open(path, encoding="utf-8") as handle:
+        payload = yaml.safe_load(handle) or {}
+    if not isinstance(payload, dict):
+        raise ValueError(f"config file is malformed: {path}")
+    return payload
 
 
 # ---------------------------------------------------------------------------
@@ -823,22 +869,28 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             departments = [d.strip() for d in departments.split(",") if d.strip()]
         autonomy: dict = body.get("autonomy") or {}
 
+        if source not in {"local", "github", "both"}:
+            raise ValueError("source must be one of: local, github, both")
+        if not all(dept in ALL_DEPTS for dept in departments):
+            raise ValueError("departments contains unsupported entries")
+
         if source in ("github", "both"):
             if not github_repo:
                 raise ValueError("github_repo is required when source is 'github' or 'both'")
+            github_repo = _validate_github_repo(github_repo)
             clone_dest = local_path or str(Path.home() / "projects" / name)
-            clone_dest_path = Path(clone_dest)
+            clone_dest_path = _validate_local_repo_path(clone_dest, root=self._root)
             if not clone_dest_path.exists():
                 try:
                     result = subprocess.run(
-                        ["gh", "repo", "clone", github_repo, clone_dest],
+                        ["gh", "repo", "clone", github_repo, str(clone_dest_path)],
                         capture_output=True,
                         text=True,
                         timeout=120,
                     )
                     if result.returncode != 0:
                         result = subprocess.run(
-                            ["git", "clone", f"https://github.com/{github_repo}.git", clone_dest],
+                            ["git", "clone", f"https://github.com/{github_repo}.git", str(clone_dest_path)],
                             capture_output=True,
                             text=True,
                             timeout=120,
@@ -847,34 +899,58 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
                         raise OSError(f"Clone failed: {result.stderr.strip()}")
                 except subprocess.TimeoutExpired as exc:
                     raise OSError("Clone timed out after 120s") from exc
-            resolved_path = clone_dest
+            resolved_path = str(clone_dest_path)
         else:
-            resolved_path = local_path or str(Path.home() / "projects" / name)
-
-        depts_yaml = ", ".join(f'"{d}"' for d in departments)
-        autonomy_block = ""
-        if autonomy:
-            lines = ["    autonomy:"]
-            for k, v in autonomy.items():
-                lines.append(f"      {k}: {'true' if v else 'false'}")
-            autonomy_block = "\n" + "\n".join(lines)
-
-        new_entry = (
-            f"\n  {name}:\n"
-            f"    path: {resolved_path}\n"
-            f"    language: {language or 'unknown'}\n"
-            f"    default_departments: [{depts_yaml}]\n"
-            f"    lint_command: \"\"\n"
-            f"    test_command: \"\"\n"
-            f"    deploy_command: \"\"\n"
-            f"    context: |\n"
-            f"      {name} — added via Back Office approval workflow.\n"
-            f"{autonomy_block}"
-        )
+            resolved_path = str(_validate_local_repo_path(local_path or str(Path.home() / "projects" / name), root=self._root))
 
         config_path = self._root / "config" / "backoffice.yaml"
-        with open(config_path, "a", encoding="utf-8") as f:
-            f.write(new_entry)
+        config_payload = _load_yaml_mapping(config_path)
+        targets = config_payload.get("targets")
+        if targets is None:
+            targets = {}
+            config_payload["targets"] = targets
+        if not isinstance(targets, dict):
+            raise ValueError("config/backoffice.yaml targets section is malformed")
+        targets[name] = {
+            "path": resolved_path,
+            "language": language or "unknown",
+            "default_departments": departments,
+            "lint_command": "",
+            "test_command": "",
+            "deploy_command": "",
+            "context": f"{name} - added via Back Office approval workflow.\n",
+        }
+        if autonomy:
+            targets[name]["autonomy"] = {k: bool(v) for k, v in autonomy.items()}
+
+        config_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(config_path, "w", encoding="utf-8") as f:
+            yaml.safe_dump(config_payload, f, sort_keys=False)
+
+        targets_config_path = self._root / "config" / "targets.yaml"
+        if targets_config_path.exists():
+            targets_payload = _load_yaml_mapping(targets_config_path)
+            target_list = targets_payload.get("targets")
+            if target_list is None:
+                target_list = []
+                targets_payload["targets"] = target_list
+            if isinstance(target_list, list):
+                target_list = [item for item in target_list if isinstance(item, dict) and item.get("name") != name]
+                target_list.append({
+                    "name": name,
+                    "path": resolved_path,
+                    "language": language or "unknown",
+                    "default_departments": departments,
+                    "lint_command": "",
+                    "test_command": "",
+                    "coverage_command": "",
+                    "deploy_command": "",
+                    "context": f"{name} - added via Back Office approval workflow.\n",
+                    "autonomy": {k: bool(v) for k, v in autonomy.items()},
+                })
+                targets_payload["targets"] = target_list
+                with open(targets_config_path, "w", encoding="utf-8") as f:
+                    yaml.safe_dump(targets_payload, f, sort_keys=False)
 
         return {
             "status": "added",
@@ -917,7 +993,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         from backoffice.tasks import append_history, find_task, iso_now  # noqa: PLC0415
 
         context = self._task_queue_context()
-        task = find_task(context.payload.setdefault("tasks", []), task_id)
+        try:
+            task = find_task(context.payload.setdefault("tasks", []), task_id)
+        except ValueError as exc:
+            self._json_response(404, {"error": str(exc)})
+            return
         actor = (body.get("by") or "operator").strip()
         note = (body.get("note") or "Approved for queued implementation").strip()
         task["status"] = "ready"
@@ -943,7 +1023,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         from backoffice.tasks import append_history, find_task, iso_now  # noqa: PLC0415
 
         context = self._task_queue_context()
-        task = find_task(context.payload.setdefault("tasks", []), task_id)
+        try:
+            task = find_task(context.payload.setdefault("tasks", []), task_id)
+        except ValueError as exc:
+            self._json_response(404, {"error": str(exc)})
+            return
         actor = (body.get("by") or "operator").strip()
         note = (body.get("note") or "Cancelled during approval review").strip()
         task["status"] = "cancelled"
@@ -963,16 +1047,25 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         from backoffice.tasks import append_history, find_task, iso_now  # noqa: PLC0415
 
         context = self._task_queue_context()
-        task = find_task(context.payload.setdefault("tasks", []), task_id)
-        repo_path = task.get("target_path") or ""
-        if not repo_path or not Path(repo_path).exists():
+        try:
+            task = find_task(context.payload.setdefault("tasks", []), task_id)
+        except ValueError as exc:
+            self._json_response(404, {"error": str(exc)})
+            return
+        repo_path_raw = task.get("target_path") or ""
+        try:
+            repo_path = _validate_local_repo_path(repo_path_raw, root=self._root)
+        except ValueError:
+            self._json_response(400, {"error": f"task target_path is outside approved roots: {repo_path_raw}"})
+            return
+        if not repo_path_raw or not repo_path.exists():
             self._json_response(400, {"error": f"task target_path is missing or does not exist: {repo_path}"})
             return
 
         try:
             branch_result = subprocess.run(
                 ["git", "rev-parse", "--abbrev-ref", "HEAD"],
-                cwd=repo_path,
+                cwd=str(repo_path),
                 capture_output=True,
                 text=True,
                 timeout=20,
@@ -1004,7 +1097,7 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         try:
             pr_result = subprocess.run(
                 ["gh", "pr", "create", "--draft", "--title", pr_title, "--body", pr_body],
-                cwd=repo_path,
+                cwd=str(repo_path),
                 capture_output=True,
                 text=True,
                 timeout=90,
@@ -1055,7 +1148,11 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
         from backoffice.tasks import append_history, find_task, iso_now  # noqa: PLC0415
 
         context = self._task_queue_context()
-        task = find_task(context.payload.setdefault("tasks", []), task_id)
+        try:
+            task = find_task(context.payload.setdefault("tasks", []), task_id)
+        except ValueError as exc:
+            self._json_response(404, {"error": str(exc)})
+            return
         suggestion = task.get("approval", {}).get("suggested_product", {})
         if not isinstance(suggestion, dict) or not suggestion.get("name"):
             self._json_response(400, {"error": "task does not contain a suggested product payload"})
