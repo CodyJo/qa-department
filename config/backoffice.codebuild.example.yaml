@@ -11,12 +11,6 @@ deploy:
   aws:
     region: us-west-2
     dashboard_targets:
-      - bucket: "admin-thenewbeautifulme-site"
-        base_path: ""
-        distribution_id: "E372ZR95FXKVT5"
-        subdomain: "admin.thenewbeautifulme.com"
-        filter_repo: "thenewbeautifulme"
-        allow_public_read: false
       - bucket: "admin-codyjo-site"
         base_path: ""
         distribution_id: "E30Z8D5XMDR1A9"
