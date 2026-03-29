@@ -17,7 +17,8 @@ def test_dept_data_map_has_all_departments():
     assert "qa" in DEPT_DATA_MAP
     assert "seo" in DEPT_DATA_MAP
     assert "self-audit" in DEPT_DATA_MAP
-    assert len(DEPT_DATA_MAP) == 8
+    assert "cloud-ops" in DEPT_DATA_MAP
+    assert len(DEPT_DATA_MAP) == 9
 
 
 def test_content_type_for_html():
@@ -43,4 +44,5 @@ def test_content_type_for_markdown():
 def test_agg_data_map_has_departments():
     assert "data.json" in AGG_DATA_MAP
     assert AGG_DATA_MAP["data.json"] == "qa-data.json"
-    assert len(AGG_DATA_MAP) == 7
+    assert "cloud-ops-data.json" in AGG_DATA_MAP
+    assert len(AGG_DATA_MAP) == 8
