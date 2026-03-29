@@ -28,11 +28,15 @@ A Back Office remediation tool that audits and generates Open Graph images, favi
 
 ### Deliverables per site
 
-1. OG image SVG source (`public/og-image.svg`)
+1. OG image SVG source (`public/og.svg` — matches existing convention in TNBM, Selah, Cordivent)
 2. OG image PNG raster (`public/og-image.png`, 1200x630)
 3. Favicon SVG (if missing)
 4. PWA icons 192x192 and 512x512 PNG (if missing or wrong)
 5. Meta tag fixes in layout files
+
+### File naming convention
+
+Existing apps (TNBM, Selah, Cordivent) already use `og.svg` as the SVG source and `og-image.png` as the raster. New and updated files follow this same convention. The old `og.svg` files in TNBM, Selah, and Cordivent are replaced in-place with the new designs.
 
 ### Additional deliverables
 
@@ -78,6 +82,7 @@ Same template structure but with game-specific theming:
 - Subtitle: "Tap the llama. Keep the droplet alive."
 - Badge: "Play Free" in blue accent
 - URL: fuel.codyjo.com/games/hydration-hustle
+- Note: Fuel already has dynamic `opengraph-image.tsx` files at `/games/` and `/games/hydration-hustle/` using Next.js `ImageResponse`. These generate OG images at build time. Replace them with static SVG+PNG approach for consistency. Remove the `opengraph-image.tsx` files and add explicit `images` to the page metadata instead.
 
 **Cthulhu Fact Frenzy** (CertStudy):
 - Colors: CertStudy teal #00d4aa + eldritch purple #7c3aed
@@ -86,6 +91,7 @@ Same template structure but with game-specific theming:
 - Subtitle: "Fact or fake? 45 seconds. No mercy."
 - Badge: "Play Free" in purple accent
 - URL: study.codyjo.com/games
+- Note: CertStudy's game lives at `/games` (inline, no sub-route)
 
 ### codyjo.com per-product OG images
 
@@ -103,7 +109,16 @@ Each product page on codyjo.com gets an OG image matching the individual app's O
 - og-search.png
 - og-continuum.png
 
-Each product page's Astro frontmatter gets an `ogImage` prop pointing to its specific file.
+Each product page passes `ogImage` to its layout. This requires modifying `ProductPage.astro` to accept and forward an `ogImage` prop to `Base.astro` (which already supports it). Currently ProductPage only passes `title`, `description`, and `schema`.
+
+Change in `src/components/ProductPage.astro`:
+1. Add `ogImage?: string` to the Props interface
+2. Destructure `ogImage` from `Astro.props`
+3. Forward it: `<Base title={title} description={description} ogImage={ogImage} schema={schema}>`
+
+Then each product page (e.g., `fuel.astro`) passes `ogImage="/images/og-fuel.png"`.
+
+Non-product pages (home, about, collaborate, privacy, 404) continue using the default `og-cody-jo-method.jpg`.
 
 ## Favicon Fixes
 
@@ -119,18 +134,43 @@ Each product page's Astro frontmatter gets an `ogImage` prop pointing to its spe
 - `public/favicon.svg`: CalendarDays lucide icon, stroke #6366f1, on #0c0e14 background
 - `public/icon-192.png`: Rasterized from favicon SVG (replacing Selah-branded version)
 - `public/icon-512.png`: Rasterized from favicon SVG (replacing Selah-branded version)
-- Add `<link rel="icon" href="/favicon.svg" type="image/svg+xml">` to layout.tsx
+- Ensure favicon.svg is referenced via the icons metadata config in layout.tsx (see Meta Tag Fixes section)
 
 ## Meta Tag Fixes
 
 ### CertStudy
 
-- Title: "CertStudy" becomes "CertStudy -- AI Certification Study Platform"
-- Add favicon link tags to layout.tsx icons config
+- Title: "CertStudy" becomes "CertStudy — AI Certification Study Platform"
+- Spread `buildAppMetadata` and add icons config to the metadata export in layout.tsx:
+  ```typescript
+  export const metadata: Metadata = {
+    ...buildAppMetadata(siteConfig, {
+      title: 'CertStudy — AI Certification Study Platform',
+      description: 'AI-powered certification study platform',
+      imageAlt: 'CertStudy — AI-powered certification study platform',
+    }),
+    icons: {
+      icon: '/favicon.svg',
+      shortcut: '/favicon.svg',
+      apple: '/icon-192.png',
+    },
+  };
+  ```
+- CertStudy's manifest.json already references `/icon-192.png` and `/icon-512.png` at the correct paths — just need to create the files
+- Existing `og-image.png` will be overwritten with the new raster output
 
 ### Cordivent
 
-- Add favicon SVG link tag to layout.tsx icons config
+- Add icons config to the metadata export in layout.tsx (Cordivent uses a raw metadata object, so add `icons` as a new property):
+  ```typescript
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/icon-192.png',
+  },
+  ```
+- Existing `icon-192.png` and `icon-512.png` will be overwritten (currently Selah-branded)
+- Existing `og-image.png` will be overwritten with the new raster output
 
 ### codyjo.com
 
@@ -145,6 +185,11 @@ Each product page's Astro frontmatter gets an `ogImage` prop pointing to its spe
 - `agents/prompts/og-remediation.md` -- System prompt with design system specs
 - `lib/og-standards.md` -- Reference: OG image requirements, meta tag patterns, favicon specs
 - `scripts/svg-to-png.mjs` -- Node script using @resvg/resvg-js for batch SVG-to-PNG conversion
+- `package.json` -- Created at back-office root for Node script dependencies (only @resvg/resvg-js)
+
+### Font handling
+
+SVG text elements use `system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif` font stack. The `@resvg/resvg-js` renderer uses system fonts available on the build machine. For consistent rendering across environments, the SVGs embed font-weight and font-size explicitly. The rendered output will use whatever sans-serif font is available — this is acceptable since the OG images are generated once and committed as PNGs.
 
 ### Make target
 
@@ -168,6 +213,36 @@ og-remediate:
 4. Runs `svg-to-png.mjs` to produce raster versions
 5. Updates meta tags in layout files if needed
 6. Writes results to `results/<repo>/og-remediation.json`
+
+### Output JSON schema (`og-remediation.json`)
+
+```json
+{
+  "repo_name": "fuel",
+  "remediated_at": "ISO-8601",
+  "summary": {
+    "og_images_created": 1,
+    "og_images_updated": 1,
+    "favicons_created": 0,
+    "pwa_icons_created": 0,
+    "meta_tags_fixed": 0
+  },
+  "actions": [
+    {
+      "type": "og_image_created|og_image_updated|favicon_created|pwa_icon_created|meta_tag_fixed",
+      "file": "public/og-image.png",
+      "description": "Generated OG image from og.svg"
+    }
+  ]
+}
+```
+
+### Cleanup
+
+When replacing OG images, remove stale files:
+- Fuel: remove `public/og-template.html` (HTML template previously used to generate OG images via browser screenshot — replaced by SVG approach)
+- Fuel: remove `src/app/games/opengraph-image.tsx` and `src/app/games/hydration-hustle/opengraph-image.tsx` (dynamic Next.js ImageResponse generators — replaced by static images)
+- Fuel: existing `og-image.png` will be overwritten with new raster output
 
 ## What is NOT in scope
 
